@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>
+
+        {% block title %}
+
+        SkillForge
+
+        {% endblock %}
+
+    </title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    {% block styles %}
+
+    {% endblock %}
+
+
+
+</head>
+
+<body class="min-h-screen bg-gradient-to-br from-[#08090d] via-[#11141b] to-[#171d28] antialiased">
+
+    <!-- Page Content -->
+
+    {% block content %}
+
+    {% endblock %}
+
+
+    {% block scripts %}
+
+    {% endblock %}
+</body>
+
+</html>

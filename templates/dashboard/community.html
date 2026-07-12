@@ -1,0 +1,421 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}
+Dashboard
+{% endblock %}
+
+{% block styles %}
+
+<link rel="stylesheet"
+  href="{{ url_for('static', filename='css/community.css') }}">
+
+{% endblock %}
+
+{% block content %}
+
+<!-- TOP BAR -->
+<header
+  class="sticky top-0 z-40 bg-[#0c0a08]/95 backdrop-blur-md border-b border-[var(--hairline)]">
+  <div class="h-[76px] flex items-center justify-between px-6 lg:px-10 gap-6">
+    <nav
+      class="hidden md:flex items-center gap-8 font-ui text-sm text-[var(--muted)] flex-shrink-0">
+      <a href="#"
+        class="hover:text-[var(--parchment)] transition-colors">Home</a>
+      <a href="#"
+        class="hover:text-[var(--parchment)] transition-colors">Skills</a>
+      <a href="#"
+        class="hover:text-[var(--parchment)] transition-colors">Sessions</a>
+      <a href="#" class="text-[var(--gold-bright)] relative">Community
+        <span
+          class="absolute -bottom-[27px] left-0 right-0 h-[2px] bg-[var(--gold)]"></span>
+      </a>
+    </nav>
+
+    <div
+      class="search-bar flex-1 max-w-md flex items-center gap-3 rounded-sm px-4 py-2.5">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+        stroke="var(--muted)" stroke-width="1.8"><circle cx="11" cy="11"
+          r="7" /><path d="M21 21l-4.3-4.3" /></svg>
+      <input type="text" placeholder="Search the Sect..."
+        class="bg-transparent outline-none font-ui text-sm text-[var(--parchment)] placeholder-[var(--muted)] w-full">
+    </div>
+
+    <div class="flex items-center gap-5 flex-shrink-0">
+      <button aria-label="Notifications"
+        class="relative text-[var(--muted)] hover:text-[var(--gold)] transition-colors">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="1.6"><path
+            d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9" /><path
+            d="M13.73 21a2 2 0 01-3.46 0" /></svg>
+        <span
+          class="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-[var(--rose)]"></span>
+      </button>
+      <button aria-label="Streak" class="text-[var(--gold)]">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor"
+          stroke="none"><path
+            d="M12 2s5 5.5 5 10a5 5 0 01-10 0c0-1.5.6-2.7 1.3-3.8.3.9 1 1.6 1.7 1.6.9 0 1-1 .8-1.8C10.3 6.3 12 2 12 2z" /></svg>
+      </button>
+      <div
+        class="flex items-center gap-3 pl-5 border-l border-[var(--hairline)]">
+        <div class="text-right hidden sm:block">
+          <div
+            class="font-ui text-sm text-[var(--parchment)] leading-tight">Arjun
+            Singh</div>
+          <div
+            class="font-ui text-[11px] tracking-wide text-[var(--gold)] leading-tight">SECT
+            DISCIPLE</div>
+        </div>
+        <img
+          src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=200&auto=format&fit=crop"
+          alt="Arjun Singh avatar"
+          class="w-9 h-9 rounded-full border border-[var(--gold)] object-cover">
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="px-6 lg:px-10 py-10 max-w-[1700px]">
+
+  <!-- Heading -->
+  <div class="fade-up mb-10" data-fade>
+    <h1
+      class="font-display text-3xl md:text-4xl text-[var(--parchment)] mb-3">The
+      Great Hall</h1>
+    <p
+      class="font-ui italic font-light text-[15px] text-[var(--muted)] max-w-2xl leading-relaxed">Gather
+      with fellow cultivators, seek wisdom from the Elders, and forge alliances
+      with the greatest Sects of our age.</p>
+  </div>
+
+  <div class="grid lg:grid-cols-[1fr_360px] gap-6">
+
+    <!-- LEFT COLUMN -->
+    <div class="space-y-6">
+
+      <!-- Sect Forum -->
+      <div class="card fade-up rounded-sm overflow-hidden" data-fade>
+        <div
+          class="flex items-center justify-between px-7 py-6 border-b border-[var(--hairline)]">
+          <div class="flex items-center gap-3">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+              stroke="var(--gold)" stroke-width="1.6"><path
+                d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" /></svg>
+            <h2 class="font-display text-xl text-[var(--parchment)]">Sect
+              Forum</h2>
+          </div>
+          <button
+            class="btn-primary flex items-center gap-2 font-ui text-sm px-5 py-2.5 rounded-sm">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2.2"><path
+                d="M12 5v14M5 12h14" /></svg>
+            Start Discussion
+          </button>
+        </div>
+
+        <a href="#"
+          class="post-row flex items-start gap-4 px-7 py-6 border-b border-[var(--hairline)]">
+          <div
+            class="w-11 h-11 rounded-sm bg-[var(--panel-2)] border border-[var(--hairline)] flex items-center justify-center flex-shrink-0">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+              stroke="var(--jade)" stroke-width="1.6"><path
+                d="M4 17l6-6-6-6M12 19h8" /></svg>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-start justify-between gap-4">
+              <h3 class="font-ui text-[15px] text-[var(--parchment)]">Mastering
+                the 'Shadow DOM' Cultivation Technique</h3>
+              <span class="font-ui text-xs text-[var(--muted)] flex-shrink-0">2h
+                ago</span>
+            </div>
+            <p
+              class="font-ui font-light text-sm text-[var(--muted)] mt-1.5 truncate">Has
+              anyone successfully integrated the Web Components talisman
+              with…</p>
+            <div class="flex items-center gap-5 mt-3.5">
+              <span
+                class="flex items-center gap-1.5 font-ui text-xs text-[var(--muted)]">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="1.8"><path
+                    d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" /></svg>
+                24 Replies
+              </span>
+              <span
+                class="flex items-center gap-1.5 font-ui text-xs text-[var(--muted)]">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="1.8"><path
+                    d="M14 9V5a3 3 0 00-6 0v4H4l1 11a2 2 0 002 2h10a2 2 0 002-2l1-11h-4z" /></svg>
+                142 Likes
+              </span>
+              <span
+                class="tag font-ui text-[10px] tracking-wide text-[var(--jade)] px-2.5 py-1 rounded-sm">EXPERT</span>
+            </div>
+          </div>
+        </a>
+
+        <a href="#"
+          class="post-row flex items-start gap-4 px-7 py-6 border-b border-[var(--hairline)]">
+          <div
+            class="w-11 h-11 rounded-sm bg-[var(--panel-2)] border border-[var(--hairline)] flex items-center justify-center flex-shrink-0">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+              stroke="var(--gold)" stroke-width="1.6"><circle cx="12" cy="8"
+                r="4" /><path d="M4 21a8 8 0 0116 0" /></svg>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-start justify-between gap-4">
+              <h3 class="font-ui text-[15px] text-[var(--parchment)]">Career
+                Path: From Disciple to Senior Architect</h3>
+              <span class="font-ui text-xs text-[var(--muted)] flex-shrink-0">5h
+                ago</span>
+            </div>
+            <p
+              class="font-ui font-light text-sm text-[var(--muted)] mt-1.5 truncate">Looking
+              for advice on which sect (company) offers the best
+              cultivation…</p>
+            <div class="flex items-center gap-5 mt-3.5">
+              <span
+                class="flex items-center gap-1.5 font-ui text-xs text-[var(--muted)]">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="1.8"><path
+                    d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" /></svg>
+                56 Replies
+              </span>
+              <span
+                class="flex items-center gap-1.5 font-ui text-xs text-[var(--muted)]">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="1.8"><path
+                    d="M14 9V5a3 3 0 00-6 0v4H4l1 11a2 2 0 002 2h10a2 2 0 002-2l1-11h-4z" /></svg>
+                310 Likes
+              </span>
+              <span
+                class="tag font-ui text-[10px] tracking-wide text-[var(--gold)] px-2.5 py-1 rounded-sm">CAREER</span>
+            </div>
+          </div>
+        </a>
+
+        <a href="#"
+          class="block text-center py-5 font-ui text-sm text-[var(--gold-bright)] hover:text-[var(--gold)] transition-colors">
+          Venture Deeper into the Forum
+        </a>
+      </div>
+
+      <!-- Sect pavilions -->
+      <div class="grid sm:grid-cols-2 gap-6">
+        <div class="card fade-up rounded-sm p-7 relative overflow-hidden"
+          data-fade>
+          <svg class="pavilion-glyph" width="140" height="140"
+            viewBox="0 0 24 24" fill="var(--gold)" stroke="none"><path
+              d="M12 2L2 8h20L12 2zM4 10v10h4V14h8v6h4V10H4z" /></svg>
+          <div class="flex items-center gap-4 mb-5 relative">
+            <div
+              class="w-14 h-14 rounded-sm bg-white flex items-center justify-center flex-shrink-0">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none"
+                stroke="#2c5da8" stroke-width="1.8"><path
+                  d="M17.5 19a4.5 4.5 0 000-9 6 6 0 00-11.3-2A5 5 0 007 18h10.5z" /></svg>
+            </div>
+            <div>
+              <h3 class="font-display text-lg text-[var(--parchment)]">Nebula
+                Sect</h3>
+              <span
+                class="font-ui text-[11px] tracking-wide text-[var(--jade)]">CLOUD
+                COMPUTING MASTERY</span>
+            </div>
+          </div>
+          <p
+            class="font-ui font-light text-sm text-[var(--muted)] leading-relaxed mb-6 relative">Seeking
+            ambitious disciples for our Infrastructure-as-a-Spiritual-Service
+            division.</p>
+          <button
+            class="btn-secondary w-full flex items-center justify-center gap-2 font-ui text-sm py-3 rounded-sm relative text-[var(--parchment)]">
+            Visit Sect Pavilion
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2"><path
+                d="M5 12h14M13 6l6 6-6 6" /></svg>
+          </button>
+        </div>
+
+        <div
+          class="card fade-up rounded-sm p-7 relative overflow-hidden effect_panel"
+          data-fade>
+          <svg class="pavilion-glyph" width="140" height="140"
+            viewBox="0 0 24 24" fill="var(--jade)" stroke="none"><path
+              d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6z" /></svg>
+          <div class="flex items-center gap-4 mb-5 relative">
+            <div
+              class="w-14 h-14 rounded-sm bg-[var(--panel-2)] border border-[var(--hairline)] flex items-center justify-center flex-shrink-0">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                stroke="var(--jade)" stroke-width="1.8"><path
+                  d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6z" /></svg>
+            </div>
+            <div>
+              <h3 class="font-display text-lg text-[var(--parchment)]">Iron
+                Aegis</h3>
+              <span
+                class="font-ui text-[11px] tracking-wide text-[var(--jade)]">DEFENSE
+                CULTIVATION</span>
+            </div>
+          </div>
+          <p
+            class="font-ui font-light text-sm text-[var(--muted)] leading-relaxed mb-6 relative">The
+            shield that never breaks. Join our security auditing squad and
+            harden the realm.</p>
+          <button
+            class="btn-secondary w-full flex items-center justify-center gap-2 font-ui text-sm py-3 rounded-sm relative text-[var(--parchment)]">
+            Visit Sect Pavilion
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2"><path
+                d="M5 12h14M13 6l6 6-6 6" /></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN -->
+    <div class="space-y-6">
+
+      <!-- Mentor Pavilion -->
+      <div class="card fade-up rounded-sm p-6" data-fade>
+        <div class="flex items-center gap-2.5 mb-6">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none"
+            stroke="var(--gold)" stroke-width="1.6"><path
+              d="M3 21h18M5 21V9l7-6 7 6v12M9 21v-6h6v6" /></svg>
+          <h2 class="font-display text-lg text-[var(--parchment)]">Mentor
+            Pavilion</h2>
+        </div>
+
+        <div class="flex items-center gap-4 mb-5">
+          <div class="relative flex-shrink-0">
+            <img
+              src="https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=200&auto=format&fit=crop"
+              alt="Elder Wei"
+              class="w-12 h-12 rounded-full border border-[var(--gold)] object-cover">
+            <span
+              class="status-dot absolute bottom-0 right-0 w-3 h-3 rounded-full bg-[var(--jade)]"></span>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="font-ui text-sm text-[var(--parchment)]">Elder Wei</div>
+            <div
+              class="font-ui font-light text-xs text-[var(--muted)] leading-snug">Systems
+              Architecture Master</div>
+          </div>
+          <button
+            class="btn-secondary font-ui text-xs px-4 py-2 rounded-sm text-[var(--parchment)] flex-shrink-0">Consult</button>
+        </div>
+
+        <div class="flex items-center gap-4 mb-6">
+          <div class="relative flex-shrink-0">
+            <img
+              src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?q=80&w=200&auto=format&fit=crop"
+              alt="Mistress Lin"
+              class="w-12 h-12 rounded-full border border-[var(--gold)] object-cover">
+            <span
+              class="status-dot absolute bottom-0 right-0 w-3 h-3 rounded-full bg-[var(--jade)]"></span>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="font-ui text-sm text-[var(--parchment)]">Mistress
+              Lin</div>
+            <div
+              class="font-ui font-light text-xs text-[var(--muted)] leading-snug">Frontend
+              Alchemy Alumni</div>
+          </div>
+          <button
+            class="btn-secondary font-ui text-xs px-4 py-2 rounded-sm text-[var(--parchment)] flex-shrink-0">Consult</button>
+        </div>
+
+        <a href="#"
+          class="block text-center font-ui text-sm text-[var(--gold-bright)] hover:text-[var(--gold)] transition-colors pt-1 border-t border-[var(--hairline)]">View
+          all Masters</a>
+      </div>
+
+      <!-- Spirit Feed -->
+      <div class="card fade-up rounded-sm p-6 effect_panel" data-fade>
+        <div class="flex items-center gap-2.5 mb-6">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none"
+            stroke="var(--jade)" stroke-width="1.8"><path
+              d="M23 6l-9.5 9.5-5-5L1 18" /><path d="M17 6h6v6" /></svg>
+          <h2 class="font-display text-lg text-[var(--parchment)]">Spirit
+            Feed</h2>
+        </div>
+
+        <div class="space-y-6">
+          <div class="flex items-start gap-3">
+            <div
+              class="w-7 h-7 rounded-full bg-[var(--panel-2)] border border-[var(--gold)]/40 flex items-center justify-center flex-shrink-0 mt-0.5">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="var(--gold)"
+                stroke="none"><path
+                  d="M12 2l2.5 7.5H22l-6.2 4.5 2.4 7.5L12 17l-6.2 4.5 2.4-7.5L2 9.5h7.5z" /></svg>
+            </div>
+            <div class="flex-1">
+              <p
+                class="font-ui text-sm text-[var(--parchment)] leading-relaxed"><span
+                  class="font-medium">Arjun</span> just forged the <span
+                  class="text-[var(--jade)]">React Skill</span>!</p>
+              <span class="font-ui text-[11px] text-[var(--muted)]">10m
+                ago</span>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-3">
+            <div
+              class="w-7 h-7 rounded-full bg-[var(--panel-2)] border border-[var(--jade)]/40 flex items-center justify-center flex-shrink-0 mt-0.5">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
+                stroke="var(--jade)" stroke-width="2"><path
+                  d="M12 2l3 7h7l-5.5 4.5L18.5 21 12 16.5 5.5 21l2-7.5L2 9h7z" /></svg>
+            </div>
+            <div class="flex-1">
+              <p
+                class="font-ui text-sm text-[var(--parchment)] leading-relaxed"><span
+                  class="font-medium">Mei Ling</span> ascended to <span
+                  class="text-[var(--jade)]">Sect Elder Rank</span>.</p>
+              <span class="font-ui text-[11px] text-[var(--muted)]">45m
+                ago</span>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-3">
+            <div
+              class="w-7 h-7 rounded-full bg-[var(--panel-2)] border border-[var(--rose)]/40 flex items-center justify-center flex-shrink-0 mt-0.5">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="var(--rose)"
+                stroke="none"><path
+                  d="M12 2l2.5 7.5H22l-6.2 4.5 2.4 7.5L12 17l-6.2 4.5 2.4-7.5L2 9.5h7.5z" /></svg>
+            </div>
+            <div class="flex-1">
+              <p
+                class="font-ui text-sm text-[var(--parchment)] leading-relaxed"><span
+                  class="font-medium">Chen</span> completed the
+                <em>'Void Security'</em> session.</p>
+              <span class="font-ui text-[11px] text-[var(--muted)]">1h
+                ago</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</main>
+
+<!-- Floating action button -->
+<button aria-label="New message"
+  class="fab fixed bottom-8 right-8 w-14 h-14 rounded-sm btn-primary flex items-center justify-center">
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+    stroke="currentColor" stroke-width="2"><path
+      d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" /><path
+      d="M12 8v4M10 10h4" /></svg>
+</button>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('[data-fade]').forEach(el => observer.observe(el));
+</script>
+
+{% endblock %}

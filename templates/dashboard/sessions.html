@@ -1,0 +1,139 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}
+Dashboard
+{% endblock %}
+
+{% block styles %}
+
+<link rel="stylesheet" 
+  href="{{ url_for('static', filename='css/session.css') }}">
+
+{% endblock %}
+
+{% block content %}
+  <!-- MOBILE TOP BAR -->
+  <div class="lg:hidden sticky top-0 z-40 flex items-center justify-between px-4 py-3 bg-[var(--ink)]/95 backdrop-blur border-b border-[var(--line)]">
+    <div class="flex items-center gap-2">
+      <span class="font-display text-lg font-bold text-[var(--gold-soft)]">SkillForge</span>
+    </div>
+    <button id="menuBtn" class="p-2 rounded-md border border-[var(--line)]" aria-label="Open menu">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+    </button>
+  </div>
+
+    <!-- TOP BAR (desktop) -->
+    <div class="hidden lg:flex items-center justify-between px-8 pt-6">
+      <div class="flex items-center gap-6 text-sm">
+        <a href="#" class="text-[var(--muted)] hover:text-[var(--text)] transition">Home</a>
+        <a href="#" class="text-[var(--muted)] hover:text-[var(--text)] transition">Skills</a>
+        <a href="#" class="brush-underline text-[var(--gold-soft)] font-medium">Sessions</a>
+      </div>
+      <div class="flex items-center gap-4">
+        <div class="flex items-center gap-2 px-3 py-1.5 rounded-full border border-[var(--line)] bg-white/[0.03]">
+          <span class="streak-flame text-sm">🔥</span>
+          <span id="streakCount" class="text-xs font-medium text-[var(--gold-soft)]">12 Day Streak</span>
+        </div>
+        <div class="flex items-center gap-3">
+          <div class="text-right leading-tight">
+            <p class="text-sm font-medium">Arjun Singh</p>
+            <p class="text-[10px] tracking-widest text-[var(--muted)]">CORE DISCIPLE</p>
+          </div>
+          <div class="w-9 h-9 rounded-full bg-gradient-to-br from-[var(--gold)] to-[var(--amethyst)] p-[2px]">
+            <div class="w-full h-full rounded-full bg-cover bg-center bg_image" ></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="px-4 sm:px-6 lg:px-8 pt-6 lg:pt-8 pb-16">
+
+      <!-- HERO -->
+      <section class="card relative overflow-hidden rounded-2xl p-6 sm:p-10 mb-8">
+        <div class="absolute inset-0 opacity-[0.06] pointer-events-none bgimg_sz"></div>
+        <div class="absolute -right-10 -top-10 w-64 h-64 rounded-full bg-[var(--amethyst)]/10 blur-3xl pointer-events-none"></div>
+        <div class="relative flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+          <div class="max-w-2xl">
+            <p class="seal text-xs tracking-[0.3em] text-[var(--jade)] mb-3">THE LIVE PAVILION</p>
+            <h2 class="font-display text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight text-[var(--text)]">
+              Master the Ancient Arts of <span class="text-[var(--gold-soft)]">Modern Code</span>
+            </h2>
+            <p class="text-[var(--muted)] mt-4 text-sm sm:text-base leading-relaxed">
+              Join fellow disciples in real-time cultivation sessions led by the Great Masters of the SkillForge Sect.
+            </p>
+          </div>
+          <button id="joinPavilionHero" class="glow-btn shrink-0 rounded-xl px-6 py-3.5 font-semibold flex items-center gap-2 transition self-start lg:self-center">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            Join Active Pavilion
+          </button>
+        </div>
+      </section>
+
+      <!-- TABS + SEARCH -->
+      <section class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+        <div class="flex items-center gap-2 overflow-x-auto hide-scrollbar" id="tabGroup">
+          <button data-tab="live" class="tab-btn active text-sm font-medium px-4 py-2 rounded-lg transition whitespace-nowrap">Live Now</button>
+          <button data-tab="upcoming" class="tab-btn text-sm font-medium px-4 py-2 rounded-lg transition whitespace-nowrap text-[var(--muted)] hover:text-[var(--text)]">Upcoming</button>
+          <button data-tab="recorded" class="tab-btn text-sm font-medium px-4 py-2 rounded-lg transition whitespace-nowrap text-[var(--muted)] hover:text-[var(--text)]">Recorded</button>
+        </div>
+        <div class="relative w-full sm:w-72">
+          <svg class="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--muted)]" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+          <input id="searchInput" type="text" placeholder="Search sessions or mentors..." class="w-full bg-white/[0.03] border border-[var(--line)] rounded-lg pl-9 pr-3 py-2.5 text-sm placeholder:text-[var(--muted)] focus:border-[var(--gold)]/50 transition">
+        </div>
+      </section>
+
+      <!-- SESSION CARDS -->
+      <section id="cardsGrid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 mb-14"></section>
+
+      <!-- ARCHIVE -->
+      <section>
+        <div class="flex items-end justify-between mb-5">
+          <div>
+            <h3 class="font-display text-xl sm:text-2xl font-bold text-[var(--gold-soft)]">Echoes of the Past</h3>
+            <p class="text-[var(--muted)] text-sm mt-1">Review recorded sessions to reinforce your techniques.</p>
+          </div>
+          <a href="#" id="viewArchiveLink" class="text-sm text-[var(--gold-soft)] font-medium whitespace-nowrap flex items-center gap-1 hover:gap-2 transition-all">View Archive <span>→</span></a>
+        </div>
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4" id="archiveGrid"></div>
+      </section>
+
+      <!-- FOOTER -->
+      <footer class="mt-16 pt-10 border-t border-[var(--line)] flex flex-col sm:flex-row justify-between gap-8">
+        <div class="max-w-xs">
+          <h4 class="font-display text-lg font-bold text-[var(--gold-soft)] mb-2">SkillForge</h4>
+          <p class="text-sm text-[var(--muted)] leading-relaxed">Elevating the next generation of tech masters through disciplined cultivation and ancient wisdom.</p>
+        </div>
+        <div class="flex gap-16 text-sm">
+          <div>
+            <p class="text-xs tracking-widest text-[var(--muted)] mb-3">SECT</p>
+            <ul class="space-y-2 text-[var(--muted)]">
+              <li><a href="#" class="hover:text-[var(--text)] transition">Manifesto</a></li>
+              <li><a href="#" class="hover:text-[var(--text)] transition">Hall of Fame</a></li>
+              <li><a href="#" class="hover:text-[var(--text)] transition">Treasury</a></li>
+            </ul>
+          </div>
+          <div>
+            <p class="text-xs tracking-widest text-[var(--muted)] mb-3">SUPPORT</p>
+            <ul class="space-y-2 text-[var(--muted)]">
+              <li><a href="#" class="hover:text-[var(--text)] transition">Help Scrolls</a></li>
+              <li><a href="#" class="hover:text-[var(--text)] transition">Scroll of Privacy</a></li>
+              <li><a href="#" class="hover:text-[var(--text)] transition">Terms of Rite</a></li>
+            </ul>
+          </div>
+        </div>
+      </footer>
+      <p class="text-center text-[11px] tracking-widest text-[var(--muted)]/60 mt-8">© 2026 SKILLFORGE SECT. ALL TRUTHS RESERVED.</p>
+    </div>
+  </main>
+</div>
+
+<!-- TOAST -->
+<div id="toastWrap" class="fixed bottom-6 right-6 z-[60] flex flex-col gap-2 items-end"></div>
+{% endblock %}
+
+{% block scripts %}
+  <script 
+    src="{{ url_for('static', filename='js/session.js') }}">
+  </script>
+{% endblock %}
+

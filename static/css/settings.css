@@ -1,0 +1,67 @@
+.btn-outline {
+    border: 1px solid var(--hairline);
+    color: var(--parchment);
+    transition: all .2s ease;
+}
+
+.btn-outline:hover {
+    border-color: var(--gold);
+    background: rgba(217, 180, 106, 0.06);
+}
+
+.field-box {
+    background: var(--panel-2);
+    border: 1px solid var(--hairline);
+}
+
+.search-bar {
+    background: var(--panel-2);
+    border: 1px solid var(--hairline);
+    transition: border-color .2s ease;
+}
+
+.search-bar:focus-within {
+    border-color: var(--gold);
+}
+
+/* Toggle switch */
+.switch {
+    width: 44px;
+    height: 24px;
+    background: var(--gold);
+    border-radius: 999px;
+    position: relative;
+    cursor: pointer;
+    transition: background .25s ease;
+    flex-shrink: 0;
+}
+
+.switch.off {
+    background: #3a3024;
+}
+
+.switch-knob {
+    position: absolute;
+    top: 2px;
+    left: 22px;
+    width: 20px;
+    height: 20px;
+    background: #fff;
+    border-radius: 50%;
+    transition: left .25s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+.switch.off .switch-knob {
+    left: 2px;
+}
+
+.dissolution-card {
+    border-left: 2px solid var(--rose);
+}
+
+.link-badge {
+    background: rgba(90, 143, 110, 0.15);
+    color: var(--jade);
+    border: 1px solid rgba(90, 143, 110, 0.4);
+}

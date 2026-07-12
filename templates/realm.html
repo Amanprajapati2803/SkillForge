@@ -1,0 +1,178 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript Realm | SkillForge</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        forgeBg: "#08131d",
+                        forgeCard: "#111b25",
+                        forgeGold: "#d4af37",
+                        forgeCream: "#f3e6c0",
+                        forgeMuted: "#94a3b8"
+                    },
+                    fontFamily: {
+                        title: ["Cinzel", "serif"],
+                        body: ["Inter", "sans-serif"]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="min-h-screen bg-forgeBg font-body text-slate-200">
+    <main class="relative overflow-hidden">
+        <div class="pointer-events-none fixed inset-0">
+            <div class="absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(212,175,55,0.14),transparent_28%),radial-gradient(circle_at_82%_0%,rgba(250,204,21,0.1),transparent_24%),linear-gradient(180deg,rgba(8,19,29,0),rgba(8,19,29,1))]"></div>
+            <div class="absolute inset-0 opacity-[0.05] [background-image:linear-gradient(rgba(212,175,55,0.5)_1px,transparent_1px),linear-gradient(90deg,rgba(212,175,55,0.5)_1px,transparent_1px)] [background-size:44px_44px]"></div>
+        </div>
+
+        <div class="relative mx-auto max-w-7xl px-5 py-8 sm:px-8 lg:px-10">
+            <a href="/skills" class="mb-7 inline-flex items-center gap-2 rounded-full border border-yellow-700/70 bg-forgeCard/80 px-4 py-2 text-sm font-semibold text-forgeGold shadow-lg shadow-yellow-950/20 transition duration-300 hover:scale-105 hover:border-forgeGold hover:bg-yellow-500/10">
+                <i data-lucide="arrow-left" class="h-4 w-4"></i>
+                Back to Skills
+            </a>
+
+            <section class="rounded-[2rem] border border-yellow-700/60 bg-forgeCard/90 p-6 shadow-2xl shadow-yellow-950/30 backdrop-blur md:p-8 lg:p-10">
+                <div class="grid items-center gap-10 lg:grid-cols-[1.15fr_0.85fr]">
+                    <div>
+                        <div class="inline-flex items-center gap-2 rounded-full border border-yellow-600/60 bg-yellow-500/10 px-4 py-2 text-sm font-bold text-forgeGold shadow-lg shadow-yellow-900/20">
+                            <span>&#9876;</span>
+                            JavaScript Realm
+                        </div>
+                        <h1 class="mt-6 max-w-3xl font-title text-4xl font-extrabold leading-tight text-forgeCream sm:text-5xl lg:text-6xl">Become the Master of the Web</h1>
+
+                        <div class="mt-8 grid gap-4 sm:grid-cols-2">
+                            <div class="rounded-2xl border border-yellow-800/50 bg-[#0c1620]/80 p-5 shadow-lg shadow-yellow-950/20">
+                                <p class="text-sm font-medium uppercase tracking-wide text-forgeMuted">Current Rank</p>
+                                <p class="mt-2 text-2xl font-bold text-forgeCream">Frontend Explorer</p>
+                            </div>
+                            <div class="rounded-2xl border border-yellow-800/50 bg-[#0c1620]/80 p-5 shadow-lg shadow-yellow-950/20">
+                                <p class="text-sm font-medium uppercase tracking-wide text-forgeMuted">Current Level</p>
+                                <p class="mt-2 text-2xl font-bold text-forgeGold">Level 8</p>
+                            </div>
+                        </div>
+
+                        <div class="mt-7">
+                            <div class="mb-3 flex items-center justify-between gap-4 text-sm">
+                                <span class="font-semibold text-forgeCream">XP Progress</span>
+                                <span class="text-forgeGold">2,400 / 3,000 XP</span>
+                            </div>
+                            <div class="h-4 overflow-hidden rounded-full border border-yellow-900/50 bg-slate-950">
+                                <div class="h-full w-4/5 rounded-full bg-gradient-to-r from-yellow-700 via-forgeGold to-yellow-200 shadow-[0_0_22px_rgba(212,175,55,0.55)] transition-all duration-700"></div>
+                            </div>
+                        </div>
+
+                        <div class="mt-7 rounded-2xl border border-yellow-700/60 bg-[#0b1721] p-5 shadow-xl shadow-yellow-950/30 transition duration-300 hover:-translate-y-1 hover:border-forgeGold hover:shadow-yellow-800/20">
+                            <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                                <div class="flex items-start gap-3">
+                                    <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-yellow-700/60 bg-yellow-500/10 text-forgeGold">
+                                        <i data-lucide="scroll" class="h-5 w-5"></i>
+                                    </div>
+                                    <div>
+                                        <h2 class="font-title text-xl font-bold text-forgeCream">Daily Quest</h2>
+                                        <p class="mt-1 text-sm text-forgeMuted">Complete one DOM challenge before midnight.</p>
+                                    </div>
+                                </div>
+                                <span class="rounded-full border border-yellow-700/50 bg-yellow-500/10 px-4 py-2 text-sm font-bold text-forgeGold">+50 XP</span>
+                            </div>
+                        </div>
+
+                        <a href="/javascript/lesson/dom" class="mt-8 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-yellow-700 via-forgeGold to-yellow-300 px-7 py-4 font-bold text-slate-950 shadow-xl shadow-yellow-700/20 transition duration-300 hover:scale-105">
+                            Continue Journey
+                            <i data-lucide="arrow-right" class="h-5 w-5"></i>
+                        </a>
+                    </div>
+
+                    <div class="flex justify-center lg:justify-end">
+                        <div class="relative flex h-64 w-64 items-center justify-center rounded-full border border-yellow-600/70 bg-yellow-500/10 shadow-[0_0_70px_rgba(212,175,55,0.32)] sm:h-80 sm:w-80">
+                            <div class="absolute inset-5 rounded-full border border-yellow-400/30"></div>
+                            <div class="absolute inset-10 rounded-full bg-[#0b1721] shadow-inner shadow-yellow-950"></div>
+                            <i class="devicon-javascript-plain colored relative text-[8rem] drop-shadow-[0_0_28px_rgba(212,175,55,0.8)] sm:text-[10rem]"></i>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="mt-8 grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
+                <div class="rounded-2xl border border-yellow-800/60 bg-forgeCard p-6 shadow-xl shadow-yellow-950/20 transition duration-300 hover:-translate-y-1 hover:border-forgeGold hover:shadow-yellow-700/20">
+                    <div class="flex items-center justify-between"><p class="text-sm font-semibold uppercase tracking-wide text-forgeMuted">Lessons Completed</p><i data-lucide="book-open-check" class="h-6 w-6 text-forgeGold"></i></div>
+                    <p class="mt-5 text-4xl font-bold text-forgeCream">18</p>
+                </div>
+                <div class="rounded-2xl border border-yellow-800/60 bg-forgeCard p-6 shadow-xl shadow-yellow-950/20 transition duration-300 hover:-translate-y-1 hover:border-forgeGold hover:shadow-yellow-700/20">
+                    <div class="flex items-center justify-between"><p class="text-sm font-semibold uppercase tracking-wide text-forgeMuted">Quizzes Won</p><i data-lucide="trophy" class="h-6 w-6 text-forgeGold"></i></div>
+                    <p class="mt-5 text-4xl font-bold text-forgeCream">12</p>
+                </div>
+                <div class="rounded-2xl border border-yellow-800/60 bg-forgeCard p-6 shadow-xl shadow-yellow-950/20 transition duration-300 hover:-translate-y-1 hover:border-forgeGold hover:shadow-yellow-700/20">
+                    <div class="flex items-center justify-between"><p class="text-sm font-semibold uppercase tracking-wide text-forgeMuted">Current XP</p><i data-lucide="sparkles" class="h-6 w-6 text-forgeGold"></i></div>
+                    <p class="mt-5 text-4xl font-bold text-forgeCream">2,400</p>
+                </div>
+                <div class="rounded-2xl border border-yellow-800/60 bg-forgeCard p-6 shadow-xl shadow-yellow-950/20 transition duration-300 hover:-translate-y-1 hover:border-forgeGold hover:shadow-yellow-700/20">
+                    <div class="flex items-center justify-between"><p class="text-sm font-semibold uppercase tracking-wide text-forgeMuted">Player Rank</p><i data-lucide="crown" class="h-6 w-6 text-forgeGold"></i></div>
+                    <p class="mt-5 text-3xl font-bold text-forgeCream">Explorer</p>
+                </div>
+            </section>
+
+            <section class="mt-8 grid gap-8 lg:grid-cols-[0.9fr_1.1fr]">
+                <div class="rounded-3xl border border-yellow-800/60 bg-forgeCard p-6 shadow-2xl shadow-yellow-950/20 transition duration-300 hover:-translate-y-1 hover:border-forgeGold hover:shadow-yellow-700/20">
+                    <div class="flex items-center gap-4">
+                        <div class="flex h-16 w-16 items-center justify-center rounded-2xl border border-yellow-700/60 bg-yellow-500/10"><i class="devicon-javascript-plain colored text-4xl"></i></div>
+                        <div><p class="text-sm font-semibold uppercase tracking-wide text-forgeMuted">Current Lesson</p><h2 class="mt-1 font-title text-2xl font-bold text-forgeCream">DOM Manipulation</h2></div>
+                    </div>
+                    <div class="mt-6">
+                        <div class="mb-3 flex justify-between text-sm"><span class="text-forgeMuted">Lesson progress</span><span class="font-semibold text-forgeGold">68%</span></div>
+                        <div class="h-3 overflow-hidden rounded-full bg-slate-950"><div class="h-full w-[68%] rounded-full bg-gradient-to-r from-yellow-700 to-forgeGold shadow-[0_0_18px_rgba(212,175,55,0.45)] transition-all duration-700"></div></div>
+                    </div>
+                    <a href="/javascript/lesson/dom" class="mt-7 inline-flex w-full items-center justify-center gap-2 rounded-xl border border-yellow-700/70 bg-yellow-500/10 px-5 py-3 font-bold text-forgeGold transition duration-300 hover:scale-105 hover:border-forgeGold hover:bg-yellow-500/20">Continue <i data-lucide="play" class="h-5 w-5"></i></a>
+                </div>
+
+                <div id="modules">
+                    <div class="mb-5"><p class="text-sm font-semibold uppercase tracking-wide text-forgeGold">Skill Path</p><h2 class="font-title text-3xl font-bold text-forgeCream">Learning Modules</h2></div>
+                    <div class="grid gap-4 sm:grid-cols-2">
+                        <div class="cursor-pointer rounded-2xl border border-yellow-800/60 bg-forgeCard p-5 shadow-xl shadow-yellow-950/20 transition duration-300 hover:-translate-y-1 hover:border-forgeGold hover:shadow-yellow-700/20"><div class="flex items-start justify-between gap-4"><i data-lucide="box" class="h-8 w-8 text-forgeGold"></i><i data-lucide="check-circle-2" class="h-6 w-6 text-emerald-400"></i></div><h3 class="mt-5 text-xl font-bold text-forgeCream">Variables</h3><p class="mt-1 text-sm text-forgeMuted">Difficulty: Easy</p><div class="mt-4 h-2 rounded-full bg-slate-950"><div class="h-2 w-full rounded-full bg-emerald-400 transition-all duration-700"></div></div><p class="mt-3 text-sm font-semibold text-emerald-400">100% Completed</p><a href="/javascript/lesson/variables" class="mt-4 inline-flex text-sm font-bold text-[#d4af37]">Open Lesson</a></div>
+                        <div class="cursor-pointer rounded-2xl border border-yellow-800/60 bg-forgeCard p-5 shadow-xl shadow-yellow-950/20 transition duration-300 hover:-translate-y-1 hover:border-forgeGold hover:shadow-yellow-700/20"><div class="flex items-start justify-between gap-4"><i data-lucide="braces" class="h-8 w-8 text-forgeGold"></i><i data-lucide="check-circle-2" class="h-6 w-6 text-emerald-400"></i></div><h3 class="mt-5 text-xl font-bold text-forgeCream">Functions</h3><p class="mt-1 text-sm text-forgeMuted">Difficulty: Easy</p><div class="mt-4 h-2 rounded-full bg-slate-950"><div class="h-2 w-full rounded-full bg-emerald-400 transition-all duration-700"></div></div><p class="mt-3 text-sm font-semibold text-emerald-400">100% Completed</p><a href="/javascript/lesson/functions" class="mt-4 inline-flex text-sm font-bold text-[#d4af37]">Open Lesson</a></div>
+                        <div class="cursor-pointer rounded-2xl border border-yellow-800/60 bg-forgeCard p-5 shadow-xl shadow-yellow-950/20 transition duration-300 hover:-translate-y-1 hover:border-forgeGold hover:shadow-yellow-700/20"><div class="flex items-start justify-between gap-4"><i data-lucide="boxes" class="h-8 w-8 text-forgeGold"></i><span class="rounded-full bg-yellow-500/10 px-3 py-1 text-xs font-bold text-forgeGold">Unlocked</span></div><h3 class="mt-5 text-xl font-bold text-forgeCream">Objects</h3><p class="mt-1 text-sm text-forgeMuted">Difficulty: Medium</p><div class="mt-4 h-2 rounded-full bg-slate-950"><div class="h-2 w-3/5 rounded-full bg-forgeGold transition-all duration-700"></div></div><p class="mt-3 text-sm font-semibold text-forgeGold">60% Unlocked</p><a href="/javascript/lesson/objects" class="mt-4 inline-flex text-sm font-bold text-[#d4af37]">Open Lesson</a></div>
+                        <div class="cursor-pointer rounded-2xl border border-yellow-800/60 bg-forgeCard p-5 shadow-xl shadow-yellow-950/20 transition duration-300 hover:-translate-y-1 hover:border-forgeGold hover:shadow-yellow-700/20"><div class="flex items-start justify-between gap-4"><i data-lucide="list-tree" class="h-8 w-8 text-forgeGold"></i><span class="rounded-full bg-yellow-500/10 px-3 py-1 text-xs font-bold text-forgeGold">Unlocked</span></div><h3 class="mt-5 text-xl font-bold text-forgeCream">Arrays</h3><p class="mt-1 text-sm text-forgeMuted">Difficulty: Medium</p><div class="mt-4 h-2 rounded-full bg-slate-950"><div class="h-2 w-2/5 rounded-full bg-forgeGold transition-all duration-700"></div></div><p class="mt-3 text-sm font-semibold text-forgeGold">40% Unlocked</p><a href="/javascript/lesson/arrays" class="mt-4 inline-flex text-sm font-bold text-[#d4af37]">Open Lesson</a></div>
+                        <div class="cursor-pointer rounded-2xl border border-slate-700/70 bg-[#0a1118] p-5 opacity-70 shadow-xl shadow-black/20 transition duration-300 hover:-translate-y-1 hover:border-yellow-800 hover:shadow-yellow-950/30"><div class="flex items-start justify-between gap-4"><i data-lucide="panel-top" class="h-8 w-8 text-slate-500"></i><i data-lucide="lock" class="h-5 w-5 text-slate-500"></i></div><h3 class="mt-5 text-xl font-bold text-slate-300">DOM</h3><p class="mt-1 text-sm text-slate-500">Difficulty: Medium</p><div class="mt-4 h-2 rounded-full bg-slate-950"><div class="h-2 w-0 rounded-full bg-slate-600 transition-all duration-700"></div></div><p class="mt-3 text-sm font-semibold text-slate-500">0% Locked</p><a href="/javascript/lesson/dom" class="mt-4 inline-flex text-sm font-bold text-slate-400">View Lesson</a></div>
+                        <div class="cursor-pointer rounded-2xl border border-slate-700/70 bg-[#0a1118] p-5 opacity-70 shadow-xl shadow-black/20 transition duration-300 hover:-translate-y-1 hover:border-yellow-800 hover:shadow-yellow-950/30"><div class="flex items-start justify-between gap-4"><i data-lucide="wand-sparkles" class="h-8 w-8 text-slate-500"></i><i data-lucide="lock" class="h-5 w-5 text-slate-500"></i></div><h3 class="mt-5 text-xl font-bold text-slate-300">ES6</h3><p class="mt-1 text-sm text-slate-500">Difficulty: Hard</p><div class="mt-4 h-2 rounded-full bg-slate-950"><div class="h-2 w-0 rounded-full bg-slate-600 transition-all duration-700"></div></div><p class="mt-3 text-sm font-semibold text-slate-500">0% Locked</p><a href="/javascript/lesson/es6" class="mt-4 inline-flex text-sm font-bold text-slate-400">View Requirements</a></div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="mt-8 grid gap-6 lg:grid-cols-3">
+                <div class="rounded-3xl border border-yellow-800/60 bg-forgeCard p-6 shadow-2xl shadow-yellow-950/20 transition duration-300 hover:-translate-y-1 hover:border-forgeGold hover:shadow-yellow-700/20"><div class="flex items-center justify-between gap-4"><h2 class="font-title text-2xl font-bold text-forgeCream">Battle Arena</h2><i data-lucide="swords" class="h-8 w-8 text-forgeGold"></i></div><div class="mt-6 rounded-2xl border border-yellow-900/50 bg-[#0b1721] p-5"><p class="text-sm uppercase tracking-wide text-forgeMuted">Enemy</p><p class="mt-1 text-2xl font-bold text-forgeCream">Syntax Goblin</p><div class="mt-5 grid grid-cols-2 gap-4 text-sm"><div><p class="text-forgeMuted">Difficulty</p><p class="font-bold text-emerald-400">Easy</p></div><div><p class="text-forgeMuted">Reward</p><p class="font-bold text-forgeGold">100 XP</p></div></div></div><a href="/quiz/1" class="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-yellow-700 via-forgeGold to-yellow-300 px-5 py-4 font-bold text-slate-950 shadow-xl shadow-yellow-700/20 transition duration-300 hover:scale-105"><i data-lucide="swords" class="h-5 w-5"></i>Fight</a></div>
+                <div class="rounded-3xl border border-yellow-800/60 bg-forgeCard p-6 shadow-2xl shadow-yellow-950/20 transition duration-300 hover:-translate-y-1 hover:border-forgeGold hover:shadow-yellow-700/20"><div class="flex items-center justify-between gap-4"><h2 class="font-title text-2xl font-bold text-forgeCream">Today's Mission</h2><i data-lucide="target" class="h-8 w-8 text-forgeGold"></i></div><p class="mt-6 text-sm uppercase tracking-wide text-forgeMuted">Coding Challenge</p><h3 class="mt-2 text-3xl font-bold text-forgeCream">Build a Calculator</h3><p class="mt-5 text-forgeMuted">Reward</p><p class="text-xl font-bold text-forgeGold">250 XP</p><a href="/javascript/challenge/calculator" class="mt-8 inline-flex w-full items-center justify-center gap-2 rounded-xl border border-yellow-700/70 bg-yellow-500/10 px-5 py-4 font-bold text-forgeGold transition duration-300 hover:scale-105 hover:border-forgeGold hover:bg-yellow-500/20">Accept Mission <i data-lucide="check" class="h-5 w-5"></i></a></div>
+                <div class="rounded-3xl border border-yellow-800/60 bg-forgeCard p-6 shadow-2xl shadow-yellow-950/20 transition duration-300 hover:-translate-y-1 hover:border-forgeGold hover:shadow-yellow-700/20"><div class="flex items-center justify-between gap-4"><h2 class="font-title text-2xl font-bold text-forgeCream">Mini Project</h2><i data-lucide="cloud-sun" class="h-8 w-8 text-forgeGold"></i></div><p class="mt-6 text-sm uppercase tracking-wide text-forgeMuted">Project</p><h3 class="mt-2 text-3xl font-bold text-forgeCream">Weather App</h3><div class="mt-5 grid grid-cols-2 gap-4 text-sm"><div><p class="text-forgeMuted">Estimated Time</p><p class="font-bold text-forgeCream">2 Hours</p></div><div><p class="text-forgeMuted">Reward</p><p class="font-bold text-forgeGold">500 XP</p></div></div><a href="/javascript/challenge/weather-app" class="mt-8 inline-flex w-full items-center justify-center gap-2 rounded-xl border border-yellow-700/70 bg-yellow-500/10 px-5 py-4 font-bold text-forgeGold transition duration-300 hover:scale-105 hover:border-forgeGold hover:bg-yellow-500/20">Start Project <i data-lucide="rocket" class="h-5 w-5"></i></a></div>
+            </section>
+
+            <section class="mt-8">
+                <div class="mb-5"><p class="text-sm font-semibold uppercase tracking-wide text-forgeGold">Vault</p><h2 class="font-title text-3xl font-bold text-forgeCream">Achievements</h2></div>
+                <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+                    <div class="rounded-2xl border border-yellow-700/70 bg-yellow-500/10 p-5 text-center shadow-xl shadow-yellow-700/20 transition duration-300 hover:-translate-y-1 hover:border-forgeGold"><i data-lucide="medal" class="mx-auto h-9 w-9 text-forgeGold"></i><h3 class="mt-4 font-bold text-forgeCream">First Forge</h3></div>
+                    <div class="rounded-2xl border border-yellow-700/70 bg-yellow-500/10 p-5 text-center shadow-xl shadow-yellow-700/20 transition duration-300 hover:-translate-y-1 hover:border-forgeGold"><i data-lucide="flame" class="mx-auto h-9 w-9 text-forgeGold"></i><h3 class="mt-4 font-bold text-forgeCream">Streak Keeper</h3></div>
+                    <div class="rounded-2xl border border-yellow-700/70 bg-yellow-500/10 p-5 text-center shadow-xl shadow-yellow-700/20 transition duration-300 hover:-translate-y-1 hover:border-forgeGold"><i data-lucide="shield-check" class="mx-auto h-9 w-9 text-forgeGold"></i><h3 class="mt-4 font-bold text-forgeCream">Quiz Victor</h3></div>
+                    <div class="rounded-2xl border border-slate-700 bg-[#0a1118] p-5 text-center opacity-60 grayscale transition duration-300 hover:-translate-y-1 hover:border-slate-500"><i data-lucide="gem" class="mx-auto h-9 w-9 text-slate-500"></i><h3 class="mt-4 font-bold text-slate-400">DOM Binder</h3></div>
+                    <div class="rounded-2xl border border-slate-700 bg-[#0a1118] p-5 text-center opacity-60 grayscale transition duration-300 hover:-translate-y-1 hover:border-slate-500"><i data-lucide="award" class="mx-auto h-9 w-9 text-slate-500"></i><h3 class="mt-4 font-bold text-slate-400">ES6 Adept</h3></div>
+                    <div class="rounded-2xl border border-slate-700 bg-[#0a1118] p-5 text-center opacity-60 grayscale transition duration-300 hover:-translate-y-1 hover:border-slate-500"><i data-lucide="crown" class="mx-auto h-9 w-9 text-slate-500"></i><h3 class="mt-4 font-bold text-slate-400">Web Master</h3></div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>
+
+
+
+

@@ -1,0 +1,72 @@
+.pill {
+    background: var(--panel-2);
+    border: 1px solid var(--hairline);
+}
+
+.pill.active {
+    background: rgba(217, 180, 106, 0.14);
+    border-color: var(--gold);
+    color: var(--gold-bright);
+}
+
+.progress-track {
+    background: #241d15;
+}
+
+.progress-fill {
+    background: linear-gradient(90deg, var(--jade), var(--gold-bright));
+    box-shadow: 0 0 12px rgba(217, 180, 106, 0.35);
+}
+
+.badge-hex {
+    clip-path: polygon(25% 6.7%, 75% 6.7%, 100% 50%, 75% 93.3%, 25% 93.3%, 0% 50%);
+}
+
+.milestone-banner {
+    background:
+        linear-gradient(90deg, rgba(12, 10, 8, 0.97) 15%, rgba(12, 10, 8, 0.55) 55%, rgba(12, 10, 8, 0.15) 100%),
+        url('https://images.unsplash.com/photo-1507842217343-583bb7270b66?q=80&w=1600&auto=format&fit=crop');
+    background-size: cover;
+    background-position: center;
+}
+
+.fade-up {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity .6s ease, transform .6s ease;
+}
+
+.fade-up.in {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.bg_color {
+    background: linear-gradient(160deg, rgba(217, 180, 106, 0.18), transparent);
+}
+
+.br_color1 {
+    border-color: var(--jade);
+}
+
+.br_color2 {
+    border-color: var(--rose);
+}
+
+.effect_1 {
+    transition-delay: .08s
+}
+
+.effect_2 {
+    transition-delay: .16s
+}
+
+
+
+@media (prefers-reduced-motion: reduce) {
+    .fade-up {
+        opacity: 1;
+        transform: none;
+        transition: none;
+    }
+}

@@ -1,0 +1,134 @@
+  .pill {
+      background: var(--panel-2);
+      border: 1px solid var(--hairline);
+      transition: all .2s ease;
+  }
+
+  .pill.active {
+      background: var(--gold);
+      color: #1a1408;
+      border-color: var(--gold);
+  }
+
+  .pill:not(.active):hover {
+      color: var(--parchment);
+      border-color: var(--gold);
+  }
+
+  .row-hover {
+      transition: background .2s ease;
+  }
+
+  .row-hover:hover {
+      background: rgba(217, 180, 106, 0.04);
+  }
+
+  .podium-1 {
+      border: 2px solid var(--gold);
+      box-shadow: 0 0 40px -8px rgba(217, 180, 106, 0.5);
+  }
+
+  .podium-2 {
+      border: 2px solid var(--blue);
+  }
+
+  .podium-3 {
+      border: 2px solid var(--rose);
+  }
+
+  .rank-chip-1 {
+      background: var(--gold-bright);
+      color: #1a1408;
+  }
+
+  .rank-chip-2 {
+      background: var(--blue);
+      color: #0c1620;
+  }
+
+  .rank-chip-3 {
+      background: var(--rose);
+      color: #1f0f08;
+  }
+
+  .title-badge {
+      background: var(--panel-2);
+      border: 1px solid var(--hairline);
+  }
+
+  .title-badge.you {
+      border-color: var(--gold);
+      color: var(--gold-bright);
+  }
+
+  .progress-track {
+      background: #241d15;
+  }
+
+  .progress-fill {
+      background: linear-gradient(90deg, var(--jade), var(--gold-bright));
+  }
+
+  .fade-up {
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity .6s ease, transform .6s ease;
+  }
+
+  .fade-up.in {
+      opacity: 1;
+      transform: translateY(0);
+  }
+
+  .crown-float {
+      animation: float 3s ease-in-out infinite;
+  }
+
+  .br_color {
+      border-color: var(--gold)
+  }
+
+  .bs {
+      box-shadow: 0 0 30px -10px rgba(217, 180, 106, 0.4);
+  }
+
+  .effect1 {
+      transition-delay: .08s;
+  }
+
+  .effect2 {
+      transition-delay: .1s;
+  }
+
+  .effect3 {
+      transition-delay: .2s;
+  }
+
+  .effect4 {
+      transition-delay: .16s;
+  }
+
+  @keyframes float {
+
+      0%,
+      100% {
+          transform: translateY(0);
+      }
+
+      50% {
+          transform: translateY(-5px);
+      }
+  }
+
+
+  @media (prefers-reduced-motion: reduce) {
+      .fade-up {
+          opacity: 1;
+          transform: none;
+          transition: none;
+      }
+
+      .crown-float {
+          animation: none;
+      }
+  }

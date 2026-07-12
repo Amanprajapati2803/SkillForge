@@ -1,0 +1,235 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}
+Dashboard
+{% endblock %}
+
+{% block styles %}
+<style>
+  body { font-family: 'Inter', sans-serif; background:#0d0d0f; }
+  .font-display { font-family: 'Playfair Display', serif; }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Top nav -->
+<header
+  class="flex items-center justify-between px-8 py-5 border-b border-white/5">
+  <nav class="flex items-center gap-8 text-sm text-gray-300">
+    <a href="#" class="hover:text-white">Home</a>
+    <a href="#" class="hover:text-white">Skills</a>
+    <a href="#" class="hover:text-white">Sessions</a>
+    <a href="#" class="hover:text-white">Internships</a>
+    <a href="#"
+      class="text-white font-medium border-b-2 border-amber-400 pb-1">Rewards</a>
+    <a href="#" class="hover:text-white">Community</a>
+  </nav>
+  <div class="flex items-center gap-5">
+    <div
+      class="flex items-center gap-2 bg-white/5 border border-white/10 rounded-full px-4 py-1.5 text-xs text-gray-300">
+      <span>🔥</span> 12 Day Streak
+    </div>
+    <button class="text-gray-300">🔔</button>
+    <div class="flex items-center gap-2">
+      <div class="text-right leading-tight">
+        <div class="text-sm font-medium text-white">Arjun Singh</div>
+        <div class="text-[10px] text-gray-500 tracking-wide">SECT DISCIPLE</div>
+      </div>
+      <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=Arjun"
+        class="w-9 h-9 rounded-full object-cover border border-white/10"
+        alt="avatar">
+    </div>
+  </div>
+</header>
+
+<!-- Content -->
+<main class="px-8 py-8 max-w-[1200px]">
+
+  <!-- Title row -->
+  <div class="flex items-start justify-between mb-10">
+    <div>
+      <div
+        class="flex items-center gap-2 text-amber-400 text-xs font-semibold tracking-widest mb-3">
+        <span class="w-6 h-px bg-amber-400 inline-block"></span> THE TREASURY
+      </div>
+      <h1 class="font-display text-4xl font-bold text-white mb-3">Rewards &amp;
+        Treasury</h1>
+      <p class="text-gray-400 max-w-xl text-sm leading-relaxed">
+        Exchange your hard-earned Spirit Stones for rare artifacts and
+        prestigious honors. Your cultivation progress fuels the vault.
+      </p>
+    </div>
+
+    <div
+      class="bg-[#161616] border border-white/10 rounded-xl px-6 py-4 flex items-center gap-6">
+      <div>
+        <div class="text-[10px] tracking-widest text-gray-500 mb-1">SPIRIT
+          STONES</div>
+        <div class="flex items-center gap-2 text-2xl font-bold text-white">
+          <span class="text-amber-400">💎</span> 12,450
+        </div>
+      </div>
+      <button
+        class="bg-amber-300 hover:bg-amber-400 transition text-black text-sm font-semibold px-5 py-2.5 rounded-lg">
+        Earn More
+      </button>
+    </div>
+  </div>
+
+  <!-- Unlockable Perks -->
+  <div class="flex items-center justify-between mb-4">
+    <h2 class="text-xl font-bold text-white">Unlockable Perks</h2>
+    <a href="#" class="text-amber-400 text-sm hover:text-amber-300">View All
+      →</a>
+  </div>
+  <div class="border-t border-white/10 mb-6"></div>
+
+  <div class="grid grid-cols-[2fr_1fr] gap-6 mb-14">
+    <!-- Legendary card -->
+    <div
+      class="bg-[#161616] border border-white/10 rounded-xl overflow-hidden flex">
+      <img
+        src="https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=600&q=80"
+        class="w-[280px] object-cover shrink-0" alt="workshop">
+      <div class="p-6 flex flex-col justify-between">
+        <div>
+          <div
+            class="text-amber-400 text-xs font-semibold tracking-widest mb-2">LEGENDARY
+            TIER</div>
+          <h3 class="font-display text-2xl font-bold text-white mb-3">Exclusive
+            Workshop Passes</h3>
+          <p class="text-gray-400 text-sm leading-relaxed">
+            Gain direct access to a private 4-hour session with Grandmasters of
+            System Design. Limited availability.
+          </p>
+        </div>
+        <div class="flex items-center justify-between mt-8">
+          <div class="flex items-center gap-2 text-amber-300 font-semibold">💎
+            5,000</div>
+          <button
+            class="bg-white/10 hover:bg-white/20 transition text-white text-sm font-medium px-5 py-2.5 rounded-lg">
+            Exchange
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Double XP Charms -->
+    <div
+      class="bg-[#161616] border border-white/10 rounded-xl p-6 flex flex-col justify-between">
+      <div>
+        <div
+          class="w-12 h-12 rounded-lg bg-white/5 flex items-center justify-center text-xl mb-5">✨</div>
+        <h3 class="font-display text-xl font-bold text-white mb-3">Double XP
+          Charms</h3>
+        <p class="text-gray-400 text-sm leading-relaxed">
+          Accelerate your cultivation. Gain 2x Experience for the next 24 hours
+          of study.
+        </p>
+      </div>
+      <div class="flex items-center justify-between mt-8">
+        <div class="flex items-center gap-2 text-amber-300 font-semibold">💎
+          800</div>
+        <button
+          class="bg-white/10 hover:bg-white/20 transition text-white text-sm font-medium px-5 py-2.5 rounded-lg">
+          Purchase
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sect Profile Badges -->
+  <div
+    class="flex items-center gap-2 text-emerald-400 text-xs font-semibold tracking-widest mb-3">
+    <span class="w-6 h-px bg-emerald-400 inline-block"></span> VISUAL PRESTIGE
+  </div>
+  <h2 class="text-xl font-bold text-white mb-5">Sect Profile Badges</h2>
+
+  <div class="grid grid-cols-5 gap-5 mb-10">
+    <!-- Iron Guard -->
+    <div
+      class="bg-[#161616] border border-white/10 rounded-xl p-6 flex flex-col items-center text-center">
+      <div class="text-3xl mb-4 text-amber-300">🛡️</div>
+      <div class="text-white font-medium mb-1">Iron Guard</div>
+      <div class="text-gray-400 text-xs flex items-center gap-1">💎 400</div>
+    </div>
+    <!-- Jade Seeker -->
+    <div
+      class="bg-[#161616] border border-white/10 rounded-xl p-6 flex flex-col items-center text-center">
+      <div class="text-3xl mb-4 text-emerald-400">🍃</div>
+      <div class="text-white font-medium mb-1">Jade Seeker</div>
+      <div class="text-gray-400 text-xs flex items-center gap-1">💎 1,200</div>
+    </div>
+    <!-- Sun Disciple -->
+    <div
+      class="bg-[#161616] border border-white/10 rounded-xl p-6 flex flex-col items-center text-center">
+      <div class="text-3xl mb-4 text-red-500">⭐</div>
+      <div class="text-white font-medium mb-1">Sun Disciple</div>
+      <div class="text-gray-400 text-xs flex items-center gap-1">💎 2,500</div>
+    </div>
+    <!-- Celestial Sage (locked) -->
+    <div
+      class="relative bg-[#141414] border border-white/10 rounded-xl p-6 flex flex-col items-center text-center opacity-60">
+      <span class="absolute top-3 right-3 text-gray-500 text-xs">🔒</span>
+      <div class="text-3xl mb-4 text-gray-500">✨</div>
+      <div class="text-gray-400 font-medium mb-1">Celestial Sage</div>
+      <div class="text-gray-500 text-xs">Rank Master Required</div>
+    </div>
+    <!-- Ember Lord (locked) -->
+    <div
+      class="relative bg-[#141414] border border-white/10 rounded-xl p-6 flex flex-col items-center text-center opacity-60">
+      <span class="absolute top-3 right-3 text-gray-500 text-xs">🔒</span>
+      <div class="text-3xl mb-4 text-gray-500">🔥</div>
+      <div class="text-gray-400 font-medium mb-1">Ember Lord</div>
+      <div class="text-gray-500 text-xs">100-Day Streak Required</div>
+      <button
+        class="absolute -bottom-3 -right-3 w-9 h-9 rounded-lg bg-amber-300 text-black flex items-center justify-center font-bold shadow-lg">?</button>
+    </div>
+  </div>
+
+  <!-- Bottom row -->
+  <div class="grid grid-cols-2 gap-6 pb-10">
+    <!-- Cultivation Track -->
+    <div class="bg-[#161616] border border-white/10 rounded-xl p-7">
+      <h3 class="font-display text-xl font-bold text-white mb-6">Current
+        Cultivation Track</h3>
+      <div class="flex items-center justify-between text-sm mb-2">
+        <span class="text-gray-300 font-medium">Path to Elder Rank</span>
+        <span class="text-gray-400">78% Complete</span>
+      </div>
+      <div class="w-full h-2 rounded-full bg-white/10 overflow-hidden mb-6">
+        <div
+          class="h-full rounded-full bg-gradient-to-r from-emerald-400 to-amber-300 w-[78%]"></div>
+      </div>
+      <div
+        class="bg-[#1c1c1c] border border-white/5 rounded-lg p-4 flex items-center gap-4">
+        <div
+          class="w-9 h-9 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-400">🏅</div>
+        <div>
+          <div class="text-white text-sm font-medium">Next Reward: Golden
+            Seal</div>
+          <div class="text-gray-500 text-xs italic mt-0.5">2,400 XP remaining to
+            unlock legendary profile frame.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Treasure Records -->
+    <div
+      class="bg-gradient-to-br from-[#3a2f0e] to-[#181410] border border-amber-900/40 rounded-xl p-7 flex flex-col items-center text-center justify-center">
+      <div class="text-3xl text-amber-300 mb-4">📖</div>
+      <h3 class="font-display text-xl font-bold text-white mb-3">Treasure
+        Records</h3>
+      <p class="text-gray-300 text-sm max-w-sm leading-relaxed mb-4">
+        You have unlocked 12 artifacts and spent 45,000 Spirit Stones since
+        joining the SkillForge Sect.
+      </p>
+      <a href="#"
+        class="text-amber-300 text-sm underline hover:text-amber-200">Review
+        your legacy</a>
+    </div>
+  </div>
+
+</main>
+{% endblock %}
+

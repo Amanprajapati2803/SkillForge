@@ -1,0 +1,72 @@
+.post-row {
+    transition: background .2s ease;
+}
+
+.post-row:hover {
+    background: rgba(217, 180, 106, 0.04);
+}
+
+.tag {
+    border: 1px solid var(--hairline);
+}
+
+.search-bar {
+    background: var(--panel);
+    border: 1px solid var(--hairline);
+    transition: border-color .2s ease;
+}
+
+.search-bar:focus-within {
+    border-color: var(--gold);
+}
+
+.fade-up {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity .6s ease, transform .6s ease;
+}
+
+.fade-up.in {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.pavilion-glyph {
+    position: absolute;
+    right: -10px;
+    bottom: -10px;
+    opacity: 0.06;
+}
+
+.fab {
+    box-shadow: 0 8px 28px -6px rgba(217, 180, 106, 0.55);
+}
+
+.status-dot {
+    box-shadow: 0 0 0 2px var(--panel);
+}
+
+.effects-panel {
+    transition-delay: .08s;
+}
+
+.btn-secondary {
+    background: var(--panel-2);
+    border: 1px solid var(--hairline);
+    transition: all .2s ease;
+}
+
+.btn-secondary:hover {
+    border-color: var(--gold);
+    color: var(--gold-bright);
+    background: rgba(217, 180, 106, 0.06);
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+    .fade-up {
+        opacity: 1;
+        transform: none;
+        transition: none;
+    }
+}

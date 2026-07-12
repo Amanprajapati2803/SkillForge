@@ -1,0 +1,129 @@
+  :root {
+      --ink: #0c0a08;
+      --panel: #15110d;
+      --panel-2: #1c1712;
+      --gold: #d9b46a;
+      --gold-bright: #f0d999;
+      --jade: #5a8f6e;
+      --rose: #d98a8a;
+      --parchment: #efe6d4;
+      --muted: #a89a84;
+      --hairline: #2c2419;
+  }
+
+  body {
+      background: var(--ink);
+      color: var(--parchment);
+      font-family: 'Noto Serif', serif;
+  }
+
+  .font-display {
+      font-family: 'Cinzel', serif;
+  }
+
+  .font-ui {
+      font-family: 'Jost', sans-serif;
+  }
+
+  .card {
+      background: var(--panel);
+      border: 1px solid var(--hairline);
+  }
+
+  .sidebar-link {
+      transition: all .2s ease;
+      border-left: 2px solid transparent;
+  }
+
+  .sidebar-link:hover {
+      background: rgba(217, 180, 106, 0.05);
+      color: var(--parchment);
+  }
+
+  .sidebar-link.active {
+      background: linear-gradient(90deg, rgba(217, 180, 106, 0.14), transparent);
+      border-left: 2px solid var(--gold);
+      color: var(--gold-bright);
+  }
+
+  .sidebar-link.active:hover {
+      background: linear-gradient(90deg, rgba(217, 180, 106, 0.14), transparent);
+      color: var(--gold-bright);
+  }
+
+  .btn-primary {
+      background: var(--gold);
+      color: #1a1408;
+      transition: all .2s ease;
+  }
+
+  .btn-primary:hover {
+      background: var(--gold-bright);
+  }
+
+  .btn-icon {
+      border: 1px solid var(--hairline);
+      transition: all .2s ease;
+  }
+
+  .btn-icon:hover {
+      border-color: var(--gold);
+      background: rgba(217, 180, 106, 0.06);
+  }
+
+  /**session styling**/
+
+  .glow-btn {
+      background: linear-gradient(135deg, var(--gold-soft), var(--gold));
+      color: #1a1305;
+      box-shadow: 0 0 0 1px rgba(227, 181, 103, 0.4), 0 8px 24px -8px rgba(227, 181, 103, 0.5);
+  }
+
+  .glow-btn:hover {
+      box-shadow: 0 0 0 1px rgba(227, 181, 103, 0.7), 0 10px 30px -6px rgba(227, 181, 103, 0.7);
+  }
+
+  .ghost-btn {
+      border: 1px solid rgba(227, 181, 103, 0.35);
+      color: var(--gold-soft);
+  }
+
+  .ghost-btn:hover {
+      background: rgba(227, 181, 103, 0.08);
+  }
+
+  .gold-line {
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+
+  .brush-underline {
+      position: relative;
+  }
+
+  .brush-underline::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -6px;
+      height: 2px;
+      background: linear-gradient(90deg, var(--gold) 0%, transparent 100%);
+  }
+
+  .hide-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+  }
+
+  ::-webkit-scrollbar {
+      width: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+      background: var(--ink);
+  }
+
+  ::-webkit-scrollbar-thumb {
+      background: var(--hairline);
+      border-radius: 4px;
+  }
