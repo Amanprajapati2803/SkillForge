@@ -72,11 +72,11 @@ landing_page
     digital sect in the realm.
   </p>
   <div class="fade-up flex flex-col sm:flex-row gap-4 mt-10 effect_3" data-fade>
-    <a href="{{ url_for('login') }}?mode=register" 
+    <a href="{{ url_for('auth.login') }}?mode=register" 
         class="btn-primary font-ui text-sm tracking-wide px-8 py-3.5 rounded-sm">
         Begin Your Journey
     </a>
-    <a href="{{ url_for('login') }}"
+    <a href="{{ url_for('auth.login') }}"
         class="btn-secondary font-ui text-sm tracking-wide px-8 py-3.5 rounded-sm">
         Enter the Chamber
     </a>
