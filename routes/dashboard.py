@@ -1,11 +1,20 @@
 from flask import Blueprint, render_template
+from services.user_service import get_user
+from flask import session
+from utils.auth import login_required
+
 dashboard_bp = Blueprint("dashboard", __name__)
 
 @dashboard_bp.route("/home")
+@login_required
 def home():
-    return render_template("dashboard/home.html")
 
+    user = get_user(session["user_id"])
 
+    return render_template(
+        "dashboard/home.html",
+        user=user
+    )
 
 @dashboard_bp.route("/sessions")
 def sessions():

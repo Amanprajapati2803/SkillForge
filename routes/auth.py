@@ -2,6 +2,7 @@ from flask import Blueprint, render_template,request
 from services.auth_service import register_user
 from flask import redirect, url_for, session
 from services.auth_service import login_user
+from services.user_service import get_user
 
 auth_bp = Blueprint("auth", __name__)
 
@@ -24,7 +25,13 @@ def login():
 
         return message
 
-    return render_template("auth/login.html")
+    user = get_user(session["user_id"])
+
+    return render_template(
+        "auth/login.html",
+        user=user
+    )
+
 
 
 @auth_bp.route("/register", methods=["GET","POST"])
@@ -36,14 +43,12 @@ def register():
         password=request.form.get("password")
         con_pass=request.form.get("conf_password")
         
-        message = register_user(
+        register_user(
             fullname,
             email,
             password,
             con_pass
         )
-
-        return message
     
     return render_template(
         "auth/login.html",

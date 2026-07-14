@@ -14,6 +14,7 @@ from routes.auth import auth_bp
 from routes.dashboard import dashboard_bp
 from routes.learning import learning_bp
 from routes.internship import internship_bp
+from routes.skills import skills_bp
 
 app = Flask(__name__)
 
@@ -26,6 +27,7 @@ app.register_blueprint(auth_bp)
 app.register_blueprint(dashboard_bp)
 app.register_blueprint(learning_bp)
 app.register_blueprint(internship_bp)
+app.register_blueprint(skills_bp)
 
 with app.app_context():
     db.create_all()
