@@ -1,2 +1,3 @@
 from .user import User
-from .skills import Skill
+from .skill import Skill
+from .activity_log import ActivityLog

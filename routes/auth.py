@@ -25,7 +25,10 @@ def login():
 
         return message
 
-    user = get_user(session["user_id"])
+    user = None
+
+    if "user_id" in session:
+        user = get_user(session["user_id"])
 
     return render_template(
         "auth/login.html",

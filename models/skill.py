@@ -1,4 +1,4 @@
-from app import db
+from database.database import db
 from datetime import datetime , timezone
 
 class Skill(db.Model):

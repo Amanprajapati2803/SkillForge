@@ -25,10 +25,16 @@ class User(db.Model):
         server_default=db.func.now()
     )
     
-skills = db.relationship(
-    "Skill",
-    backref="user",
-    lazy=True,
-    cascade="all, delete-orphan"
-)    
+    skills = db.relationship(
+        "Skill",
+        backref="user",
+        lazy=True,
+        cascade="all, delete-orphan"
+    )    
     
+    activity_logs = db.relationship(
+        "ActivityLog",
+        backref="user",
+        lazy=True,
+        cascade="all, delete-orphan"
+    )    
