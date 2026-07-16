@@ -1,0 +1,348 @@
+{% extends "layouts/base.html" %}
+
+{% block content %}
+
+<div class="max-w-7xl mx-auto px-8 py-10">
+
+    <!-- Header -->
+
+    <div class="mb-10">
+
+        <a
+            href="{{ url_for('skills.skills') }}"
+            class="text-yellow-400 hover:text-yellow-300">
+
+            ← Back to Skills
+
+        </a>
+
+        <h1 class="text-4xl font-bold mt-4">
+
+            {{ skill.name }} Realm
+
+        </h1>
+
+        <p class="text-gray-400">
+
+            Manage your learning resources.
+
+        </p>
+
+    </div>
+
+    <!-- Add Resource -->
+
+    <div class="bg-[#141414] rounded-xl border border-white/5 p-6 mb-8">
+
+        <h2 class="text-xl font-semibold mb-6">
+
+            Add Learning Resource
+
+        </h2>
+
+        <form
+            action="{{ url_for('skills.add_resource', skill_id=skill.id) }}"
+            method="POST">
+
+            <div class="grid grid-cols-2 gap-5">
+
+                <input
+                    type="text"
+                    name="title"
+                    placeholder="Resource Title"
+                    required
+                    class="bg-[#1a1a1a] rounded-lg px-4 py-3">
+
+                <select
+                    name="resource_type"
+                    class="bg-[#1a1a1a] rounded-lg px-4 py-3">
+
+                    <option value="youtube">YouTube</option>
+
+                    <option value="website">Website</option>
+
+                    <option value="book">Book</option>
+
+                    <option value="course">Course</option>
+
+                    <option value="pdf">PDF</option>
+
+                    <option value="notes">Notes</option>
+
+                    <option value="other">Other</option>
+
+                </select>
+
+            </div>
+
+            <input
+                type="url"
+                name="url"
+                placeholder="https://..."
+                required
+                class="w-full bg-[#1a1a1a] rounded-lg px-4 py-3 mt-5">
+
+            <textarea
+                name="description"
+                rows="3"
+                placeholder="Description (optional)"
+                class="w-full bg-[#1a1a1a] rounded-lg px-4 py-3 mt-5"></textarea>
+
+            <button
+                type="submit"
+                class="mt-5 bg-yellow-500 hover:bg-yellow-400 text-black font-semibold px-6 py-3 rounded-lg">
+
+                Add Resource
+
+            </button>
+
+        </form>
+
+    </div>
+
+    <!-- Resources -->
+
+    <div>
+
+        <h2 class="text-2xl font-semibold mb-6">
+
+            Learning Resources
+
+        </h2>
+
+        {% if resources %}
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+            {% for resource in resources %}
+
+            <div
+                class="bg-[#141414] border border-white/5 rounded-xl p-5 hover:border-yellow-400 transition">
+
+                <div class="flex justify-between items-start">
+
+                    <div>
+
+                        <h3 class="text-lg font-semibold text-white">
+
+                            {{ resource.title }}
+
+                        </h3>
+
+                        <p class="text-sm text-yellow-400 mt-1">
+
+                            {% if resource.resource_type == "youtube" %}
+                            📺 YouTube
+                            {% elif resource.resource_type == "website" %}
+                            🌐 Website
+                            {% elif resource.resource_type == "book" %}
+                            📘 Book
+                            {% elif resource.resource_type == "course" %}
+                            🎓 Course
+                            {% elif resource.resource_type == "pdf" %}
+                            📄 PDF
+                            {% elif resource.resource_type == "notes" %}
+                            📝 Notes
+                            {% else %}
+                            📦 Other
+                            {% endif %}
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+                {% if resource.description %}
+
+                <p class="text-gray-400 mt-4">
+
+                    {{ resource.description }}
+
+                </p>
+
+                {% endif %}
+
+                <a
+                    href="{{ resource.url }}"
+                    target="_blank"
+                    class="inline-block mt-5 text-yellow-400 hover:text-yellow-300">
+
+                    🔗 Open Resource →
+
+                </a>
+                <div class="flex gap-4 mt-5">
+
+                    <button
+                        type="button"
+                        class="text-blue-400 hover:text-blue-300 transition resource-edit-btn"
+                        data-id="{{ resource.id }}"
+                        data-title="{{ resource.title }}"
+                        data-type="{{ resource.resource_type }}"
+                        data-url="{{ resource.url }}"
+                        data-description="{{ resource.description or '' }}">
+
+                        ✏️ Edit
+
+                    </button>
+
+                    <form
+                        action="{{ url_for('skills.delete_resource_route', resource_id=resource.id) }}"
+                        method="POST">
+
+                        <button
+                            type="submit"
+                            class="text-red-400 hover:text-red-300 transition">
+
+                            🗑 Delete
+
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+        {% else %}
+
+        <div
+            class="bg-[#141414] rounded-xl border border-white/5 p-8 text-center">
+
+            <h3 class="text-xl font-semibold">
+
+                No resources yet
+
+            </h3>
+
+            <p class="text-gray-400 mt-2">
+
+                Add your first resource above.
+
+            </p>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+<div
+    id="editResourceModal"
+    class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50">
+
+    <div class="bg-[#141414] rounded-xl w-full max-w-lg p-6">
+
+        <h2 class="text-2xl font-bold mb-6">
+            Edit Resource
+        </h2>
+
+        <form
+            id="editResourceForm"
+            method="POST">
+
+            <input
+                id="editTitle"
+                type="text"
+                name="title"
+                required
+                class="w-full bg-[#1a1a1a] rounded-lg px-4 py-3 mb-4">
+
+            <select
+                id="editType"
+                name="resource_type"
+                class="w-full bg-[#1a1a1a] rounded-lg px-4 py-3 mb-4">
+
+                <option value="youtube">YouTube</option>
+                <option value="website">Website</option>
+                <option value="book">Book</option>
+                <option value="course">Course</option>
+                <option value="pdf">PDF</option>
+                <option value="notes">Notes</option>
+                <option value="other">Other</option>
+
+            </select>
+
+            <input
+                id="editUrl"
+                type="url"
+                name="url"
+                required
+                class="w-full bg-[#1a1a1a] rounded-lg px-4 py-3 mb-4">
+
+            <textarea
+                id="editDescription"
+                name="description"
+                rows="3"
+                class="w-full bg-[#1a1a1a] rounded-lg px-4 py-3 mb-6"></textarea>
+
+            <div class="flex justify-end gap-3">
+
+                <button
+                    type="button"
+                    id="closeResourceModal"
+                    class="px-5 py-2 rounded-lg bg-gray-700">
+
+                    Cancel
+
+                </button>
+
+                <button
+                    type="submit"
+                    class="px-5 py-2 rounded-lg bg-yellow-500 text-black font-semibold">
+
+                    Save Changes
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+
+const resourceModal = document.getElementById("editResourceModal");
+const resourceForm = document.getElementById("editResourceForm");
+
+document.querySelectorAll(".resource-edit-btn").forEach(btn => {
+
+    btn.addEventListener("click", function (e) {
+
+        e.stopPropagation();
+
+        document.getElementById("editTitle").value = this.dataset.title;
+        document.getElementById("editType").value = this.dataset.type;
+        document.getElementById("editUrl").value = this.dataset.url;
+        document.getElementById("editDescription").value = this.dataset.description;
+
+        resourceForm.action = `/resources/${this.dataset.id}/edit`;
+
+        resourceModal.classList.remove("hidden");
+        resourceModal.classList.add("flex");
+
+    });
+
+});
+
+document.getElementById("closeResourceModal").addEventListener("click", () => {
+
+    resourceModal.classList.remove("flex");
+    resourceModal.classList.add("hidden");
+
+});
+
+</script>
+{% endblock %}
