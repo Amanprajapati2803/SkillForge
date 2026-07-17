@@ -233,6 +233,125 @@
 
 </div>
 
+<!-- ========================= -->
+<!-- Learning Sessions Section -->
+<!-- ========================= -->
+
+<div class="p-6">
+
+    <div class="flex justify-between items-center mb-6">
+
+        <h2 class="text-2xl font-semibold">
+            Learning Sessions
+        </h2>
+
+        <button
+            onclick="openSessionModal()"
+            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition">
+
+            + Add Session
+
+        </button>
+
+    </div>
+
+    {% if sessions %}
+
+    <div class="space-y-4">
+
+        {% for session in sessions %}
+
+        <div
+            class="bg-[#141414] border border-white/5 rounded-xl p-5 hover:border-blue-500/30 transition">
+
+            <div class="flex justify-between items-start">
+
+                <div>
+
+                    <h3 class="text-lg font-semibold text-white">
+                        📘 {{ session.title }}
+                    </h3>
+
+                    <p class="text-gray-400 mt-2">
+                        ⏱ {{ session.duration }} Minutes
+                    </p>
+
+                    {% if session.notes %}
+                    <p class="text-gray-300 mt-2">
+                        📝 {{ session.notes }}
+                    </p>
+                    {% endif %}
+
+                    <p class="text-green-400 font-semibold mt-2">
+                        +{{ session.xp_earned }} XP
+                    </p>
+
+                    <p class="text-xs text-gray-500 mt-2">
+                        {{ session.created_at.strftime("%d %b %Y") }}
+                    </p>
+
+                </div>
+
+                <div class="flex gap-2">
+
+                    <button
+    data-id="{{ session.id }}"
+    data-title="{{ session.title }}"
+    data-duration="{{ session.duration }}"
+    data-notes="{{ session.notes or '' }}"
+    onclick="openEditSessionModal(this)"
+    class="px-3 py-1 rounded-lg bg-yellow-500 hover:bg-yellow-600">
+
+    Edit
+
+</button>
+
+                    <form
+                        action="{{ url_for('learning_session.delete_session', session_id=session.id) }}"
+                        method="POST"
+                        onsubmit="return confirm('Delete this learning session?')">
+
+                        <button
+                            class="px-3 py-1 rounded-lg bg-red-600 hover:bg-red-700">
+
+                            Delete
+
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+    {% else %}
+
+    <div class="bg-[#141414] rounded-xl p-10 text-center">
+
+        <div class="text-5xl mb-4">
+            📚
+        </div>
+
+        <h3 class="text-xl font-semibold">
+            No Learning Sessions Yet
+        </h3>
+
+        <p class="text-gray-400 mt-2">
+            Start tracking your learning by adding your first session.
+        </p>
+
+    </div>
+
+    {% endif %}
+
+</div>
+
 <div
     id="editResourceModal"
     class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50">
@@ -309,6 +428,134 @@
 
 </div>
 
+<!-- ========================= -->
+<!-- Add Session Modal -->
+<!-- ========================= -->
+
+<div
+    id="sessionModal"
+    class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50">
+
+    <div class="bg-[#141414] rounded-xl p-6 w-full max-w-md">
+
+        <h2 class="text-xl font-semibold mb-5">
+            Add Learning Session
+        </h2>
+
+        <form
+            action="{{ url_for('learning_session.add_session', skill_id=skill.id) }}"
+            method="POST">
+
+            <input
+                type="text"
+                name="title"
+                placeholder="Session Title"
+                class="w-full p-3 rounded-lg mb-4 bg-[#1d1d1d]"
+                required>
+
+            <input
+                type="number"
+                name="duration"
+                placeholder="Duration (minutes)"
+                class="w-full p-3 rounded-lg mb-4 bg-[#1d1d1d]"
+                required>
+
+            <textarea
+                name="notes"
+                placeholder="What did you learn?"
+                class="w-full p-3 rounded-lg mb-5 bg-[#1d1d1d]"></textarea>
+
+            <div class="flex justify-end gap-3">
+
+                <button
+                    type="button"
+                    onclick="closeSessionModal()"
+                    class="px-4 py-2 rounded-lg bg-gray-700">
+
+                    Cancel
+
+                </button>
+
+                <button
+                    type="submit"
+                    class="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700">
+
+                    Save
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+<!-- ========================= -->
+<!-- Edit Session Modal -->
+<!-- ========================= -->
+
+<div
+    id="editSessionModal"
+    class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50">
+
+    <div class="bg-[#141414] rounded-xl p-6 w-full max-w-md">
+
+        <h2 class="text-xl font-semibold mb-5">
+            Edit Learning Session
+        </h2>
+
+        <form
+            id="editSessionForm"
+            method="POST">
+
+            <input
+                type="text"
+                id="editSessionTitle"
+                name="title"
+                class="w-full p-3 rounded-lg mb-4 bg-[#1d1d1d]"
+                required>
+
+            <input
+                type="number"
+                id="editSessionDuration"
+                name="duration"
+                class="w-full p-3 rounded-lg mb-4 bg-[#1d1d1d]"
+                required>
+
+            <textarea
+                id="editSessionNotes"
+                name="notes"
+                class="w-full p-3 rounded-lg mb-5 bg-[#1d1d1d]"></textarea>
+
+            <div class="flex justify-end gap-3">
+
+                <button
+                    type="button"
+                    onclick="closeEditSessionModal()"
+                    class="px-4 py-2 rounded-lg bg-gray-700">
+
+                    Cancel
+
+                </button>
+
+                <button
+                    type="submit"
+                    class="px-4 py-2 rounded-lg bg-yellow-500 hover:bg-yellow-600">
+
+                    Update
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
 {% endblock %}
 
 {% block scripts %}
@@ -344,5 +591,70 @@ document.getElementById("closeResourceModal").addEventListener("click", () => {
 
 });
 
+/** learning session **/ 
+
+function openSessionModal() {
+    document
+        .getElementById("sessionModal")
+        .classList.remove("hidden");
+
+    document
+        .getElementById("sessionModal")
+        .classList.add("flex");
+}
+
+function closeSessionModal() {
+    document
+        .getElementById("sessionModal")
+        .classList.remove("flex");
+
+    document
+        .getElementById("sessionModal")
+        .classList.add("hidden");
+}
+
+/**edit session**/
+function openEditSessionModal(id, title, duration, notes) {
+
+    document.getElementById("editSessionForm").action =
+        `/session/${id}/edit`;
+
+    document.getElementById("editSessionTitle").value = title;
+
+    document.getElementById("editSessionDuration").value = duration;
+
+    document.getElementById("editSessionNotes").value = notes;
+
+    document.getElementById("editSessionModal").classList.remove("hidden");
+
+    document.getElementById("editSessionModal").classList.add("flex");
+}
+
+function closeEditSessionModal() {
+
+    document.getElementById("editSessionModal").classList.remove("flex");
+
+    document.getElementById("editSessionModal").classList.add("hidden");
+}
+
+
+/** edit button scripting**/
+function openEditSessionModal(button) {
+
+    document.getElementById("editSessionForm").action =
+        `/session/${button.dataset.id}/edit`;
+
+    document.getElementById("editSessionTitle").value =
+        button.dataset.title;
+
+    document.getElementById("editSessionDuration").value =
+        button.dataset.duration;
+
+    document.getElementById("editSessionNotes").value =
+        button.dataset.notes;
+
+    document.getElementById("editSessionModal").classList.remove("hidden");
+    document.getElementById("editSessionModal").classList.add("flex");
+}
 </script>
 {% endblock %}

@@ -1,13 +1,11 @@
-from flask import Blueprint, session, render_template, request, url_for, redirect, flash
+from flask import Blueprint, session, render_template, request, url_for, redirect
 from models.skill import Skill
 from models.resources import Resource
 from utils.auth import login_required
 from database.database import db
-from models.user import User
 from utils.progression import award_skill_xp, award_user_xp
 from services.resources_service import (
     create_resource,
-    get_resource,
     update_resource,
     delete_resource,
     get_skill_resources,
@@ -72,7 +70,9 @@ def edit_skill(skill_id):
 @login_required
 def add_skill_xp(skill_id):
 
-    skill = Skill.query.get_or_404(skill_id)
+    skill = Skill.query.filter_by(
+        id=skill_id, user_id=session["user_id"]
+    ).first_or_404()
 
     award_skill_xp(skill, 10)
 
@@ -92,13 +92,23 @@ def add_skill_xp(skill_id):
 def skill_realm(skill_id):
 
     skill = Skill.query.filter_by(
-        id=skill_id, user_id=session["user_id"]
+        id=skill_id,
+        user_id=session["user_id"]
     ).first_or_404()
 
     resources = get_skill_resources(skill.id)
 
+    sessions = sorted(
+        skill.sessions,
+        key=lambda s: s.created_at,
+        reverse=True
+    )
+
     return render_template(
-        "dashboard/skill_realm.html", skill=skill, resources=resources
+        "dashboard/skill_realm.html",
+        skill=skill,
+        resources=resources,
+        sessions=sessions
     )
 
 

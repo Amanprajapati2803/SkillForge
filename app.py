@@ -9,12 +9,16 @@ from database.database import db
 
 # Import models
 from models.user import User
+from models.learning_session import LearningSession
+
 from routes.main import main_bp
 from routes.auth import auth_bp
 from routes.dashboard import dashboard_bp
 from routes.learning import learning_bp
 from routes.internship import internship_bp
 from routes.skill import skills_bp
+
+
 
 
 app = Flask(__name__)
@@ -32,7 +36,7 @@ app.register_blueprint(skills_bp)
 
 
 with app.app_context():
-    db.create_all()
+    db.create_all() 
 
 if __name__ == "__main__":
     app.run(debug=True)
