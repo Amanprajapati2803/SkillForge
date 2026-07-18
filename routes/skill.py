@@ -167,21 +167,3 @@ def edit_resource(resource_id):
     return redirect(url_for("skills.skill_realm", skill_id=skill.id))
 
 
-# @skills_bp.route("/resources/<int:resource_id>/delete", methods=["POST"])
-# @login_required
-# def remove_resource(resource_id):
-#     resource = get_resource(resource_id)
-
-#     if not resource:
-#         flash("Resource not found.", "error")
-#         return redirect(url_for("dashboard.home"))
-
-#     skill_id = resource.skill_id
-
-#     delete_resource(resource)
-
-#     flash("Resource deleted successfully!", "success")
-
-#     return redirect(
-#         url_for("skills.view_skill", skill_id=skill_id)
-#     )

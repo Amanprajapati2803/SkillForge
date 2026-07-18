@@ -16,6 +16,8 @@ class User(db.Model):
     
     xp = db.Column(db.Integer, default=0)
 
+    bio = db.Column(db.Text)
+    
     level = db.Column(db.Integer, default=1)
 
     streak = db.Column(db.Integer, default=0)

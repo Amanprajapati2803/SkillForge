@@ -4,6 +4,12 @@ document.querySelectorAll('[data-toggle]').forEach(sw => {
     });
 });
 
-document.getElementById('editProfileBtn').addEventListener('click', () => {
-    alert('Edit Profile — cultivation update panel would open here.');
+const editModal = document.getElementById("editProfileModal");
+
+document.getElementById("editProfileBtn").addEventListener("click", () => {
+    editModal.classList.remove("hidden");
+});
+
+document.getElementById("closeEditModal").addEventListener("click", () => {
+    editModal.classList.add("hidden");
 });
