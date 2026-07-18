@@ -17,8 +17,8 @@ from routes.dashboard import dashboard_bp
 from routes.learning import learning_bp
 from routes.internship import internship_bp
 from routes.skill import skills_bp
-
-
+# from seeders.achievement_seeder import seed_achievements
+from routes.achievement import achievement_bp
 
 
 app = Flask(__name__)
@@ -33,10 +33,12 @@ app.register_blueprint(dashboard_bp)
 app.register_blueprint(learning_bp)
 app.register_blueprint(internship_bp)
 app.register_blueprint(skills_bp)
+app.register_blueprint(achievement_bp)
 
 
 with app.app_context():
     db.create_all() 
+    # seed_achievements()
 
 if __name__ == "__main__":
     app.run(debug=True)

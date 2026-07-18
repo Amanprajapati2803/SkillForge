@@ -10,6 +10,7 @@ from services.resources_service import (
     delete_resource,
     get_skill_resources,
 )
+from services.achievement_service import unlock_achievement
 
 skills_bp = Blueprint("skills", __name__)
 
@@ -26,6 +27,8 @@ def skills():
 
         db.session.add(new_skill)
         db.session.commit()
+        
+        unlock_achievement(session["user_id"], "First Step")
 
         return redirect(url_for("skills.skills"))
 
