@@ -7,6 +7,8 @@ from utils.progression import (
     calculate_session_xp,award_skill_xp,award_user_xp,remove_skill_xp,remove_user_xp
 )
 from utils.auth import login_required
+from services.challenge_service import update_challenge_progress
+from models.user import User
 
 learning_bp = Blueprint("learning_session", __name__)
 
@@ -45,6 +47,11 @@ def add_session(skill_id):
         db.session.add(activity)
         
     db.session.commit()
+    
+    update_challenge_progress(
+        session["user_id"],
+        "Practice Sessions"
+    )
 
     return redirect(
         url_for("skills.skill_realm", skill_id=skill.id)

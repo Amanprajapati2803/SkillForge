@@ -5,3 +5,4 @@ from .resources import Resource
 from .learning_session import LearningSession
 from .achievement import Achievement
 from .user_achievement import UserAchievement
+from .daily_challenge import DailyChallenge

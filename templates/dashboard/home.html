@@ -185,6 +185,105 @@ Dashboard
             </div>
         </div>
 
+        <div class="card fade-up rounded-sm p-6" data-fade>
+
+            <h2 class="font-display text-xl text-[var(--gold-bright)] mb-5">
+                🎯 Daily Quests
+            </h2>
+
+            {% if daily_challenges %}
+
+            {% for challenge in daily_challenges %}
+
+            <div class="mb-5">
+
+                <div class="flex justify-between items-center mb-2">
+
+                    <div>
+
+                        <h3 class="font-ui text-[var(--parchment)]">
+                            {{ challenge.title }}
+                        </h3>
+
+                        <p class="text-xs text-[var(--muted)]">
+                            {{ challenge.description }}
+                        </p>
+
+                    </div>
+
+                    <span class="text-sm text-[var(--gold)]">
+
+                        {{ challenge.progress }}/{{ challenge.target }}
+
+                    </span>
+
+                </div>
+
+                <div
+                    class="progress-track w-full h-2 rounded-full overflow-hidden">
+
+                    <div
+                        class="progress-fill h-full rounded-full"
+                        style="width: {{ (challenge.progress / challenge.target * 100) if challenge.target else 0 }}%;">
+                    </div>
+
+                </div>
+
+                <div class="flex justify-between mt-2">
+
+                    <span class="text-xs text-[var(--jade)]">
+
+                        +{{ challenge.xp_reward }} XP
+
+                    </span>
+
+                    {% if challenge.completed and not challenge.claimed %}
+
+                    <form
+                        action="{{ url_for('dashboard.claim_challenge', challenge_id=challenge.id) }}"
+                        method="POST">
+
+                        <button
+                            class="text-xs bg-green-600 hover:bg-green-700 px-3 py-1 rounded">
+
+                            Claim +{{ challenge.xp_reward }} XP
+
+                        </button>
+
+                    </form>
+
+                    {% elif challenge.claimed %}
+
+                    <span class="text-green-400 text-xs">
+
+                        ✅ Reward Claimed
+
+                    </span>
+
+                    {% else %}
+
+                    <span class="text-yellow-400 text-xs">
+
+                        In Progress
+
+                    </span>
+
+                    {% endif %}
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+            {% else %}
+
+            <p class="text-[var(--muted)]">
+                No daily quests available.
+            </p>
+
+            {% endif %}
+
+        </div>
         <!-- Active Techniques -->
         <div class="flex items-end justify-between mb-4">
             <div>
@@ -360,7 +459,6 @@ Dashboard
 
                     {% endif %}
 
-                    
                 </tbody>
             </table>
         </div>

@@ -8,6 +8,7 @@ from models.user import User
 from database.database import db
 from models.skill import Skill
 from models.activity_log import ActivityLog
+# from services.challenge_service import ensure_daily_challenges
 
 auth_bp = Blueprint("auth", __name__)
 
@@ -26,6 +27,9 @@ def login():
 
             session["user_id"] = user.id
             session["user_name"] = user.name
+            
+             # Generate today's challenges if they don't exist
+            # ensure_daily_challenges(user.id)
 
             return redirect(url_for("dashboard.home"))
 

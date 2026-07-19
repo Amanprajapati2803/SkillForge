@@ -10,7 +10,9 @@ from services.resources_service import (
     delete_resource,
     get_skill_resources,
 )
+from models.user import User
 from services.achievement_service import unlock_achievement
+from services.challenge_service import update_challenge_progress
 
 skills_bp = Blueprint("skills", __name__)
 
@@ -27,6 +29,11 @@ def skills():
 
         db.session.add(new_skill)
         db.session.commit()
+        
+        update_challenge_progress(
+            session["user_id"],
+            "Skill Builder"
+        )
         
         unlock_achievement(session["user_id"], "First Step")
 
@@ -83,6 +90,8 @@ def add_skill_xp(skill_id):
     db.session.add(activity)
 
     db.session.commit()
+    
+
 
     return redirect(url_for("dashboard.home"))
 
@@ -131,6 +140,10 @@ def add_resource(skill_id):
         description=request.form.get("description"),
     )
 
+    update_challenge_progress(
+        User.id,
+        "Resource Collector"
+    )
     return redirect(url_for("skills.skill_realm", skill_id=skill.id))
 
 

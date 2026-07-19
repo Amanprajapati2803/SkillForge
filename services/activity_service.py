@@ -1,4 +1,5 @@
 from models.activity_log import ActivityLog
+from database.database import db
 
 
 def get_recent_activities(user_id, limit=5):
@@ -13,3 +14,13 @@ def get_recent_activities(user_id, limit=5):
         .limit(limit)
         .all()
     )
+    
+def log_activity(user_id, description,xp_earned):
+
+    activity = ActivityLog(
+        user_id=user_id,
+        description=description,
+        xp_earned=xp_earned
+    )
+
+    db.session.add(activity)

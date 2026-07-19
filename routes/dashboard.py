@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template,redirect,flash,url_for
 from models.skill import Skill
 from services.user_service import get_user
 from flask import session
@@ -10,6 +10,9 @@ from models.learning_session import LearningSession
 from database.database import db
 from models.user import User
 from utils.titles import get_sect_title
+from services.challenge_service import ensure_daily_challenges,claim_challenge_reward
+from models.daily_challenge import DailyChallenge
+from datetime import datetime,timezone
 
 dashboard_bp = Blueprint("dashboard", __name__)
 
@@ -19,6 +22,7 @@ def home():
 
     user = get_user(session["user_id"])
     
+    ensure_daily_challenges(user.id)
     
     
     progress_percent = user.xp % 100
@@ -68,6 +72,20 @@ def home():
         .limit(3)
         .all()
     )
+    
+    today = datetime.now(timezone.utc).date()
+
+    daily_challenges = (
+        DailyChallenge.query
+        .filter_by(user_id=user.id)
+        .all()
+    )
+
+    daily_challenges = [
+        challenge
+        for challenge in daily_challenges
+        if challenge.created_at.date() == today
+    ]
 
     return render_template(
         "dashboard/home.html",
@@ -84,8 +102,22 @@ def home():
         minutes=minutes,
         hours=hours,
         recent_sessions=recent_sessions,
-        top_skills=top_skills
+        top_skills=top_skills,
+        daily_challenges=daily_challenges
     )
+    
+@dashboard_bp.route("/challenge/<int:challenge_id>/claim", methods=["POST"])
+@login_required
+def claim_challenge(challenge_id):
+
+    success, message = claim_challenge_reward(
+        challenge_id,
+        session["user_id"]
+    )
+
+    flash(message)
+
+    return redirect(url_for("dashboard.home"))
 
 
 @dashboard_bp.route("/sessions")
