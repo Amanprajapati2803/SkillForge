@@ -5,7 +5,7 @@ landing_page
 {% endblock %}
 
 {% block styles %}
-<link rel="stylesheet" 
+<link rel="stylesheet"
     href="{{ url_for('static', filename='css/leaderboard.css') }}">
 {% endblock %}
 
@@ -106,17 +106,20 @@ landing_page
             </div>
             <div class="card w-full rounded-sm px-5 py-5 text-center">
                 <h3
-                    class="font-display text-xl text-[var(--parchment)] mb-1">Luna
-                    Zhao</h3>
+                    class="font-display text-xl text-[var(--parchment)] mb-1">
+                    {{ top_users[1].name if top_users|length > 1 else "No User"
+                    }}</h3>
                 <div
-                    class="font-ui text-[11px] tracking-widest text-[var(--blue)] mb-3">GRAND
-                    ELDER</div>
+                    class="font-ui text-[11px] tracking-widest text-[var(--blue)] mb-3">
+                    Level {{ top_users[1].level if top_users|length > 1 else 1
+                    }}
+                </div>
                 <div
                     class="flex items-center justify-center gap-1.5 font-ui text-sm text-[var(--parchment)]">
                     <svg width="14" height="14" viewBox="0 0 24 24"
                         fill="var(--gold)" stroke="none"><path
                             d="M13 2L3 14h7l-1 8 10-12h-7z" /></svg>
-                    48,200 XP
+                    {{ top_users[1].xp if top_users|length > 1 else 0 }} XP
                 </div>
             </div>
         </div>
@@ -141,17 +144,19 @@ landing_page
             <div
                 class="card w-full rounded-sm px-5 py-5 text-center br_color bs">
                 <h3
-                    class="font-display text-2xl text-[var(--gold-bright)] mb-1">Master
-                    Wei</h3>
+                    class="font-display text-2xl text-[var(--gold-bright)] mb-1">
+                    {{ top_users[0].name if top_users|length > 0 else "No User"
+                    }}</h3>
                 <div
-                    class="font-ui text-[11px] tracking-widest text-[var(--gold)] mb-3">SECT
-                    FOUNDER</div>
+                    class="font-ui text-[11px] tracking-widest text-[var(--gold)] mb-3">
+                    Level {{ top_users[0].level if top_users|length > 0 else 1
+                    }}</div>
                 <div
                     class="flex items-center justify-center gap-1.5 font-ui text-sm text-[var(--parchment)]">
                     <svg width="14" height="14" viewBox="0 0 24 24"
                         fill="var(--gold)" stroke="none"><path
                             d="M13 2L3 14h7l-1 8 10-12h-7z" /></svg>
-                    72,500 XP
+                    {{ top_users[0].xp if top_users|length > 0 else 0 }} XP
                 </div>
             </div>
         </div>
@@ -168,17 +173,21 @@ landing_page
             </div>
             <div class="card w-full rounded-sm px-5 py-5 text-center">
                 <h3
-                    class="font-display text-xl text-[var(--parchment)] mb-1">Chen
-                    Long</h3>
+                    class="font-display text-xl text-[var(--parchment)] mb-1">
+                    {{ top_users[2].name if top_users|length > 2 else "No User"
+                    }}
+                </h3>
                 <div
-                    class="font-ui text-[11px] tracking-widest text-[var(--rose)] mb-3">INNER
-                    ELDER</div>
+                    class="font-ui text-[11px] tracking-widest text-[var(--rose)] mb-3">
+                    Level {{ top_users[2].level if top_users|length > 2 else 1
+                    }}
+                </div>
                 <div
                     class="flex items-center justify-center gap-1.5 font-ui text-sm text-[var(--parchment)]">
                     <svg width="14" height="14" viewBox="0 0 24 24"
                         fill="var(--gold)" stroke="none"><path
                             d="M13 2L3 14h7l-1 8 10-12h-7z" /></svg>
-                    42,900 XP
+                    {{ top_users[2].xp if top_users|length > 2 else 0 }} XP
                 </div>
             </div>
         </div>
@@ -197,86 +206,57 @@ landing_page
                 <span>SPIRIT XP</span>
             </div>
 
-            <div
-                class="row-hover grid grid-cols-[70px_1fr_150px_90px_120px] items-center px-7 py-5 border-b border-[var(--hairline)]">
-                <span class="font-display text-lg text-[var(--muted)]">4</span>
-                <div class="flex items-center gap-3">
-                    <img
-                        src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=100&auto=format&fit=crop"
-                        alt="Alex Mercer"
-                        class="w-10 h-10 rounded-sm object-cover">
-                    <span
-                        class="font-ui text-[15px] text-[var(--parchment)]">Alex
-                        Mercer</span>
-                </div>
-                <span
-                    class="title-badge font-ui text-xs px-3 py-1.5 rounded-sm text-[var(--muted)] w-fit">Core
-                    Disciple</span>
-                <span class="font-ui text-sm text-[var(--jade)]">38</span>
-                <span class="font-ui text-sm text-[var(--parchment)]">31,500
-                    XP</span>
-            </div>
+            {% for user in users %}
 
             <div
-                class="row-hover grid grid-cols-[70px_1fr_150px_90px_120px] items-center px-7 py-5 border-b border-[var(--hairline)]">
-                <span class="font-display text-lg text-[var(--muted)]">5</span>
-                <div class="flex items-center gap-3">
-                    <img
-                        src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=100&auto=format&fit=crop"
-                        alt="Sarah Connor"
-                        class="w-10 h-10 rounded-sm object-cover">
-                    <span
-                        class="font-ui text-[15px] text-[var(--parchment)]">Sarah
-                        Connor</span>
-                </div>
+                class="row-hover grid grid-cols-[70px_1fr_150px_90px_120px] items-center px-7 py-5 {% if user.id == current_user.id %}bg-[rgba(217,180,106,0.06)]{% else %}border-b border-[var(--hairline)]{% endif %}">
+
+                <!-- Rank -->
                 <span
-                    class="title-badge font-ui text-xs px-3 py-1.5 rounded-sm text-[var(--muted)] w-fit">Core
-                    Disciple</span>
-                <span class="font-ui text-sm text-[var(--jade)]">34</span>
-                <span class="font-ui text-sm text-[var(--parchment)]">28,900
-                    XP</span>
+                    class="font-display text-lg {% if user.id == current_user.id %}text-[var(--gold-bright)]{% else %}text-[var(--muted)]{% endif %}">
+                    {{ user.rank }}
+                </span>
+
+                <!-- Name -->
+                <div class="flex items-center gap-3">
+
+                    <!-- Avatar -->
+                    <div
+                        class="w-10 h-10 rounded-sm bg-[var(--gold)] text-black flex items-center justify-center font-bold">
+                        {{ user.name[0]|upper }}
+                    </div>
+
+                    <span
+                        class="font-ui text-[15px] {% if user.id == current_user.id %}text-[var(--gold-bright)]{% else %}text-[var(--parchment)]{% endif %}">
+                        {{ user.name }}
+                        {% if user.id == current_user.id %}
+                        (You)
+                        {% endif %}
+                    </span>
+
+                </div>
+
+                <!-- Sect Title -->
+                <span
+                    class="title-badge font-ui text-xs px-3 py-1.5 rounded-sm text-[var(--muted)] w-fit">
+
+                    {{ user.sect_title }}
+
+                </span>
+
+                <!-- Level -->
+                <span class="font-ui text-sm text-[var(--jade)]">
+                    {{ user.level }}
+                </span>
+
+                <!-- XP -->
+                <span class="font-ui text-sm text-[var(--parchment)]">
+                    {{ "{:,}".format(user.xp) }} XP
+                </span>
+
             </div>
 
-            <div
-                class="row-hover grid grid-cols-[70px_1fr_150px_90px_120px] items-center px-7 py-5 border-b border-[var(--hairline)]">
-                <span class="font-display text-lg text-[var(--muted)]">6</span>
-                <div class="flex items-center gap-3">
-                    <img
-                        src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=100&auto=format&fit=crop"
-                        alt="Kaito Kid"
-                        class="w-10 h-10 rounded-sm object-cover">
-                    <span
-                        class="font-ui text-[15px] text-[var(--parchment)]">Kaito
-                        Kid</span>
-                </div>
-                <span
-                    class="title-badge font-ui text-xs px-3 py-1.5 rounded-sm text-[var(--muted)] w-fit">Inner
-                    Disciple</span>
-                <span class="font-ui text-sm text-[var(--jade)]">31</span>
-                <span class="font-ui text-sm text-[var(--parchment)]">24,200
-                    XP</span>
-            </div>
-
-            <div
-                class="row-hover grid grid-cols-[70px_1fr_150px_90px_120px] items-center px-7 py-5 bg-[rgba(217,180,106,0.06)]">
-                <span
-                    class="font-display text-lg text-[var(--gold-bright)]">12</span>
-                <div class="flex items-center gap-3">
-                    <img
-                        src="https://images.unsplash.com/photo-1614583225154-5fcdda07019e?q=80&w=100&auto=format&fit=crop"
-                        alt="Arjun Singh"
-                        class="w-10 h-10 rounded-sm object-cover border border-[var(--gold)]">
-                    <span
-                        class="font-ui text-[15px] text-[var(--gold-bright)]">Arjun
-                        Singh (You)</span>
-                </div>
-                <span
-                    class="title-badge you font-ui text-xs px-3 py-1.5 rounded-sm w-fit">Sect
-                    Disciple</span>
-                <span class="font-ui text-sm text-[var(--jade)]">12</span>
-                <span class="font-ui text-sm text-[var(--parchment)]">12,450
-                    XP</span>
-            </div>
+            {% endfor %}
 
             <button
                 class="w-full flex items-center justify-center gap-2 font-ui text-sm text-[var(--gold-bright)] hover:text-[var(--gold)] transition-colors py-5">
@@ -301,14 +281,15 @@ landing_page
                             class="font-ui text-[11px] tracking-widest text-[var(--muted)] mb-1">CURRENT
                             RANK</div>
                         <div
-                            class="font-display text-2xl text-[var(--parchment)]">#12</div>
+                            class="font-display text-2xl text-[var(--parchment)]">#{{
+                            current_user.rank }}</div>
                     </div>
                     <div class="text-right">
                         <div
                             class="font-ui text-[11px] tracking-widest text-[var(--muted)] mb-1">PERCENTILE</div>
                         <div
                             class="font-display text-2xl text-[var(--jade)]">Top
-                            8%</div>
+                            {{ percentile }}%</div>
                     </div>
                 </div>
                 <div
@@ -317,98 +298,107 @@ landing_page
                         class="progress-fill h-full rounded-full w-[82%]"></div>
                 </div>
                 <p
-                    class="font-ui font-light italic text-sm text-[var(--muted)] leading-relaxed">Earn
-                    1,200 XP more to reach Top 5% and ascend to
-                    "Inner Disciple"</p>
+                    class="font-ui font-light italic text-sm text-[var(--muted)] leading-relaxed">
+                    {% if next_rank %}
+                    Earn {{ "{:,}".format(xp_needed) }} XP more to surpass
+                    <strong>{{ next_rank.name }}</strong> and rise to Rank #{{
+                    next_rank.rank }}.
+                    {% else %}
+                    👑 You have reached the pinnacle of the sect.
+                    {% endif %}
+                </p>    
             </div>
 
-            <!-- Sect titles -->
-            <div class="card fade-up rounded-sm p-6 effcet1" data-fade>
-                <h2
-                    class="font-display text-xl text-[var(--parchment)] mb-6">Sect
-                    Titles</h2>
-                <div class="space-y-5">
-                    <div class="flex items-start gap-3.5">
-                        <div
-                            class="w-10 h-10 rounded-sm bg-[var(--panel-2)] border border-[var(--gold)]/50 flex items-center justify-center flex-shrink-0">
-                            <svg width="18" height="18" viewBox="0 0 24 24"
-                                fill="none" stroke="var(--gold)"
-                                stroke-width="1.6"><circle cx="12" cy="8"
-                                    r="6" /><path
-                                    d="M8.5 13.5L7 22l5-3 5 3-1.5-8.5" /></svg>
+                <!-- Sect titles -->
+                <div class="card fade-up rounded-sm p-6 effcet1" data-fade>
+                    <h2
+                        class="font-display text-xl text-[var(--parchment)] mb-6">Sect
+                        Titles</h2>
+                    <div class="space-y-5">
+                        <div class="flex items-start gap-3.5">
+                            <div
+                                class="w-10 h-10 rounded-sm bg-[var(--panel-2)] border border-[var(--gold)]/50 flex items-center justify-center flex-shrink-0">
+                                <svg width="18" height="18" viewBox="0 0 24 24"
+                                    fill="none" stroke="var(--gold)"
+                                    stroke-width="1.6"><circle cx="12" cy="8"
+                                        r="6" /><path
+                                        d="M8.5 13.5L7 22l5-3 5 3-1.5-8.5" /></svg>
+                            </div>
+                            <div>
+                                <div
+                                    class="font-ui text-sm text-[var(--parchment)]">Grand
+                                    Elder</div>
+                                <div
+                                    class="font-ui font-light text-xs text-[var(--muted)]">Top
+                                    0.1% cultivators</div>
+                            </div>
                         </div>
-                        <div>
+                        <div class="flex items-start gap-3.5">
                             <div
-                                class="font-ui text-sm text-[var(--parchment)]">Grand
-                                Elder</div>
-                            <div
-                                class="font-ui font-light text-xs text-[var(--muted)]">Top
-                                0.1% cultivators</div>
+                                class="w-10 h-10 rounded-sm bg-[var(--panel-2)] border border-[var(--blue)]/50 flex items-center justify-center flex-shrink-0">
+                                <svg width="18" height="18" viewBox="0 0 24 24"
+                                    fill="none" stroke="var(--blue)"
+                                    stroke-width="1.6"><path
+                                        d="M12 15a4 4 0 004-4V5a4 4 0 00-8 0v6a4 4 0 004 4z" /><path
+                                        d="M19 10v1a7 7 0 01-14 0v-1M12 19v3" /></svg>
+                            </div>
+                            <div>
+                                <div
+                                    class="font-ui text-sm text-[var(--parchment)]">Core
+                                    Disciple</div>
+                                <div
+                                    class="font-ui font-light text-xs text-[var(--muted)]">Top
+                                    1% cultivators</div>
+                            </div>
                         </div>
-                    </div>
-                    <div class="flex items-start gap-3.5">
-                        <div
-                            class="w-10 h-10 rounded-sm bg-[var(--panel-2)] border border-[var(--blue)]/50 flex items-center justify-center flex-shrink-0">
-                            <svg width="18" height="18" viewBox="0 0 24 24"
-                                fill="none" stroke="var(--blue)"
-                                stroke-width="1.6"><path
-                                    d="M12 15a4 4 0 004-4V5a4 4 0 00-8 0v6a4 4 0 004 4z" /><path
-                                    d="M19 10v1a7 7 0 01-14 0v-1M12 19v3" /></svg>
-                        </div>
-                        <div>
+                        <div class="flex items-start gap-3.5">
                             <div
-                                class="font-ui text-sm text-[var(--parchment)]">Core
-                                Disciple</div>
-                            <div
-                                class="font-ui font-light text-xs text-[var(--muted)]">Top
-                                1% cultivators</div>
-                        </div>
-                    </div>
-                    <div class="flex items-start gap-3.5">
-                        <div
-                            class="w-10 h-10 rounded-sm bg-[var(--panel-2)] border border-[var(--rose)]/50 flex items-center justify-center flex-shrink-0">
-                            <svg width="18" height="18" viewBox="0 0 24 24"
-                                fill="none" stroke="var(--rose)"
-                                stroke-width="1.6"><path
-                                    d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6z" /></svg>
-                        </div>
-                        <div>
-                            <div
-                                class="font-ui text-sm text-[var(--parchment)]">Inner
-                                Disciple</div>
-                            <div
-                                class="font-ui font-light text-xs text-[var(--muted)]">Top
-                                5% cultivators</div>
+                                class="w-10 h-10 rounded-sm bg-[var(--panel-2)] border border-[var(--rose)]/50 flex items-center justify-center flex-shrink-0">
+                                <svg width="18" height="18" viewBox="0 0 24 24"
+                                    fill="none" stroke="var(--rose)"
+                                    stroke-width="1.6"><path
+                                        d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6z" /></svg>
+                            </div>
+                            <div>
+                                <div
+                                    class="font-ui text-sm text-[var(--parchment)]">Inner
+                                    Disciple</div>
+                                <div
+                                    class="font-ui font-light text-xs text-[var(--muted)]">Top
+                                    5% cultivators</div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Recent Ascension -->
-            <div class="card fade-up rounded-sm p-6 effect4" data-fade>
-                <div class="flex items-center gap-2.5 mb-4">
-                    <svg width="18" height="18" viewBox="0 0 24 24"
-                        fill="var(--jade)" stroke="none"><path
-                            d="M12 2l1.5 5.5L19 9l-5.5 1.5L12 16l-1.5-5.5L5 9l5.5-1.5z" /><path
-                            d="M19 15l.7 2.3L22 18l-2.3.7L19 21l-.7-2.3L16 18l2.3-.7z" /></svg>
-                    <h3 class="font-display text-lg text-[var(--jade)]">Recent
-                        Ascension</h3>
+                <!-- Recent Ascension -->
+                <div class="card fade-up rounded-sm p-6 effect4" data-fade>
+                    <div class="flex items-center gap-2.5 mb-4">
+                        <svg width="18" height="18" viewBox="0 0 24 24"
+                            fill="var(--jade)" stroke="none"><path
+                                d="M12 2l1.5 5.5L19 9l-5.5 1.5L12 16l-1.5-5.5L5 9l5.5-1.5z" /><path
+                                d="M19 15l.7 2.3L22 18l-2.3.7L19 21l-.7-2.3L16 18l2.3-.7z" /></svg>
+                        <h3
+                            class="font-display text-lg text-[var(--jade)]">Recent
+                            Ascension</h3>
+                    </div>
+                    <p
+                        class="font-ui font-light text-sm text-[var(--parchment)] leading-relaxed"><span
+                            class="font-medium">Hiroshi M.</span> has just
+                        ascended
+                        to the <span class="text-[var(--jade)]">Inner
+                            Circle</span>
+                        from Level 24!</p>
                 </div>
-                <p
-                    class="font-ui font-light text-sm text-[var(--parchment)] leading-relaxed"><span
-                        class="font-medium">Hiroshi M.</span> has just ascended
-                    to the <span class="text-[var(--jade)]">Inner Circle</span>
-                    from Level 24!</p>
-            </div>
 
+            </div>
         </div>
-    </div>
-</main>
+    </main>
 
-{% endblock %}
+    {% endblock %}
 
-{% block scripts %}
-<script>
+    {% block scripts %}
+    <script>
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
@@ -431,4 +421,4 @@ landing_page
     });
   });
 </script>
-{% endblock %}
+    {% endblock %}

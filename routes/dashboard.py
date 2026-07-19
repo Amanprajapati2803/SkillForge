@@ -8,6 +8,8 @@ from services.activity_service import get_recent_activities
 from sqlalchemy import func
 from models.learning_session import LearningSession
 from database.database import db
+from models.user import User
+from utils.titles import get_sect_title
 
 dashboard_bp = Blueprint("dashboard", __name__)
 
@@ -104,7 +106,49 @@ def certify():
 def community():
     return render_template("dashboard/community.html")
 
-
 @dashboard_bp.route("/leaderboard")
-def lead():
-    return render_template("dashboard/leaderboard.html")
+@login_required
+def leaderboard():
+    users = User.query.order_by(User.xp.desc()).all()
+
+    # Assign ranks
+    for index, user in enumerate(users, start=1):
+        user.rank = index
+
+    top_users = users[:3]
+
+    current_user = next(
+        (user for user in users if user.id == session["user_id"]),
+        None
+    )
+
+    total_users = len(users)
+
+    if current_user:
+        percentile = round(
+            ((total_users - current_user.rank + 1) / total_users) * 100
+        )
+    else:
+        percentile = 0
+        
+    next_rank = None
+    xp_needed = 0
+
+    if current_user and current_user.rank > 1:
+        next_rank = users[current_user.rank - 2]
+        xp_needed = max(0, next_rank.xp - current_user.xp + 1)    
+
+    for index, user in enumerate(users, start=1):
+        user.rank = index
+        user.sect_title = get_sect_title(user.level)
+        
+    return render_template(
+        "dashboard/leaderboard.html",
+        users=users,
+        top_users=top_users,
+        current_user=current_user,
+        total_users=total_users,
+        percentile=percentile,
+        next_rank=next_rank,
+        xp_needed=xp_needed
+    )
