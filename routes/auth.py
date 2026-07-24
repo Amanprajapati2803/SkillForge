@@ -13,7 +13,6 @@ from models.activity_log import ActivityLog
 auth_bp = Blueprint("auth", __name__)
 
 @auth_bp.route("/login", methods=["GET","POST"])
-@login_required
 def login():
 
     if request.method == "POST":
@@ -48,7 +47,6 @@ def login():
 
 
 @auth_bp.route("/register", methods=["GET","POST"])
-@login_required
 def register():
     if request.method=="POST":
         

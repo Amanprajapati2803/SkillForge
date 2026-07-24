@@ -6,3 +6,6 @@ from .learning_session import LearningSession
 from .achievement import Achievement
 from .user_achievement import UserAchievement
 from .daily_challenge import DailyChallenge
+from .internship import Internship
+from .internship_skill import InternshipSkill
+from .applied_internship import AppliedInternship

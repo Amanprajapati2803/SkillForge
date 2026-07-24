@@ -40,3 +40,10 @@ class User(db.Model):
         lazy=True,
         cascade="all, delete-orphan"
     )    
+    
+    applications = db.relationship(
+    "AppliedInternship",
+    backref="user",
+    lazy=True,
+    cascade="all, delete-orphan"
+)
