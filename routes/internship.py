@@ -4,6 +4,8 @@ from utils.internship_matcher import get_matching_internships
 from models.user import User
 from database.database import db
 from models.applied_internship import AppliedInternship
+from utils.achievements import check_achievements
+from models import user
 
 internship_bp = Blueprint("internship", __name__)
 
@@ -94,6 +96,8 @@ def apply_internship(internship_id):
 
     db.session.add(application)
     db.session.commit()
+    
+    check_achievements(user)
 
     return redirect(url_for("internship.interns"))
 

@@ -20,6 +20,7 @@ from routes.skill import skills_bp
 # from seeders.achievement_seeder import seed_achievements
 from routes.achievement import achievement_bp
 # from seeders.internships_seeder import seed_internships
+from flask_migrate import Migrate
 
 
 
@@ -28,6 +29,8 @@ app = Flask(__name__)
 app.config.from_object(Config)
 
 db.init_app(app)
+
+migrate=Migrate(app,db)
 
 app.register_blueprint(main_bp)
 app.register_blueprint(auth_bp)

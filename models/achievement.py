@@ -14,3 +14,9 @@ class Achievement(db.Model):
     icon = db.Column(db.String(20), nullable=False)
 
     xp_reward = db.Column(db.Integer, default=0)
+
+    category = db.Column(db.String(50), nullable=False, default="Progress")
+
+    rarity = db.Column(db.String(20), nullable=False, default="Common")
+
+    key = db.Column(db.String(50), unique=True, nullable=False)

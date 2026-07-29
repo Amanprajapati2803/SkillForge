@@ -9,6 +9,7 @@ from utils.progression import (
 from utils.auth import login_required
 from services.challenge_service import update_challenge_progress
 from models.user import User
+from utils.achievements import check_achievements
 
 learning_bp = Blueprint("learning_session", __name__)
 
@@ -46,7 +47,10 @@ def add_session(skill_id):
     if activity:
         db.session.add(activity)
         
+    
     db.session.commit()
+    
+    check_achievements(skill.user)
     
     update_challenge_progress(
         session["user_id"],
@@ -130,6 +134,8 @@ def edit_session(session_id):
 
     db.session.commit()
 
+    check_achievements(skill.user)
+    
     return redirect(
         url_for("skills.skill_realm", skill_id=skill.id)
     )

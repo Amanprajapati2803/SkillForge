@@ -1,4 +1,5 @@
 from flask import Blueprint, session, render_template, request, url_for, redirect
+from models import user
 from models.skill import Skill
 from models.resources import Resource
 from utils.auth import login_required
@@ -13,6 +14,7 @@ from services.resources_service import (
 from models.user import User
 from services.achievement_service import unlock_achievement
 from services.challenge_service import update_challenge_progress
+from utils.achievements import check_achievements
 
 skills_bp = Blueprint("skills", __name__)
 
@@ -29,6 +31,8 @@ def skills():
 
         db.session.add(new_skill)
         db.session.commit()
+        
+        check_achievements(user)
         
         update_challenge_progress(
             session["user_id"],
