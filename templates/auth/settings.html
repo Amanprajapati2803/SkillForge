@@ -518,7 +518,7 @@ Settings
           <h2 class="font-display section-title">Profile</h2>
           <p class="font-ui section-sub">Update your name, college, and spiritual bio.</p>
 
-          <form id="profileForm" action="{{ url_for('auth.edit_profile') }}" method="POST" enctype="multipart/form-data">
+          <form id="profileForm" action="{{ url_for('settings.edit_profile') }}" method="POST" enctype="multipart/form-data">
             <div class="flex flex-col sm:flex-row gap-8 mb-8">
 
               <div class="avatar-upload" id="avatarDropzone">
@@ -651,7 +651,7 @@ Settings
               <div class="font-ui text-[15px] text-[var(--parchment)] mb-1">Two-Factor Ward</div>
               <div class="font-ui font-light text-sm text-[var(--muted)]">Require a second seal when signing in from a new device.</div>
             </div>
-            <div class="switch {{ 'is-on' if user.two_factor_enabled }}" data-toggle-url="{{ url_for('auth.toggle_two_factor') }}"><div class="switch-knob"></div></div>
+            <div class="switch {{ 'is-on' if user.two_factor_enabled }}" data-toggle-url="{{ url_for('settings.toggle_two_factor') }}"><div class="switch-knob"></div></div>
           </div>
         </div>
 
@@ -824,9 +824,9 @@ Settings
   "use strict";
 
   var URLS = {
-    notifications: "{{ url_for('auth.update_notifications') }}",
-    appearance: "{{ url_for('auth.update_appearance') }}",
-    password: "{{ url_for('auth.change_password') }}",
+    notifications: "{{ url_for('settings.update_notifications') }}",
+    appearance: "{{ url_for('settings.update_appearance') }}",
+    password: "{{ url_for('settings.change_password') }}",
     link: "/setting/link/",
     unlink: "/setting/unlink/"
   };

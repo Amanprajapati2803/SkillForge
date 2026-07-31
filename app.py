@@ -17,6 +17,7 @@ from routes.dashboard import dashboard_bp
 from routes.learning import learning_bp
 from routes.internship import internship_bp
 from routes.skill import skills_bp
+from routes.settings import setting_bp
 # from seeders.achievement_seeder import seed_achievements
 from routes.achievement import achievement_bp
 # from seeders.internships_seeder import seed_internships
@@ -39,6 +40,7 @@ app.register_blueprint(learning_bp)
 app.register_blueprint(internship_bp)
 app.register_blueprint(skills_bp)
 app.register_blueprint(achievement_bp)
+app.register_blueprint(setting_bp)
 
 
 with app.app_context():

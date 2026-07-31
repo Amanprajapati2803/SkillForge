@@ -1,5 +1,6 @@
 from database.database import db
 
+
 class User(db.Model):
 
     __tablename__ = "users"
@@ -13,37 +14,43 @@ class User(db.Model):
     password = db.Column(db.String(255), nullable=False)
 
     college = db.Column(db.String(100))
-    
+
     xp = db.Column(db.Integer, default=0)
 
     bio = db.Column(db.Text)
-    
+
     level = db.Column(db.Integer, default=1)
 
     streak = db.Column(db.Integer, default=0)
 
-    created_at = db.Column(
-        db.DateTime,
-        server_default=db.func.now()
-    )
-    
+    created_at = db.Column(db.DateTime, server_default=db.func.now())
+
     skills = db.relationship(
-        "Skill",
-        backref="user",
-        lazy=True,
-        cascade="all, delete-orphan"
-    )    
-    
+        "Skill", backref="user", lazy=True, cascade="all, delete-orphan"
+    )
+
     activity_logs = db.relationship(
-        "ActivityLog",
-        backref="user",
-        lazy=True,
-        cascade="all, delete-orphan"
-    )    
-    
+        "ActivityLog", backref="user", lazy=True, cascade="all, delete-orphan"
+    )
+
     applications = db.relationship(
-    "AppliedInternship",
-    backref="user",
-    lazy=True,
-    cascade="all, delete-orphan"
-)
+        "AppliedInternship", backref="user", lazy=True, cascade="all, delete-orphan"
+    )
+
+    two_factor_enabled = db.Column(db.Boolean, default=False, nullable=False)
+
+    notify_feed = db.Column(db.Boolean, default=True, nullable=False)
+
+    notify_sessions = db.Column(db.Boolean, default=True, nullable=False)
+
+    notify_digest = db.Column(db.Boolean, default=True, nullable=False)
+
+    notify_badges = db.Column(db.Boolean, default=False, nullable=False)
+
+    google_linked = db.Column(db.Boolean, default=False, nullable=False)
+
+    github_linked = db.Column(db.Boolean, default=False, nullable=False)
+
+    linkedin_linked = db.Column(db.Boolean, default=False, nullable=False)
+
+    avatar = db.Column(db.String(255), default="default-avatar.png")
