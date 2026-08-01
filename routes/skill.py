@@ -5,12 +5,7 @@ from models.resources import Resource
 from utils.auth import login_required
 from database.database import db
 from utils.progression import award_skill_xp, award_user_xp
-from services.resources_service import (
-    create_resource,
-    update_resource,
-    delete_resource,
-    get_skill_resources,
-)
+from services.resources_service import get_skill_resources
 from models.user import User
 from services.achievement_service import unlock_achievement
 from services.challenge_service import update_challenge_progress
@@ -116,7 +111,7 @@ def skill_realm(skill_id):
 
     sessions = sorted(
         skill.sessions,
-        key=lambda s: s.created_at,
+        key=lambda s: s.id,
         reverse=True
     )
 
@@ -128,62 +123,62 @@ def skill_realm(skill_id):
     )
 
 
-@skills_bp.route("/skills/<int:skill_id>/resources/add", methods=["POST"])
-@login_required
-def add_resource(skill_id):
+# @skills_bp.route("/skills/<int:skill_id>/resources/add", methods=["POST"])
+# @login_required
+# def add_resource(skill_id):
 
-    skill = Skill.query.filter_by(
-        id=skill_id, user_id=session["user_id"]
-    ).first_or_404()
+#     skill = Skill.query.filter_by(
+#         id=skill_id, user_id=session["user_id"]
+#     ).first_or_404()
 
-    create_resource(
-        skill_id=skill.id,
-        title=request.form.get("title"),
-        resource_type=request.form.get("resource_type"),
-        url=request.form.get("url"),
-        description=request.form.get("description"),
-    )
+#     create_resource(
+#         skill_id=skill.id,
+#         title=request.form.get("title"),
+#         resource_type=request.form.get("resource_type"),
+#         url=request.form.get("url"),
+#         description=request.form.get("description"),
+#     )
 
-    update_challenge_progress(
-        User.id,
-        "Resource Collector"
-    )
-    return redirect(url_for("skills.skill_realm", skill_id=skill.id))
-
-
-@skills_bp.route("/resources/<int:resource_id>/delete", methods=["POST"])
-@login_required
-def delete_resource_route(resource_id):
-
-    resource = Resource.query.get_or_404(resource_id)
-
-    skill = Skill.query.filter_by(
-        id=resource.skill_id, user_id=session["user_id"]
-    ).first_or_404()
-
-    delete_resource(resource)
-
-    return redirect(url_for("skills.skill_realm", skill_id=skill.id))
+#     update_challenge_progress(
+#         User.id,
+#         "Resource Collector"
+#     )
+#     return redirect(url_for("skills.skill_realm", skill_id=skill.id))
 
 
-@skills_bp.route("/resources/<int:resource_id>/edit", methods=["POST"])
-@login_required
-def edit_resource(resource_id):
+# @skills_bp.route("/resources/<int:resource_id>/delete", methods=["POST"])
+# @login_required
+# def delete_resource_route(resource_id):
 
-    resource = Resource.query.get_or_404(resource_id)
+#     resource = Resource.query.get_or_404(resource_id)
 
-    skill = Skill.query.filter_by(
-        id=resource.skill_id, user_id=session["user_id"]
-    ).first_or_404()
+#     skill = Skill.query.filter_by(
+#         id=resource.skill_id, user_id=session["user_id"]
+#     ).first_or_404()
 
-    update_resource(
-        resource=resource,
-        title=request.form.get("title"),
-        resource_type=request.form.get("resource_type"),
-        url=request.form.get("url"),
-        description=request.form.get("description"),
-    )
+#     delete_resource(resource)
 
-    return redirect(url_for("skills.skill_realm", skill_id=skill.id))
+#     return redirect(url_for("skills.skill_realm", skill_id=skill.id))
+
+
+# @skills_bp.route("/resources/<int:resource_id>/edit", methods=["POST"])
+# @login_required
+# def edit_resource(resource_id):
+
+#     resource = Resource.query.get_or_404(resource_id)
+
+#     skill = Skill.query.filter_by(
+#         id=resource.skill_id, user_id=session["user_id"]
+#     ).first_or_404()
+
+#     update_resource(
+#         resource=resource,
+#         title=request.form.get("title"),
+#         resource_type=request.form.get("resource_type"),
+#         url=request.form.get("url"),
+#         description=request.form.get("description"),
+#     )
+
+#     return redirect(url_for("skills.skill_realm", skill_id=skill.id))
 
 

@@ -1,6 +1,12 @@
 from models.resources import Resource
 from database.database import db
 
+# user/student
+def get_resource(resource_id):
+    return Resource.query.get(resource_id)
+
+
+#admin
 
 def create_resource(skill_id, title, resource_type, url, description=None):
     resource = Resource(
@@ -16,16 +22,11 @@ def create_resource(skill_id, title, resource_type, url, description=None):
 
     return resource
 
-
-def get_resource(resource_id):
-    return Resource.query.get(resource_id)
-
-
 def get_skill_resources(skill_id):
     return (
         Resource.query
         .filter_by(skill_id=skill_id)
-        .order_by(Resource.created_at.desc())
+        # .order_by(Resource.created_at.desc())
         .all()
     )
 
