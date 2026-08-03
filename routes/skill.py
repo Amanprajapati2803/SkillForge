@@ -45,7 +45,7 @@ def skills():
 
     skills = Skill.query.filter_by(user_id=session["user_id"]).all()
 
-    return render_template("dashboard/skills.html", skills=skills)
+    return render_template("dashboard/skills.html", skills=skills, user=session["user_id"])
 
 
 @skills_bp.route("/skills/delete/<int:skill_id>", methods=["POST"])
