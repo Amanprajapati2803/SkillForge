@@ -122,16 +122,16 @@ def claim_challenge(challenge_id):
 
 @dashboard_bp.route("/sessions")
 def sessions():
-    return render_template("dashboard/sessions.html")
+    return render_template("dashboard/sessions.html", user=session["user_id"])
 
 
 @dashboard_bp.route("/rewards")
 def rewards():
-    return render_template("dashboard/rewards.html")
+    return render_template("dashboard/rewards.html",user=session["user_id"])
 
 @dashboard_bp.route("/certify")
 def certify():
-    return render_template("dashboard/certificate.html")
+    return render_template("dashboard/certificate.html",user=session["user_id"])
 
 
 @dashboard_bp.route("/community")
