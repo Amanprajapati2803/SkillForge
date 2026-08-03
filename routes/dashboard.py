@@ -122,21 +122,25 @@ def claim_challenge(challenge_id):
 
 @dashboard_bp.route("/sessions")
 def sessions():
-    return render_template("dashboard/sessions.html", user=session["user_id"])
+    user=User.query.get(session["user_id"])
+    return render_template("dashboard/sessions.html", user=user)
 
 
 @dashboard_bp.route("/rewards")
 def rewards():
-    return render_template("dashboard/rewards.html",user=session["user_id"])
+    user=User.query.get(session["user_id"])
+    return render_template("dashboard/rewards.html", user=user)
 
 @dashboard_bp.route("/certify")
 def certify():
-    return render_template("dashboard/certificate.html",user=session["user_id"])
+    user=User.query.get(session["user_id"])
+    return render_template("dashboard/certificate.html",user=user)
 
 
 @dashboard_bp.route("/community")
 def community():
-    return render_template("dashboard/community.html")
+    user=User.query.get(session["user_id"])
+    return render_template("dashboard/community.html", user=user)
 
 @dashboard_bp.route("/leaderboard")
 @login_required
@@ -176,7 +180,7 @@ def leaderboard():
         
     return render_template(
         "dashboard/leaderboard.html",
-        users=users,
+        user=user,
         top_users=top_users,
         current_user=current_user,
         total_users=total_users,

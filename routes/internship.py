@@ -69,6 +69,7 @@ def interns():
 
     return render_template(
         "dashboard/internship.html",
+        user=user,
         recommendations=filtered,
         total_scrolls=total_scrolls,
         legendary_matches=legendary_matches,

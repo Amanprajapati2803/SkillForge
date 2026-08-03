@@ -42,11 +42,17 @@ landing_page
       </button>
       <div
         class="hidden sm:flex items-center gap-2 pl-4 border-l border-[#2a2318]">
-        <div
-          class="w-8 h-8 rounded-full avatar-ring flex items-center justify-center font-ui text-xs text-[var(--gold-bright)]">AS</div>
-        <span class="font-ui text-sm text-[var(--parchment)]">Arjun
-          Singh</span>
-      </div>
+        <div class="flex items-center gap-4">
+    <a href="{{ url_for('auth.login') }}?mode=register"
+       class="px-5 py-2 rounded-lg bg-[var(--gold)] text-black font-semibold hover:opacity-90 transition duration-200">
+        Sign Up
+    </a>
+
+    <a href="{{ url_for('auth.login') }}"
+       class="text-sm text-[var(--parchment)] hover:text-[var(--gold)] transition">
+        Already have an account?
+    </a>
+</div>
     </div>
   </div>
 </header>
