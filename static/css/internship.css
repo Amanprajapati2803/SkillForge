@@ -1,95 +1,80 @@
-  .hero-banner {
-      background:
-          radial-gradient(ellipse at 85% 45%, rgba(217, 180, 106, 0.10), transparent 55%),
-          var(--panel);
-      border: 1px solid var(--hairline);
-  }
+.hero-banner {
+    background:
+        radial-gradient(ellipse at 85% 45%, rgba(217, 180, 106, 0.10), transparent 55%),
+        var(--panel);
+    border: 1px solid var(--hairline);
+}
 
-  .progress-track {
-      background: #241d15;
-  }
+.progress-track {
+    background: #241d15;
+}
 
-  .progress-fill {
-      background: linear-gradient(90deg, var(--jade), var(--gold-bright));
-  }
+.progress-fill {
+    background: linear-gradient(90deg, var(--jade), var(--gold-bright));
+}
 
-  .rank-card {
-      background: linear-gradient(160deg, #4a3d1a, #241d10);
-      border: 1px solid rgba(217, 180, 106, 0.4);
-  }
+.rank-card {
+    background: linear-gradient(160deg, #4a3d1a, #241d10);
+    border: 1px solid rgba(217, 180, 106, 0.4);
+}
 
-  .tag {
-      background: var(--panel-2);
-      border: 1px solid var(--hairline);
-      color: var(--muted);
-  }
+.tag {
+    background: var(--panel-2);
+    border: 1px solid var(--hairline);
+    color: var(--muted);
+}
 
-  .icon-frame {
-      background: var(--panel-2);
-      border: 1px solid var(--hairline);
-  }
+.icon-frame {
+    background: var(--panel-2);
+    border: 1px solid var(--hairline);
+}
 
-  .fade-up {
-      opacity: 0;
-      transform: translateY(16px);
-      transition: opacity .6s ease, transform .6s ease;
-  }
+.fade-up {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity .6s ease, transform .6s ease;
+}
 
-  .fade-up.in {
-      opacity: 1;
-      transform: translateY(0);
-  }
+.fade-up.in {
+    opacity: 1;
+    transform: translateY(0);
+}
 
-  .job-card {
-      transition: transform .25s ease, border-color .25s ease;
-  }
+.job-card {
+    transition: transform .25s ease, border-color .25s ease;
+}
 
-  .job-card:hover {
-      transform: translateY(-3px);
-      border-color: var(--gold);
-  }
+.job-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--gold);
+}
 
-  .icon-btn {
-      border: 1px solid var(--hairline);
-      transition: all .2s ease;
-  }
+.icon-btn {
+    border: 1px solid var(--hairline);
+    transition: all .2s ease;
+}
 
-  .icon-btn:hover {
-      border-color: var(--gold);
-      color: var(--gold);
-  }
+.icon-btn:hover {
+    border-color: var(--gold);
+    color: var(--gold);
+}
 
-  .btn-disabled {
-      background: var(--panel-2);
-      color: var(--muted);
-      border: 1px solid var(--hairline);
-      cursor: not-allowed;
-  }
+.btn-disabled {
+    background: var(--panel-2);
+    color: var(--muted);
+    border: 1px solid var(--hairline);
+    cursor: not-allowed;
+}
 
-  .effect1 {
-      transition-delay: .06s;
-  }
+.effect1 { transition-delay: .06s; }
+.effect2 { transition-delay: .08s; }
+.effect3 { transition-delay: .12s; }
+.effect4 { transition-delay: .18s; }
 
-  .effect2 {
-      transition-delay: .08s;
-  }
-
-  .effect3 {
-      transition-delay: .12s;
-  }
-
-  .effect4 {
-      transition-delay: .18s;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-      .fade-up {
-          opacity: 1;
-          transform: none;
-          transition: none;
-      }
-  }
-
-
-  /** serch bar animation**/
-
+@media (prefers-reduced-motion: reduce) {
+    .fade-up {
+        opacity: 1;
+        transform: none;
+        transition: none;
+    }
+}
