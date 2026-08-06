@@ -9,3 +9,7 @@ from .daily_challenge import DailyChallenge
 from .internship import Internship
 from .internship_skill import InternshipSkill
 from .applied_internship import AppliedInternship
+from .community_bookmark import CommunityBookmark
+from .community_comment import CommunityComment
+from .community_like import CommunityLike
+from .community_post import CommunityPost

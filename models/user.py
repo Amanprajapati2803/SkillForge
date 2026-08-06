@@ -54,3 +54,31 @@ class User(db.Model):
     linkedin_linked = db.Column(db.Boolean, default=False, nullable=False)
 
     avatar = db.Column(db.String(255), default="default-avatar.png")
+
+    community_posts = db.relationship(
+        "CommunityPost",
+        backref="user",
+        lazy=True,
+        cascade="all, delete-orphan",
+    )
+
+    community_comments = db.relationship(
+        "CommunityComment",
+        backref="user",
+        lazy=True,
+        cascade="all, delete-orphan",
+    )
+
+    community_likes = db.relationship(
+        "CommunityLike",
+        backref="user",
+        lazy=True,
+        cascade="all, delete-orphan",
+    )
+
+    community_bookmarks = db.relationship(
+        "CommunityBookmark",
+        backref="user",
+        lazy=True,
+        cascade="all, delete-orphan",
+    )

@@ -14,15 +14,16 @@ Dashboard
 {% block content %}
 
 <!-- TOP BAR -->
-<header =
-   class=" top-0 z-40 bg-[#0c0a08]/95 backdrop-blur-md border-b border-[var(--hairline)]">
-<div class="flex items-center justify-between mb-6">
-  <h2 class="serif text-xl font-bold text-white flex items-center gap-2">
-  <div class="h-[76px] flex items-center justify-between px-6 lg:px-10">
+<header
+  class=" top-0 z-40 bg-[#0c0a08]/95 backdrop-blur-md border-b border-[var(--hairline)]">
+  <div class="flex items-center justify-between mb-6">
+    <h2 class="serif text-xl font-bold text-white flex items-center gap-2">
+      <div class="h-[76px] flex items-center justify-between px-6 lg:px-10">
 
-    <h1 class="font-display text-2xl text-[var(--gold-bright)]">Community</h1>
-    </div>
-  </h2>
+        <h1
+          class="font-display text-2xl text-[var(--gold-bright)]">Community</h1>
+      </div>
+    </h2>
 
     <div
       class="search-bar flex-1 max-w-md flex items-center gap-3 rounded-sm px-4 py-2.5">
@@ -97,6 +98,7 @@ Dashboard
               Forum</h2>
           </div>
           <button
+            id="openDiscussionModal"
             class="btn-primary flex items-center gap-2 font-ui text-sm px-5 py-2.5 rounded-sm">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
               stroke="currentColor" stroke-width="2.2"><path
@@ -105,165 +107,152 @@ Dashboard
           </button>
         </div>
 
-        <a href="#"
-          class="post-row flex items-start gap-4 px-7 py-6 border-b border-[var(--hairline)]">
+        {% if posts %}
+
+        {% for post in posts %}
+        <div
+          class="post-row cursor-pointer flex items-start gap-4 px-7 py-6 border-b border-[var(--hairline)]"
+          onclick="window.location='{{ url_for('communities.view_post', post_id=post.id) }}'">
+
           <div
             class="w-11 h-11 rounded-sm bg-[var(--panel-2)] border border-[var(--hairline)] flex items-center justify-center flex-shrink-0">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
-              stroke="var(--jade)" stroke-width="1.6"><path
-                d="M4 17l6-6-6-6M12 19h8" /></svg>
+              stroke="var(--jade)" stroke-width="1.6">
+              <path d="M4 17l6-6-6-6M12 19h8" />
+            </svg>
           </div>
-          <div class="flex-1 min-w-0">
-            <div class="flex items-start justify-between gap-4">
-              <h3 class="font-ui text-[15px] text-[var(--parchment)]">Mastering
-                the 'Shadow DOM' Cultivation Technique</h3>
-              <span class="font-ui text-xs text-[var(--muted)] flex-shrink-0">2h
-                ago</span>
-            </div>
-            <p
-              class="font-ui font-light text-sm text-[var(--muted)] mt-1.5 truncate">Has
-              anyone successfully integrated the Web Components talisman
-              with…</p>
-            <div class="flex items-center gap-5 mt-3.5">
-              <span
-                class="flex items-center gap-1.5 font-ui text-xs text-[var(--muted)]">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
-                  stroke="currentColor" stroke-width="1.8"><path
-                    d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" /></svg>
-                24 Replies
-              </span>
-              <span
-                class="flex items-center gap-1.5 font-ui text-xs text-[var(--muted)]">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
-                  stroke="currentColor" stroke-width="1.8"><path
-                    d="M14 9V5a3 3 0 00-6 0v4H4l1 11a2 2 0 002 2h10a2 2 0 002-2l1-11h-4z" /></svg>
-                142 Likes
-              </span>
-              <span
-                class="tag font-ui text-[10px] tracking-wide text-[var(--jade)] px-2.5 py-1 rounded-sm">EXPERT</span>
-            </div>
-          </div>
-        </a>
 
-        <a href="#"
-          class="post-row flex items-start gap-4 px-7 py-6 border-b border-[var(--hairline)]">
-          <div
-            class="w-11 h-11 rounded-sm bg-[var(--panel-2)] border border-[var(--hairline)] flex items-center justify-center flex-shrink-0">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
-              stroke="var(--gold)" stroke-width="1.6"><circle cx="12" cy="8"
-                r="4" /><path d="M4 21a8 8 0 0116 0" /></svg>
-          </div>
           <div class="flex-1 min-w-0">
+            <!-- temporary fix for the user name display -->
+            <div class="flex items-center gap-2 mb-1">
+              <h3 class="font-ui text-[15px] text-[var(--parchment)]">
+                {{ post.user.name }}
+              </h3>
+            </div>
             <div class="flex items-start justify-between gap-4">
-              <h3 class="font-ui text-[15px] text-[var(--parchment)]">Career
-                Path: From Disciple to Senior Architect</h3>
-              <span class="font-ui text-xs text-[var(--muted)] flex-shrink-0">5h
-                ago</span>
-            </div>
-            <p
-              class="font-ui font-light text-sm text-[var(--muted)] mt-1.5 truncate">Looking
-              for advice on which sect (company) offers the best
-              cultivation…</p>
-            <div class="flex items-center gap-5 mt-3.5">
-              <span
-                class="flex items-center gap-1.5 font-ui text-xs text-[var(--muted)]">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
-                  stroke="currentColor" stroke-width="1.8"><path
-                    d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" /></svg>
-                56 Replies
-              </span>
-              <span
-                class="flex items-center gap-1.5 font-ui text-xs text-[var(--muted)]">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
-                  stroke="currentColor" stroke-width="1.8"><path
-                    d="M14 9V5a3 3 0 00-6 0v4H4l1 11a2 2 0 002 2h10a2 2 0 002-2l1-11h-4z" /></svg>
-                310 Likes
-              </span>
-              <span
-                class="tag font-ui text-[10px] tracking-wide text-[var(--gold)] px-2.5 py-1 rounded-sm">CAREER</span>
-            </div>
-          </div>
-        </a>
 
-        <a href="#"
+              <h3 class="font-ui text-[15px] text-[var(--parchment)]">
+                {{ post.title }}
+              </h3>
+
+              <span class="font-ui text-xs text-[var(--muted)] flex-shrink-0">
+                {{ post.created_at.strftime('%d %b %Y') }}
+              </span>
+
+            </div>
+
+            <p
+              class="font-ui font-light text-sm text-[var(--muted)] mt-1.5 truncate">
+              {{ post.content | truncate(120)}}
+            </p>
+
+            <div class="flex items-center gap-5 mt-3.5">
+
+              <span
+                class="flex items-center gap-1.5 font-ui text-xs text-[var(--muted)]">
+
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="1.8">
+                  <path
+                    d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
+                </svg>
+
+                {{ post.comments|length }} Replies
+
+              </span>
+
+              <button
+                class="like-btn flex items-center gap-1.5 font-ui text-xs text-[var(--muted)]"
+                data-post-id="{{ post.id }}"
+                data-liked="{{ 'true' if post.likes|selectattr('user_id', 'equalto', session['user_id'])|list|length else 'false' }}"
+                onclick="event.stopPropagation();">
+
+                <svg class="like-icon"
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="{{ 'currentColor' if post.likes|selectattr('user_id', 'equalto', session['user_id'])|list|length else 'none' }}"
+                  stroke="currentColor"
+                  stroke-width="1.8">
+                  <path
+                    d="M12 21s-6.7-4.35-9.33-8.12C.73 9.98 2.2 6 5.72 6c2.06 0 3.27 1.19 4.28 2.46C11.01 7.19 12.22 6 14.28 6 17.8 6 19.27 9.98 21.33 12.88 18.7 16.65 12 21 12 21z" />
+                </svg>
+
+                <span class="like-count">
+                  {{ post.likes|length }}
+                </span>
+
+              </button>
+
+              <span
+                class="tag font-ui text-[10px] tracking-wide text-[var(--jade)] px-2.5 py-1 rounded-sm">
+
+                {{ post.category }}
+
+              </span>
+
+            </div>
+
+          </div>
+
+        </div>
+        {% endfor %}
+
+        {% else %}
+
+        <div class="text-center py-12 text-slate-500">
+
+          <i class="fa-regular fa-comments text-5xl mb-4"></i>
+
+          <h3 class="text-xl font-semibold">
+            No discussions yet
+          </h3>
+
+          <p>
+            Be the first to start a discussion!
+          </p>
+
+        </div>
+
+        {% endif %}
+
+        <div id="postDetailPanel" class="hidden card rounded-sm p-6 mt-6">
+
+          <button id="closePostDetail"
+            class="mb-4 text-sm text-[var(--jade)] hover:text-[var(--gold)]">
+            ← Back
+          </button>
+
+          <span id="postDetailCategory"
+            class="tag font-ui text-[10px] tracking-wide text-[var(--jade)] px-2.5 py-1 rounded-sm">
+          </span>
+
+          <h2 id="postDetailTitle"
+            class="font-display text-2xl text-[var(--parchment)] mt-4">
+          </h2>
+
+          <div class="flex items-center gap-2 mt-2 text-xs text-[var(--muted)]">
+            <span id="postDetailAuthor"></span>
+            <span>•</span>
+            <span id="postDetailDate"></span>
+          </div>
+
+          <!-- <div id="postDetailContent"
+            class="mt-6 font-ui text-sm text-[var(--parchment)] leading-7 whitespace-pre-line">
+          </div> -->
+
+        </div>
+
+        <!-- <a href="#"
           class="block text-center py-5 font-ui text-sm text-[var(--gold-bright)] hover:text-[var(--gold)] transition-colors">
           Venture Deeper into the Forum
-        </a>
+        </a> -->
       </div>
 
-      <!-- Sect pavilions -->
-      <div class="grid sm:grid-cols-2 gap-6">
-        <div class="card fade-up rounded-sm p-7 relative overflow-hidden"
-          data-fade>
-          <svg class="pavilion-glyph" width="140" height="140"
-            viewBox="0 0 24 24" fill="var(--gold)" stroke="none"><path
-              d="M12 2L2 8h20L12 2zM4 10v10h4V14h8v6h4V10H4z" /></svg>
-          <div class="flex items-center gap-4 mb-5 relative">
-            <div
-              class="w-14 h-14 rounded-sm bg-white flex items-center justify-center flex-shrink-0">
-              <svg width="26" height="26" viewBox="0 0 24 24" fill="none"
-                stroke="#2c5da8" stroke-width="1.8"><path
-                  d="M17.5 19a4.5 4.5 0 000-9 6 6 0 00-11.3-2A5 5 0 007 18h10.5z" /></svg>
-            </div>
-            <div>
-              <h3 class="font-display text-lg text-[var(--parchment)]">Nebula
-                Sect</h3>
-              <span
-                class="font-ui text-[11px] tracking-wide text-[var(--jade)]">CLOUD
-                COMPUTING MASTERY</span>
-            </div>
-          </div>
-          <p
-            class="font-ui font-light text-sm text-[var(--muted)] leading-relaxed mb-6 relative">Seeking
-            ambitious disciples for our Infrastructure-as-a-Spiritual-Service
-            division.</p>
-          <button
-            class="btn-secondary w-full flex items-center justify-center gap-2 font-ui text-sm py-3 rounded-sm relative text-[var(--parchment)]">
-            Visit Sect Pavilion
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" stroke-width="2"><path
-                d="M5 12h14M13 6l6 6-6 6" /></svg>
-          </button>
-        </div>
-
-        <div
-          class="card fade-up rounded-sm p-7 relative overflow-hidden effect_panel"
-          data-fade>
-          <svg class="pavilion-glyph" width="140" height="140"
-            viewBox="0 0 24 24" fill="var(--jade)" stroke="none"><path
-              d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6z" /></svg>
-          <div class="flex items-center gap-4 mb-5 relative">
-            <div
-              class="w-14 h-14 rounded-sm bg-[var(--panel-2)] border border-[var(--hairline)] flex items-center justify-center flex-shrink-0">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                stroke="var(--jade)" stroke-width="1.8"><path
-                  d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6z" /></svg>
-            </div>
-            <div>
-              <h3 class="font-display text-lg text-[var(--parchment)]">Iron
-                Aegis</h3>
-              <span
-                class="font-ui text-[11px] tracking-wide text-[var(--jade)]">DEFENSE
-                CULTIVATION</span>
-            </div>
-          </div>
-          <p
-            class="font-ui font-light text-sm text-[var(--muted)] leading-relaxed mb-6 relative">The
-            shield that never breaks. Join our security auditing squad and
-            harden the realm.</p>
-          <button
-            class="btn-secondary w-full flex items-center justify-center gap-2 font-ui text-sm py-3 rounded-sm relative text-[var(--parchment)]">
-            Visit Sect Pavilion
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" stroke-width="2"><path
-                d="M5 12h14M13 6l6 6-6 6" /></svg>
-          </button>
-        </div>
-      </div>
     </div>
 
     <!-- RIGHT COLUMN -->
-    <div class="space-y-6">
+    <div id="communitySidebar" class="space-y-6">
 
       <!-- Mentor Pavilion -->
       <div class="card fade-up rounded-sm p-6" data-fade>
@@ -383,6 +372,73 @@ Dashboard
         </div>
       </div>
 
+      <!-- Sect pavilions -->
+      <div class="card fade-up rounded-sm p-7 relative overflow-hidden"
+        data-fade>
+        <svg class="pavilion-glyph" width="140" height="140"
+          viewBox="0 0 24 24" fill="var(--gold)" stroke="none"><path
+            d="M12 2L2 8h20L12 2zM4 10v10h4V14h8v6h4V10H4z" /></svg>
+        <div class="flex items-center gap-4 mb-5 relative">
+          <div
+            class="w-14 h-14 rounded-sm bg-white flex items-center justify-center flex-shrink-0">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none"
+              stroke="#2c5da8" stroke-width="1.8"><path
+                d="M17.5 19a4.5 4.5 0 000-9 6 6 0 00-11.3-2A5 5 0 007 18h10.5z" /></svg>
+          </div>
+          <div>
+            <h3 class="font-display text-lg text-[var(--parchment)]">Nebula
+              Sect</h3>
+            <span
+              class="font-ui text-[11px] tracking-wide text-[var(--jade)]">CLOUD
+              COMPUTING MASTERY</span>
+          </div>
+        </div>
+        <p
+          class="font-ui font-light text-sm text-[var(--muted)] leading-relaxed mb-6 relative">Seeking
+          ambitious disciples for our Infrastructure-as-a-Spiritual-Service
+          division.</p>
+        <button
+          class="btn-secondary w-full flex items-center justify-center gap-2 font-ui text-sm py-3 rounded-sm relative text-[var(--parchment)]">
+          Visit Sect Pavilion
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2"><path
+              d="M5 12h14M13 6l6 6-6 6" /></svg>
+        </button>
+      </div>
+
+      <div
+        class="card fade-up rounded-sm p-7 relative overflow-hidden effect_panel"
+        data-fade>
+        <svg class="pavilion-glyph" width="140" height="140"
+          viewBox="0 0 24 24" fill="var(--jade)" stroke="none"><path
+            d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6z" /></svg>
+        <div class="flex items-center gap-4 mb-5 relative">
+          <div
+            class="w-14 h-14 rounded-sm bg-[var(--panel-2)] border border-[var(--hairline)] flex items-center justify-center flex-shrink-0">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+              stroke="var(--jade)" stroke-width="1.8"><path
+                d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6z" /></svg>
+          </div>
+          <div>
+            <h3 class="font-display text-lg text-[var(--parchment)]">Iron
+              Aegis</h3>
+            <span
+              class="font-ui text-[11px] tracking-wide text-[var(--jade)]">DEFENSE
+              CULTIVATION</span>
+          </div>
+        </div>
+        <p
+          class="font-ui font-light text-sm text-[var(--muted)] leading-relaxed mb-6 relative">The
+          shield that never breaks. Join our security auditing squad and
+          harden the realm.</p>
+        <button
+          class="btn-secondary w-full flex items-center justify-center gap-2 font-ui text-sm py-3 rounded-sm relative text-[var(--parchment)]">
+          Visit Sect Pavilion
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2"><path
+              d="M5 12h14M13 6l6 6-6 6" /></svg>
+        </button>
+      </div>
     </div>
   </div>
 </main>
@@ -395,20 +451,204 @@ Dashboard
       d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" /><path
       d="M12 8v4M10 10h4" /></svg>
 </button>
+
+<!-- ================= CREATE DISCUSSION MODAL ================= -->
+
+<div
+  id="discussionModal"
+  class="fixed inset-0 z-50 hidden items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+
+  <div
+    class="w-full max-w-2xl rounded-lg border border-[var(--hairline)] bg-[var(--panel)] shadow-2xl">
+
+    <!-- Header -->
+    <div
+      class="flex items-center justify-between border-b border-[var(--hairline)] px-6 py-4">
+
+      <h2 class="font-display text-xl text-[var(--parchment)]">
+        Start a Discussion
+      </h2>
+
+      <button
+        id="closeDiscussionModal"
+        class="text-[var(--muted)] hover:text-[var(--parchment)] text-xl">
+
+        &times;
+
+      </button>
+
+    </div>
+
+    <!-- Form -->
+
+    <form
+      action="{{ url_for('communities.create_community_post') }}"
+      method="POST"
+      enctype="multipart/form-data"
+      class="space-y-5 p-6">
+
+      <!-- Title -->
+
+      <div>
+
+        <label class="block mb-2 font-ui text-sm text-[var(--parchment)]">
+          Discussion Title
+        </label>
+
+        <input
+          type="text"
+          name="title"
+          required
+          class="w-full rounded-md border border-[var(--hairline)] bg-[var(--panel-2)] px-4 py-3 text-[var(--parchment)] outline-none focus:border-[var(--jade)]">
+
+      </div>
+
+      <!-- Category -->
+
+      <div>
+
+        <label class="block mb-2 font-ui text-sm text-[var(--parchment)]">
+          Category
+        </label>
+
+        <select
+          name="category"
+          required
+          class="w-full rounded-md border border-[var(--hairline)] bg-[var(--panel-2)] px-4 py-3 text-[var(--parchment)] outline-none focus:border-[var(--jade)]">
+
+          <option value>Select Category</option>
+          <option value="GENERAL">General</option>
+          <option value="PROJECT">Project</option>
+          <option value="CAREER">Career</option>
+          <option value="RESOURCE">Resource</option>
+          <option value="HACKATHON">Hackathon</option>
+          <option value="QUESTION">Question</option>
+
+        </select>
+
+      </div>
+
+      <!-- Content -->
+
+      <div>
+
+        <label class="block mb-2 font-ui text-sm text-[var(--parchment)]">
+          Content
+        </label>
+
+        <textarea
+          name="content"
+          rows="6"
+          required
+          class="w-full resize-none rounded-md border border-[var(--hairline)] bg-[var(--panel-2)] px-4 py-3 text-[var(--parchment)] outline-none focus:border-[var(--jade)]"></textarea>
+
+      </div>
+
+      <!-- Files -->
+
+      <div class="grid gap-4 md:grid-cols-2">
+
+        <div>
+
+          <label class="block mb-2 font-ui text-sm text-[var(--parchment)]">
+            Image
+          </label>
+
+          <label
+            class="flex items-center justify-center gap-2 cursor-pointer rounded-md border border-dashed border-[var(--hairline)] bg-[var(--panel-2)] px-4 py-4 hover:border-[var(--jade)] transition">
+
+            <svg width="18" height="18" viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2">
+              <path d="M12 5v14M5 12h14" />
+            </svg>
+
+            <span class="font-ui text-sm text-[var(--muted)]">
+              Choose Image
+            </span>
+
+            <input
+              id="imageInput"
+              type="file"
+              name="image"
+              accept="image/*"
+              class="hidden">
+
+          </label>
+
+          <p
+            id="imageName"
+            class="mt-2 text-xs text-[var(--muted)]">
+            No image selected
+          </p>
+
+        </div>
+
+        <div>
+
+          <label class="block mb-2 font-ui text-sm text-[var(--parchment)]">
+            Attachment
+          </label>
+
+          <label
+            class="flex items-center justify-center gap-2 cursor-pointer rounded-md border border-dashed border-[var(--hairline)] bg-[var(--panel-2)] px-4 py-4 hover:border-[var(--jade)] transition">
+
+            📎
+
+            <span class="font-ui text-sm text-[var(--muted)]">
+              Choose Attachment
+            </span>
+
+            <input
+              id="attachmentInput"
+              type="file"
+              name="attachment"
+              class="hidden">
+
+          </label>
+
+          <p
+            id="attachmentName"
+            class="mt-2 text-xs text-[var(--muted)]">
+            No attachment selected
+          </p>
+
+        </div>
+
+      </div>
+
+      <!-- Footer -->
+
+      <div class="flex justify-end gap-3 pt-2">
+
+        <button
+          type="button"
+          id="cancelDiscussionModal"
+          class="rounded-md border border-[var(--hairline)] px-5 py-2 text-[var(--muted)] hover:text-[var(--parchment)]">
+
+          Cancel
+
+        </button>
+
+        <button
+          type="submit"
+          class="btn-primary rounded-md px-5 py-2">
+
+          Post Discussion
+
+        </button>
+
+      </div>
+
+    </form>
+
+  </div>
+
+</div>
 {% endblock %}
 
 {% block scripts %}
-<script>
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('in');
-        observer.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.1 });
-
-  document.querySelectorAll('[data-fade]').forEach(el => observer.observe(el));
-</script>
+<script src="{{ url_for('static', filename='js/community.js') }}"></script>
 
 {% endblock %}

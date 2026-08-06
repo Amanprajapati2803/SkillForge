@@ -7,6 +7,7 @@ app = Flask(__name__)
 from config import Config
 from database.database import db
 
+
 # Import models
 from models.user import User
 from models.learning_session import LearningSession
@@ -23,7 +24,7 @@ from routes.achievement import achievement_bp
 # from seeders.internships_seeder import seed_internships
 from flask_migrate import Migrate
 # from seeders.resources_seeder import seed_resources
-
+from routes.community import community_bp
 
 app = Flask(__name__)
 
@@ -41,6 +42,7 @@ app.register_blueprint(internship_bp)
 app.register_blueprint(skills_bp)
 app.register_blueprint(achievement_bp)
 app.register_blueprint(setting_bp)
+app.register_blueprint(community_bp)
 
 
 with app.app_context():

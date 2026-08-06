@@ -134,10 +134,6 @@ def certify():
     return render_template("dashboard/certificate.html",user=session["user_id"])
 
 
-@dashboard_bp.route("/community")
-def community():
-    return render_template("dashboard/community.html")
-
 @dashboard_bp.route("/leaderboard")
 @login_required
 def leaderboard():
