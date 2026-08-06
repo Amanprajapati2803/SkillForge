@@ -1,625 +1,454 @@
 {% extends "layouts/base.html" %}
 
+{% block title %}{{ skill.name }} Realm{% endblock %}
+
+{% block styles %}
+<style>
+  #toast {
+    position: fixed; bottom: 24px; right: 24px;
+    background: #161616; border: 1px solid rgba(232,184,75,0.3);
+    color: white; padding: 12px 20px; border-radius: 10px;
+    transform: translateY(100px); opacity: 0;
+    transition: all 0.3s ease; z-index: 9999;
+    display: flex; align-items: center; gap: 10px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+  }
+  #toast.show { transform: translateY(0); opacity: 1; }
+  .resource-card { transition: all 0.3s ease; }
+  .resource-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(232,184,75,0.4);
+    box-shadow: 0 8px 32px rgba(232,184,75,0.08);
+  }
+  .resource-card.hidden-card { display: none !important; }
+  .modal-overlay { backdrop-filter: blur(8px); }
+</style>
+{% endblock %}
+
 {% block content %}
 
-<div class="max-w-7xl mx-auto px-8 py-10">
+<!-- ==================== HEADER ==================== -->
+<header class="sticky top-0 z-40 bg-[#0c0a08]/95 backdrop-blur-md border-b border-[var(--hairline)]">
+  <div class="h-[76px] flex items-center justify-between px-6 lg:px-10">
+    <div class="flex items-center gap-4">
+      <a href="{{ url_for('skills.skills') }}" class="text-gray-400 hover:text-white transition">
+        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+      </a>
+      <h1 class="font-display text-2xl text-[var(--gold-bright)]">{{ skill.name }} Realm</h1>
+    </div>
+    <div class="flex items-center gap-5">
+      <div class="flex items-center gap-1.5 border border-gold/50 rounded-full px-3 py-1 text-gold text-xs font-medium">
+        <span>🔥</span> {{ user.streak or 0 }} Day Streak
+      </div>
+      <span class="text-sm text-gray-200 hidden sm:block">{{ user.name }}</span>
+      <div class="w-9 h-9 rounded-full border-2 border-gold overflow-hidden bg-gray-700">
+        <img src="https://api.dicebear.com/7.x/adventurer/svg?seed={{ user.name }}" class="w-full h-full object-cover" alt="{{ user.name }}">
+      </div>
+    </div>
+  </div>
+</header>
 
-    <!-- Header -->
+<div class="px-6 lg:px-10 py-8 max-w-7xl mx-auto">
 
-    <div class="mb-10">
+  <!-- Skill Stats Banner -->
+  <div class="bg-[#141414] border border-white/5 rounded-xl p-6 mb-8 flex flex-col md:flex-row items-center justify-between gap-4">
+    <div class="flex items-center gap-4">
+      <div class="w-14 h-14 rounded-xl bg-yellow-400/10 border border-yellow-400/30 flex items-center justify-center text-2xl font-bold text-yellow-400">
+        {{ skill.name[:2]|upper }}
+      </div>
+      <div>
+        <h2 class="text-xl font-bold text-white">{{ skill.name }}</h2>
+        <p class="text-sm text-gray-400">Level {{ skill.level or 1 }} • {{ skill.xp or 0 }} XP • {{ sessions|length }} Sessions</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-3">
+      <form action="{{ url_for('skills.add_skill_xp', skill_id=skill.id) }}" method="POST" class="m-0">
+        <button type="submit" class="bg-green-600 hover:bg-green-500 text-white font-semibold px-4 py-2 rounded-lg transition active:scale-95">
+          +10 XP
+        </button>
+      </form>
+      <button onclick="openSessionModal()" class="bg-blue-600 hover:bg-blue-500 text-white font-semibold px-4 py-2 rounded-lg transition active:scale-95">
+        + Add Session
+      </button>
+    </div>
+  </div>
 
-        <a
-            href="{{ url_for('skills.skills') }}"
-            class="text-yellow-400 hover:text-yellow-300">
+  <!-- ==================== LEARNING RESOURCES ==================== -->
+  <div class="mb-10">
+    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
+      <div>
+        <h2 class="text-2xl font-bold text-white flex items-center gap-2">📚 Learning Resources</h2>
+        <p class="text-gray-400 text-sm mt-1">Explore curated resources to improve your {{ skill.name }} skills.</p>
+        <p id="resourceCount" class="text-sm text-gray-500 mt-1 font-medium">Showing {{ resources|length }} Resource{{ 's' if resources|length != 1 else '' }}</p>
+      </div>
+      <div class="flex flex-col sm:flex-row gap-3">
+        <div class="relative">
+          <input id="resourceSearch" type="text" placeholder="Search resources..."
+            class="w-full sm:w-64 bg-[#1a1a1a] border border-white/5 rounded-lg px-4 py-2.5 pr-10 text-white text-sm focus:outline-none focus:border-yellow-500 transition">
+          <button id="clearSearch" type="button" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white text-xs">✕</button>
+        </div>
+        <select id="resourceTypeFilter" class="bg-[#1a1a1a] border border-white/5 rounded-lg px-4 py-2.5 text-white text-sm focus:outline-none focus:border-yellow-500">
+          <option value="all">All Types</option>
+          <option value="youtube">YouTube</option>
+          <option value="website">Website</option>
+          <option value="course">Course</option>
+          <option value="book">Book</option>
+          <option value="pdf">PDF</option>
+          <option value="notes">Notes</option>
+        </select>
+        <select id="difficultyFilter" class="bg-[#1a1a1a] border border-white/5 rounded-lg px-4 py-2.5 text-white text-sm focus:outline-none focus:border-yellow-500">
+          <option value="all">All Levels</option>
+          <option value="beginner">Beginner</option>
+          <option value="intermediate">Intermediate</option>
+          <option value="advanced">Advanced</option>
+        </select>
+        <button onclick="openAddResourceModal()" class="bg-yellow-400 hover:bg-yellow-300 text-black font-semibold px-4 py-2.5 rounded-lg text-sm transition active:scale-95 whitespace-nowrap">
+          + Add Resource
+        </button>
+      </div>
+    </div>
 
-            ← Back to Skills
+    {% if resources %}
+    <div id="resourceGrid" class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+      {% for resource in resources %}
+      <div class="resource-card bg-[#141414] border border-white/5 rounded-2xl p-6 flex flex-col"
+        data-title="{{ resource.title|lower }}"
+        data-description="{{ (resource.description or '')|lower }}"
+        data-type="{{ resource.resource_type|lower }}"
+        data-difficulty="{{ (resource.difficulty or 'Beginner')|lower }}">
 
-        </a>
+        <div class="flex justify-between items-start mb-3">
+          <div class="flex items-center gap-2">
+            {% if resource.resource_type == 'youtube' %}
+            <span class="inline-flex items-center bg-red-500/10 text-red-400 px-2.5 py-1 rounded-full text-xs font-semibold">📺 YouTube</span>
+            {% elif resource.resource_type == 'website' %}
+            <span class="inline-flex items-center bg-blue-500/10 text-blue-400 px-2.5 py-1 rounded-full text-xs font-semibold">🌐 Website</span>
+            {% elif resource.resource_type == 'book' %}
+            <span class="inline-flex items-center bg-purple-500/10 text-purple-400 px-2.5 py-1 rounded-full text-xs font-semibold">📘 Book</span>
+            {% elif resource.resource_type == 'course' %}
+            <span class="inline-flex items-center bg-green-500/10 text-green-400 px-2.5 py-1 rounded-full text-xs font-semibold">🎓 Course</span>
+            {% elif resource.resource_type == 'pdf' %}
+            <span class="inline-flex items-center bg-orange-500/10 text-orange-400 px-2.5 py-1 rounded-full text-xs font-semibold">📄 PDF</span>
+            {% elif resource.resource_type == 'notes' %}
+            <span class="inline-flex items-center bg-pink-500/10 text-pink-400 px-2.5 py-1 rounded-full text-xs font-semibold">📝 Notes</span>
+            {% else %}
+            <span class="inline-flex items-center bg-gray-500/10 text-gray-400 px-2.5 py-1 rounded-full text-xs font-semibold">📦 Other</span>
+            {% endif %}
+          </div>
+          {% if resource.difficulty == 'Beginner' %}
+          <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-green-500/20 text-green-400">🟢 Beginner</span>
+          {% elif resource.difficulty == 'Intermediate' %}
+          <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-yellow-500/20 text-yellow-400">🟡 Intermediate</span>
+          {% elif resource.difficulty == 'Advanced' %}
+          <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-red-500/20 text-red-400">🔴 Advanced</span>
+          {% endif %}
+        </div>
 
-        <h1 class="text-4xl font-bold mt-4">
-
-            {{ skill.name }} Realm
-
-        </h1>
-
-        <p class="text-gray-400">
-
-            Manage your learning resources.
-
+        <h3 class="text-lg font-bold text-white mb-2">{{ resource.title }}</h3>
+        <div class="border-b border-white/5 my-3"></div>
+        <p class="text-gray-400 text-sm flex-grow leading-relaxed line-clamp-3 mb-4">
+          {{ resource.description or 'No description available.' }}
         </p>
 
-    </div>
-
-    <!-- Add Resource -->
-
-    <div class="bg-[#141414] rounded-xl border border-white/5 p-6 mb-8">
-
-        <!-- Resources -->
-
-        <div>
-            <div
-                class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-
-                <!-- Left -->
-                <div>
-
-                    <h2 class="text-2xl font-bold flex items-center gap-2">
-                        📚 Learning Resources
-                    </h2>
-
-                    <p class="text-gray-400 mt-2">
-                        Explore curated resources to improve your {{ skill.name
-                        }} skills.
-                    </p>
-
-                    <p
-                        id="resourceCount"
-                        class="text-sm text-gray-400 mt-2 font-medium">
-
-                        Showing {{ resources|length }} of {{ resources|length }}
-                        Resources
-
-                    </p>
-
-                </div>
-
-                <!-- Right -->
-                <div class="flex flex-col md:flex-row gap-3 w-full lg:w-auto">
-
-                    <div class="relative w-full md:w-72">
-
-                        <input
-                            id="resourceSearch"
-                            type="text"
-                            placeholder="Search by title or description..."
-                            class="w-full bg-[#1a1a1a] border border-white/5 rounded-lg px-4 py-3 pr-10 focus:outline-none focus:border-yellow-500 transition">
-
-                        <button
-                            id="clearSearch"
-                            type="button"
-                            class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition">
-
-                            ✕
-
-                        </button>
-
-                    </div>
-
-                    <select
-                        id="resourceTypeFilter"
-                        class="bg-[#1a1a1a] border border-white/5 rounded-lg px-4 py-3">
-
-                        <option value="all">All Types</option>
-                        <option value="youtube">YouTube</option>
-                        <option value="website">Website</option>
-                        <option value="course">Course</option>
-                        <option value="book">Book</option>
-                        <option value="pdf">PDF</option>
-                        <option value="notes">Notes</option>
-
-                    </select>
-
-                    <select
-                        id="difficultyFilter"
-                        class="bg-[#1a1a1a] border border-white/5 rounded-lg px-4 py-3">
-
-                        <option value="all">All Difficulty</option>
-                        <option value="Beginner">Beginner</option>
-                        <option value="Intermediate">Intermediate</option>
-                        <option value="Advanced">Advanced</option>
-
-                    </select>
-
-                    <select
-                        id="resourceSort"
-                        class=" bg-[#1a1a1a] border border-white/5 rounded-xl px-4 py-3 focus:border-yellow-500 transition">
-
-                        <option value="recommended">⭐ Recommended</option>
-
-                        <option value="title">🔤 Title (A-Z)</option>
-
-                        <option value="beginner">🟢 Beginner First</option>
-
-                        <option value="intermediate">🟡 Intermediate
-                            First</option>
-
-                        <option value="advanced">🔴 Advanced First</option>
-
-                    </select>
-
-                </div>
-
-            </div>
-
-            {% if resources %}
-
-            <div
-                id="resourceGrid"
-                class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-
-                {% for resource in resources %}
-
-                <div
-                    class=" mt-6 resource-card bg-[#141414] border border-white/5 rounded-2xl p-6 h-full flex flex-col transition-all duration-300 hover:-translate-y-2 hover:border-yellow-400/70 hover:shadow-2xl hover:shadow-yellow-500/10 transition-opacity duration-200"
-                    data-title="{{ resource.title|lower }}"
-                    data-description="{{ (resource.description or '')|lower }}"
-                    data-type="{{ resource.resource_type|lower }}"
-                    data-difficulty="{{ resource.difficulty|lower }}">
-                    <!-- Top -->
-                    <div class="flex justify-between items-start">
-
-                        <div>
-
-                            <p class="text-sm text-yellow-400 font-medium">
-
-                                {% if resource.resource_type == "youtube" %}
-                                <p
-                                    class="inline-flex items-center bg-yellow-500/10 text-yellow-400 px-3 py-1 rounded-full text-xs font-semibold">
-                                    📺 YouTube
-                                </p>
-                                {% elif resource.resource_type == "website" %}
-                                🌐 Website
-                                {% elif resource.resource_type == "book" %}
-                                📘 Book
-                                {% elif resource.resource_type == "course" %}
-                                🎓 Course
-                                {% elif resource.resource_type == "pdf" %}
-                                📄 PDF
-                                {% elif resource.resource_type == "notes" %}
-                                📝 Notes
-                                {% else %}
-                                📦 Other
-                                {% endif %}
-
-                            </p>
-
-                        </div>
-
-                        <!-- Difficulty Badge -->
-                        {% if resource.difficulty == "Beginner" %}
-
-                        <span
-                            class="px-3 py-1 rounded-full text-xs font-semibold bg-green-500/20 text-green-400">
-
-                            🟢 Beginner
-
-                        </span>
-
-                        {% elif resource.difficulty == "Intermediate" %}
-
-                        <span
-                            class="px-3 py-1 rounded-full text-xs font-semibold bg-yellow-500/20 text-yellow-400">
-
-                            🟡 Intermediate
-
-                        </span>
-
-                        {% else %}
-
-                        <span
-                            class="px-3 py-1 rounded-full text-xs font-semibold bg-red-500/20 text-red-400">
-
-                            🔴 Advanced
-
-                        </span>
-
-                        {% endif %}
-
-                    </div>
-
-                    <!-- Title -->
-                    <h3 class="text-xl font-bold leading-tight text-white mt-4">
-
-                        {{ resource.title }}
-
-                    </h3>
-
-                    <!-- Divider -->
-                    <div class="border-b border-white/5 my-4"></div>
-
-                    <!-- Description -->
-                    <p class="text-gray-400 mt-3 flex-grow leading-relaxed line-clamp-3">
-
-                        {% if resource.description %}
-                        {{ resource.description }}
-                        {% else %}
-                        No description available.
-                        {% endif %}
-
-                    </p>
-
-                    <!-- Bottom -->
-                    <div class="mt-6">
-
-                        <a
-                            href="{{ resource.url }}"
-                            target="_blank"
-                            class=" group inline-flex items-center justify-center gap-2 bg-yellow-500 hover:bg-yellow-400 active:scale-95 text-black font-semibold px-5 py-3 rounded-xl transition-all duration-200">
-
-                            Open Resource
-
-                            <span class="text-lg transition-transform duration-200 group-hover:translate-x-1 group-hover:-translate-y-1">
-                                ↗
-                            </span>
-
-                        </a>
-
-                    </div>
-
-                </div>
-
-                {% endfor %}
-
-                <div
-                    id="noResourcesMessage"
-                    class="hidden bg-[#141414] rounded-xl border border-white/5 p-8 text-center mt-6">
-
-                    <div class="text-5xl mb-3">📚</div>
-
-                    <h3 class="text-xl font-semibold">
-                        No Resources Found
-                    </h3>
-
-                    <p class="text-gray-400 mt-2">
-                        Try another search or change your filters.
-                    </p>
-
-                    <button
-                        id="clearFilters"
-                        type="button"
-                        class="mt-6 bg-yellow-500 hover:bg-yellow-400 active:scale-95 transition-all duration-200 text-black font-semibold px-6 py-3 rounded-lg  hover:scale-[1.03] active:scale-95">
-
-                        Clear Filters
-
-                    </button>
-
-                </div>
-            </div>
-
-            {% else %}
-
-            <div class="bg-[#141414] rounded-xl p-10 text-center">
-
-                <div class="text-5xl mb-4">📚</div>
-
-                <h3 class="text-xl font-semibold">
-                    No Resources Yet
-                </h3>
-
-                <p class="text-gray-400 mt-2">
-                    Resources haven't been added for this skill yet.
-                </p>
-
-            </div>
-
-            {% endif %}
-
+        <div class="flex items-center gap-2 mt-auto">
+          <a href="{{ resource.url }}" target="_blank" class="flex-1 group inline-flex items-center justify-center gap-2 bg-yellow-500 hover:bg-yellow-400 text-black font-semibold px-4 py-2.5 rounded-xl transition-all active:scale-95 text-sm">
+            Open Resource <span class="transition-transform group-hover:translate-x-1">↗</span>
+          </a>
+          <button onclick="openEditResourceModal({{ resource.id }}, '{{ resource.title|replace("'", "\'") }}', '{{ resource.resource_type }}', '{{ resource.url|replace("'", "\'") }}', '{{ (resource.description or '')|replace("'", "\'") }}', '{{ resource.difficulty or 'Beginner' }}')"
+            class="bg-white/5 hover:bg-white/10 text-gray-300 px-3 py-2.5 rounded-xl transition text-sm" title="Edit">✏️</button>
+          <form action="{{ url_for('skills.delete_resource', resource_id=resource.id) }}" method="POST" class="m-0" onsubmit="return confirm('Remove this resource from archive?')">
+            <button type="submit" class="bg-white/5 hover:bg-red-500/20 text-gray-300 hover:text-red-400 px-3 py-2.5 rounded-xl transition text-sm" title="Delete">🗑️</button>
+          </form>
         </div>
+      </div>
+      {% endfor %}
     </div>
+    {% else %}
+    <div class="bg-[#141414] rounded-xl p-10 text-center border border-white/5">
+      <div class="text-5xl mb-4">📚</div>
+      <h3 class="text-xl font-semibold text-white">No Resources Yet</h3>
+      <p class="text-gray-400 mt-2 mb-4">Add your first learning resource for {{ skill.name }}.</p>
+      <button onclick="openAddResourceModal()" class="bg-yellow-400 hover:bg-yellow-300 text-black font-semibold px-5 py-2.5 rounded-lg transition">
+        + Add First Resource
+      </button>
+    </div>
+    {% endif %}
+  </div>
 
-</div>
-
-<!-- ========================= -->
-<!-- Learning Sessions Section -->
-<!-- ========================= -->
-
-<div class="p-6">
-
-    <div class="flex justify-between items-center mb-6">
-
-        <h2 class="text-2xl font-semibold">
-            Learning Sessions
-        </h2>
-
-        <button
-            onclick="openSessionModal()"
-            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition">
-
-            + Add Session
-
-        </button>
-
+  <!-- ==================== LEARNING SESSIONS ==================== -->
+  <div class="mb-8">
+    <div class="flex items-center justify-between mb-5">
+      <h2 class="text-2xl font-bold text-white">📖 Learning Sessions</h2>
+      <button onclick="openSessionModal()" class="bg-blue-600 hover:bg-blue-500 text-white font-semibold px-4 py-2 rounded-lg transition active:scale-95 text-sm">
+        + Add Session
+      </button>
     </div>
 
     {% if sessions %}
-
-    <div class="space-y-4">
-
-        {% for session in sessions %}
-
-        <div
-            class="bg-[#141414] border border-white/5 rounded-xl p-5 hover:border-blue-500/30 transition">
-
-            <div class="flex justify-between items-start">
-
-                <div>
-
-                    <h3 class="text-lg font-semibold text-white">
-                        📘 {{ session.title }}
-                    </h3>
-
-                    <p class="text-gray-400 mt-2">
-                        ⏱ {{ session.duration }} Minutes
-                    </p>
-
-                    {% if session.notes %}
-                    <p class="text-gray-300 mt-2">
-                        📝 {{ session.notes }}
-                    </p>
-                    {% endif %}
-
-                    <p class="text-green-400 font-semibold mt-2">
-                        +{{ session.xp_earned }} XP
-                    </p>
-
-                </div>
-
-                <div class="flex gap-2">
-
-                    <button
-                        data-id="{{ session.id }}"
-                        data-title="{{ session.title }}"
-                        data-duration="{{ session.duration }}"
-                        data-notes="{{ session.notes or '' }}"
-                        onclick="openEditSessionModal(this)"
-                        class="px-3 py-1 rounded-lg bg-yellow-500 hover:bg-yellow-600">
-
-                        Edit
-
-                    </button>
-
-                    <form
-                        action="{{ url_for('learning_session.delete_session', session_id=session.id) }}"
-                        method="POST"
-                        onsubmit="return confirm('Delete this learning session?')">
-
-                        <button
-                            class="px-3 py-1 rounded-lg bg-red-600 hover:bg-red-700">
-
-                            Delete
-
-                        </button>
-
-                    </form>
-
-                </div>
-
+    <div class="space-y-3">
+      {% for session in sessions %}
+      <div class="bg-[#141414] border border-white/5 rounded-xl p-5 hover:border-blue-500/30 transition">
+        <div class="flex flex-col sm:flex-row justify-between items-start gap-3">
+          <div class="flex-1">
+            <h3 class="text-lg font-semibold text-white">{{ session.title }}</h3>
+            <div class="flex flex-wrap items-center gap-4 mt-2 text-sm">
+              <span class="text-gray-400">⏱ {{ session.duration }} Minutes</span>
+              <span class="text-green-400 font-semibold">+{{ session.xp_earned }} XP</span>
+              <span class="text-gray-500 text-xs">{{ session.created_at.strftime("%d %b %Y") if session.created_at else '' }}</span>
             </div>
-
+            {% if session.notes %}
+            <p class="text-gray-400 text-sm mt-2 bg-white/5 rounded-lg p-3">{{ session.notes }}</p>
+            {% endif %}
+          </div>
+          <div class="flex gap-2 shrink-0">
+            <button onclick="openEditSessionModal({{ session.id }}, '{{ session.title|replace("'", "\'") }}', {{ session.duration }}, '{{ (session.notes or '')|replace("'", "\'") }}')"
+              class="px-3 py-1.5 rounded-lg bg-yellow-500/10 hover:bg-yellow-500/20 text-yellow-400 text-sm transition">Edit</button>
+            <form action="{{ url_for('learning_session.delete_session', session_id=session.id) }}" method="POST" class="m-0" onsubmit="return confirm('Delete this session? XP will be reversed.')">
+              <button type="submit" class="px-3 py-1.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 text-sm transition">Delete</button>
+            </form>
+          </div>
         </div>
-
-        {% endfor %}
-
+      </div>
+      {% endfor %}
     </div>
-
     {% else %}
-
-    <div class="bg-[#141414] rounded-xl p-10 text-center">
-
-        <div class="text-5xl mb-4">
-            📚
-        </div>
-
-        <h3 class="text-xl font-semibold">
-            No Learning Sessions Yet
-        </h3>
-
-        <p class="text-gray-400 mt-2">
-            Start tracking your learning by adding your first session.
-        </p>
-
+    <div class="bg-[#141414] rounded-xl p-10 text-center border border-white/5">
+      <div class="text-5xl mb-4">📖</div>
+      <h3 class="text-xl font-semibold text-white">No Learning Sessions Yet</h3>
+      <p class="text-gray-400 mt-2 mb-4">Start tracking your learning by adding your first session.</p>
+      <button onclick="openSessionModal()" class="bg-blue-600 hover:bg-blue-500 text-white font-semibold px-5 py-2.5 rounded-lg transition">
+        + Add First Session
+      </button>
     </div>
-
     {% endif %}
+  </div>
 
 </div>
 
-<div
-    id="editResourceModal"
-    class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50">
-
-    <div class="bg-[#141414] rounded-xl w-full max-w-lg p-6">
-
-        <h2 class="text-2xl font-bold mb-6">
-            Edit Resource
-        </h2>
-
-        <form
-            id="editResourceForm"
-            method="POST">
-
-            <input
-                id="editTitle"
-                type="text"
-                name="title"
-                required
-                class="w-full bg-[#1a1a1a] rounded-lg px-4 py-3 mb-4">
-
-            <select
-                id="editType"
-                name="resource_type"
-                class="w-full bg-[#1a1a1a] rounded-lg px-4 py-3 mb-4">
-
-                <option value="youtube">YouTube</option>
-                <option value="website">Website</option>
-                <option value="book">Book</option>
-                <option value="course">Course</option>
-                <option value="pdf">PDF</option>
-                <option value="notes">Notes</option>
-                <option value="other">Other</option>
-
-            </select>
-
-            <input
-                id="editUrl"
-                type="url"
-                name="url"
-                required
-                class="w-full bg-[#1a1a1a] rounded-lg px-4 py-3 mb-4">
-
-            <textarea
-                id="editDescription"
-                name="description"
-                rows="3"
-                class="w-full bg-[#1a1a1a] rounded-lg px-4 py-3 mb-6"></textarea>
-
-            <div class="flex justify-end gap-3">
-
-                <button
-                    type="button"
-                    id="closeResourceModal"
-                    class="px-5 py-2 rounded-lg bg-gray-700">
-
-                    Cancel
-
-                </button>
-
-                <button
-                    type="submit"
-                    class="px-5 py-2 rounded-lg bg-yellow-500 text-black font-semibold">
-
-                    Save Changes
-
-                </button>
-
-            </div>
-
-        </form>
-
+<!-- ==================== ADD RESOURCE MODAL ==================== -->
+<div id="addResourceModal" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 modal-overlay">
+  <div class="bg-[#141414] rounded-xl w-full max-w-lg p-6 mx-4 border border-white/10 shadow-2xl">
+    <div class="flex items-center justify-between mb-5">
+      <h2 class="text-xl font-bold text-white">📚 Add Resource</h2>
+      <button onclick="closeAddResourceModal()" class="text-gray-400 hover:text-white text-2xl leading-none">×</button>
     </div>
-
+    <form action="{{ url_for('skills.add_resource', skill_id=skill.id) }}" method="POST">
+      <input type="text" name="title" placeholder="Resource Title" required
+        class="w-full bg-[#1a1a1a] border border-white/10 rounded-lg px-4 py-3 text-white mb-3 focus:outline-none focus:border-yellow-500">
+      <div class="grid grid-cols-2 gap-3 mb-3">
+        <select name="resource_type" class="w-full bg-[#1a1a1a] border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-yellow-500">
+          <option value="youtube">📺 YouTube</option>
+          <option value="website">🌐 Website</option>
+          <option value="course">🎓 Course</option>
+          <option value="book">📘 Book</option>
+          <option value="pdf">📄 PDF</option>
+          <option value="notes">📝 Notes</option>
+          <option value="other">📦 Other</option>
+        </select>
+        <select name="difficulty" class="w-full bg-[#1a1a1a] border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-yellow-500">
+          <option value="Beginner">🟢 Beginner</option>
+          <option value="Intermediate">🟡 Intermediate</option>
+          <option value="Advanced">🔴 Advanced</option>
+        </select>
+      </div>
+      <input type="url" name="url" placeholder="https://..." required
+        class="w-full bg-[#1a1a1a] border border-white/10 rounded-lg px-4 py-3 text-white mb-3 focus:outline-none focus:border-yellow-500">
+      <textarea name="description" placeholder="Brief description..." rows="3"
+        class="w-full bg-[#1a1a1a] border border-white/10 rounded-lg px-4 py-3 text-white mb-5 focus:outline-none focus:border-yellow-500"></textarea>
+      <div class="flex justify-end gap-3">
+        <button type="button" onclick="closeAddResourceModal()" class="px-5 py-2.5 rounded-lg border border-white/10 text-gray-300 hover:bg-white/5 transition">Cancel</button>
+        <button type="submit" class="px-5 py-2.5 rounded-lg bg-yellow-400 hover:bg-yellow-300 text-black font-semibold transition">Add Resource</button>
+      </div>
+    </form>
+  </div>
 </div>
 
-<!-- ========================= -->
-<!-- Add Session Modal -->
-<!-- ========================= -->
-
-<div
-    id="sessionModal"
-    class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50">
-
-    <div class="bg-[#141414] rounded-xl p-6 w-full max-w-md">
-
-        <h2 class="text-xl font-semibold mb-5">
-            Add Learning Session
-        </h2>
-
-        <form
-            action="{{ url_for('learning_session.add_session', skill_id=skill.id) }}"
-            method="POST">
-
-            <input
-                type="text"
-                name="title"
-                placeholder="Session Title"
-                class="w-full p-3 rounded-lg mb-4 bg-[#1d1d1d]"
-                required>
-
-            <input
-                type="number"
-                name="duration"
-                placeholder="Duration (minutes)"
-                class="w-full p-3 rounded-lg mb-4 bg-[#1d1d1d]"
-                required>
-
-            <textarea
-                name="notes"
-                placeholder="What did you learn?"
-                class="w-full p-3 rounded-lg mb-5 bg-[#1d1d1d]"></textarea>
-
-            <div class="flex justify-end gap-3">
-
-                <button
-                    type="button"
-                    onclick="closeSessionModal()"
-                    class="px-4 py-2 rounded-lg bg-gray-700">
-
-                    Cancel
-
-                </button>
-
-                <button
-                    type="submit"
-                    class="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700">
-
-                    Save
-
-                </button>
-
-            </div>
-
-        </form>
-
+<!-- ==================== EDIT RESOURCE MODAL ==================== -->
+<div id="editResourceModal" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 modal-overlay">
+  <div class="bg-[#141414] rounded-xl w-full max-w-lg p-6 mx-4 border border-white/10 shadow-2xl">
+    <div class="flex items-center justify-between mb-5">
+      <h2 class="text-xl font-bold text-white">✏️ Edit Resource</h2>
+      <button onclick="closeEditResourceModal()" class="text-gray-400 hover:text-white text-2xl leading-none">×</button>
     </div>
-
+    <form id="editResourceForm" method="POST">
+      <input type="text" id="editResTitle" name="title" required
+        class="w-full bg-[#1a1a1a] border border-white/10 rounded-lg px-4 py-3 text-white mb-3 focus:outline-none focus:border-yellow-500">
+      <div class="grid grid-cols-2 gap-3 mb-3">
+        <select id="editResType" name="resource_type" class="w-full bg-[#1a1a1a] border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-yellow-500">
+          <option value="youtube">YouTube</option>
+          <option value="website">Website</option>
+          <option value="course">Course</option>
+          <option value="book">Book</option>
+          <option value="pdf">PDF</option>
+          <option value="notes">Notes</option>
+          <option value="other">Other</option>
+        </select>
+        <select id="editResDifficulty" name="difficulty" class="w-full bg-[#1a1a1a] border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-yellow-500">
+          <option value="Beginner">Beginner</option>
+          <option value="Intermediate">Intermediate</option>
+          <option value="Advanced">Advanced</option>
+        </select>
+      </div>
+      <input type="url" id="editResUrl" name="url" required
+        class="w-full bg-[#1a1a1a] border border-white/10 rounded-lg px-4 py-3 text-white mb-3 focus:outline-none focus:border-yellow-500">
+      <textarea id="editResDesc" name="description" rows="3"
+        class="w-full bg-[#1a1a1a] border border-white/10 rounded-lg px-4 py-3 text-white mb-5 focus:outline-none focus:border-yellow-500"></textarea>
+      <div class="flex justify-end gap-3">
+        <button type="button" onclick="closeEditResourceModal()" class="px-5 py-2.5 rounded-lg border border-white/10 text-gray-300 hover:bg-white/5 transition">Cancel</button>
+        <button type="submit" class="px-5 py-2.5 rounded-lg bg-yellow-400 hover:bg-yellow-300 text-black font-semibold transition">Save Changes</button>
+      </div>
+    </form>
+  </div>
 </div>
 
-<!-- ========================= -->
-<!-- Edit Session Modal -->
-<!-- ========================= -->
-
-<div
-    id="editSessionModal"
-    class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50">
-
-    <div class="bg-[#141414] rounded-xl p-6 w-full max-w-md">
-
-        <h2 class="text-xl font-semibold mb-5">
-            Edit Learning Session
-        </h2>
-
-        <form
-            id="editSessionForm"
-            method="POST">
-
-            <input
-                type="text"
-                id="editSessionTitle"
-                name="title"
-                class="w-full p-3 rounded-lg mb-4 bg-[#1d1d1d]"
-                required>
-
-            <input
-                type="number"
-                id="editSessionDuration"
-                name="duration"
-                class="w-full p-3 rounded-lg mb-4 bg-[#1d1d1d]"
-                required>
-
-            <textarea
-                id="editSessionNotes"
-                name="notes"
-                class="w-full p-3 rounded-lg mb-5 bg-[#1d1d1d]"></textarea>
-
-            <div class="flex justify-end gap-3">
-
-                <button
-                    type="button"
-                    onclick="closeEditSessionModal()"
-                    class="px-4 py-2 rounded-lg bg-gray-700">
-
-                    Cancel
-
-                </button>
-
-                <button
-                    type="submit"
-                    class="px-4 py-2 rounded-lg bg-yellow-500 hover:bg-yellow-600">
-
-                    Update
-
-                </button>
-
-            </div>
-
-        </form>
-
+<!-- ==================== ADD SESSION MODAL ==================== -->
+<div id="sessionModal" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 modal-overlay">
+  <div class="bg-[#141414] rounded-xl p-6 w-full max-w-md mx-4 border border-white/10 shadow-2xl">
+    <div class="flex items-center justify-between mb-5">
+      <h2 class="text-xl font-bold text-white">📖 Add Learning Session</h2>
+      <button onclick="closeSessionModal()" class="text-gray-400 hover:text-white text-2xl leading-none">×</button>
     </div>
-
+    <form action="{{ url_for('learning_session.add_session', skill_id=skill.id) }}" method="POST">
+      <input type="text" name="title" placeholder="Session Title (e.g. 'React Hooks Deep Dive')" required
+        class="w-full p-3 rounded-lg mb-3 bg-[#1d1d1d] border border-white/10 text-white focus:outline-none focus:border-blue-500">
+      <input type="number" name="duration" placeholder="Duration in minutes" min="1" required
+        class="w-full p-3 rounded-lg mb-3 bg-[#1d1d1d] border border-white/10 text-white focus:outline-none focus:border-blue-500">
+      <textarea name="notes" placeholder="What did you learn? (optional)" rows="3"
+        class="w-full p-3 rounded-lg mb-5 bg-[#1d1d1d] border border-white/10 text-white focus:outline-none focus:border-blue-500"></textarea>
+      <div class="flex justify-end gap-3">
+        <button type="button" onclick="closeSessionModal()" class="px-4 py-2 rounded-lg bg-gray-700 hover:bg-gray-600 text-white transition">Cancel</button>
+        <button type="submit" class="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-semibold transition">Save Session</button>
+      </div>
+    </form>
+  </div>
 </div>
+
+<!-- ==================== EDIT SESSION MODAL ==================== -->
+<div id="editSessionModal" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 modal-overlay">
+  <div class="bg-[#141414] rounded-xl p-6 w-full max-w-md mx-4 border border-white/10 shadow-2xl">
+    <div class="flex items-center justify-between mb-5">
+      <h2 class="text-xl font-bold text-white">✏️ Edit Session</h2>
+      <button onclick="closeEditSessionModal()" class="text-gray-400 hover:text-white text-2xl leading-none">×</button>
+    </div>
+    <form id="editSessionForm" method="POST">
+      <input type="text" id="editSessionTitle" name="title" required
+        class="w-full p-3 rounded-lg mb-3 bg-[#1d1d1d] border border-white/10 text-white focus:outline-none focus:border-yellow-500">
+      <input type="number" id="editSessionDuration" name="duration" min="1" required
+        class="w-full p-3 rounded-lg mb-3 bg-[#1d1d1d] border border-white/10 text-white focus:outline-none focus:border-yellow-500">
+      <textarea id="editSessionNotes" name="notes" rows="3"
+        class="w-full p-3 rounded-lg mb-5 bg-[#1d1d1d] border border-white/10 text-white focus:outline-none focus:border-yellow-500"></textarea>
+      <div class="flex justify-end gap-3">
+        <button type="button" onclick="closeEditSessionModal()" class="px-4 py-2 rounded-lg bg-gray-700 hover:bg-gray-600 text-white transition">Cancel</button>
+        <button type="submit" class="px-4 py-2 rounded-lg bg-yellow-400 hover:bg-yellow-300 text-black font-semibold transition">Update</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast"><span id="toastIcon">🔔</span><span id="toastMsg"></span></div>
 
 {% endblock %}
 
 {% block scripts %}
-<script src="{{ url_for('static', filename='js/skill_realm.js') }}"></script>
+<script>
+  // Toast
+  function showToast(msg, icon='🔔') {
+    const t = document.getElementById('toast');
+    document.getElementById('toastMsg').textContent = msg;
+    document.getElementById('toastIcon').textContent = icon;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3500);
+  }
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+        setTimeout(() => showToast("{{ message }}", "{% if category == 'success' %}✅{% elif category == 'error' %}❌{% else %}ℹ️{% endif %}"), 300);
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  // ========== RESOURCE SEARCH & FILTER ==========
+  const searchInput = document.getElementById('resourceSearch');
+  const clearBtn = document.getElementById('clearSearch');
+  const typeFilter = document.getElementById('resourceTypeFilter');
+  const diffFilter = document.getElementById('difficultyFilter');
+  const cards = document.querySelectorAll('.resource-card');
+  const countLabel = document.getElementById('resourceCount');
+
+  function filterResources() {
+    const term = searchInput.value.toLowerCase().trim();
+    const type = typeFilter.value;
+    const diff = diffFilter.value;
+    let visible = 0;
+
+    cards.forEach(card => {
+      const title = card.dataset.title;
+      const desc = card.dataset.description;
+      const cardType = card.dataset.type;
+      const cardDiff = card.dataset.difficulty;
+
+      const matchesSearch = !term || title.includes(term) || desc.includes(term);
+      const matchesType = type === 'all' || cardType === type;
+      const matchesDiff = diff === 'all' || cardDiff === diff;
+
+      if (matchesSearch && matchesType && matchesDiff) {
+        card.classList.remove('hidden-card');
+        visible++;
+      } else {
+        card.classList.add('hidden-card');
+      }
+    });
+
+    countLabel.textContent = `Showing ${visible} Resource${visible !== 1 ? 's' : ''}`;
+    clearBtn.classList.toggle('hidden', !term);
+  }
+
+  searchInput.addEventListener('input', filterResources);
+  typeFilter.addEventListener('change', filterResources);
+  diffFilter.addEventListener('change', filterResources);
+  clearBtn.addEventListener('click', () => { searchInput.value = ''; filterResources(); });
+
+  // ========== MODALS ==========
+  function toggleModal(id, show) {
+    const el = document.getElementById(id);
+    if (show) { el.classList.remove('hidden'); el.classList.add('flex'); }
+    else { el.classList.add('hidden'); el.classList.remove('flex'); }
+  }
+
+  // Add Resource
+  function openAddResourceModal() { toggleModal('addResourceModal', true); }
+  function closeAddResourceModal() { toggleModal('addResourceModal', false); }
+  document.getElementById('addResourceModal').addEventListener('click', e => { if(e.target === e.currentTarget) closeAddResourceModal(); });
+
+  // Edit Resource
+  function openEditResourceModal(id, title, type, url, desc, diff) {
+    document.getElementById('editResourceForm').action = `/resources/${id}/edit`;
+    document.getElementById('editResTitle').value = title;
+    document.getElementById('editResType').value = type;
+    document.getElementById('editResUrl').value = url;
+    document.getElementById('editResDesc').value = desc;
+    document.getElementById('editResDifficulty').value = diff;
+    toggleModal('editResourceModal', true);
+  }
+  function closeEditResourceModal() { toggleModal('editResourceModal', false); }
+  document.getElementById('editResourceModal').addEventListener('click', e => { if(e.target === e.currentTarget) closeEditResourceModal(); });
+
+  // Add Session
+  function openSessionModal() { toggleModal('sessionModal', true); }
+  function closeSessionModal() { toggleModal('sessionModal', false); }
+  document.getElementById('sessionModal').addEventListener('click', e => { if(e.target === e.currentTarget) closeSessionModal(); });
+
+  // Edit Session
+  function openEditSessionModal(id, title, duration, notes) {
+    document.getElementById('editSessionForm').action = `/session/${id}/edit`;
+    document.getElementById('editSessionTitle').value = title;
+    document.getElementById('editSessionDuration').value = duration;
+    document.getElementById('editSessionNotes').value = notes;
+    toggleModal('editSessionModal', true);
+  }
+  function closeEditSessionModal() { toggleModal('editSessionModal', false); }
+  document.getElementById('editSessionModal').addEventListener('click', e => { if(e.target === e.currentTarget) closeEditSessionModal(); });
+</script>
 {% endblock %}

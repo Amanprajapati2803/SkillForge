@@ -9,3 +9,4 @@ from .daily_challenge import DailyChallenge
 from .internship import Internship
 from .internship_skill import InternshipSkill
 from .applied_internship import AppliedInternship
+from .session import Session

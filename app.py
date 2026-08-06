@@ -23,7 +23,7 @@ from routes.achievement import achievement_bp
 # from seeders.internships_seeder import seed_internships
 from flask_migrate import Migrate
 # from seeders.resources_seeder import seed_resources
-
+#from seeders.sessions_seeder import seed_sessions
 
 app = Flask(__name__)
 
@@ -48,6 +48,7 @@ with app.app_context():
     # seed_achievements()
     # seed_internships()
     # seed_resources()
+    #seed_sessions()
 
 if __name__ == "__main__":
     app.run(debug=True)

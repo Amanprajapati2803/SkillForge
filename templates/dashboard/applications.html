@@ -1,375 +1,190 @@
 {% extends "layouts/base.html" %}
 
-{% block title %}
-Application Qi
-{% endblock %}
+{% block title %}Application Qi{% endblock %}
 
 {% block styles %}
 <style>
-.details{
-
-    max-height:0;
-
-    opacity:0;
-
-    overflow:hidden;
-
-    transition:
-    max-height .45s ease,
-    opacity .30s ease,
-    padding .30s ease;
+.details {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-height .45s ease, opacity .30s ease, padding .30s ease;
 }
-
-.details.open{
-
-    max-height:1000px;
-
-    opacity:1;
+.details.open {
+    max-height: 1000px;
+    opacity: 1;
+    padding-top: 1.5rem;
 }
-
-.arrow{
-
-    display:inline-block;
-
-    transition:transform .35s ease;
-
+.arrow {
+    display: inline-block;
+    transition: transform .35s ease;
 }
-
-.arrow.rotate{
-
-    transform:rotate(180deg);
-
+.arrow.rotate {
+    transform: rotate(180deg);
 }
+.status-applied { color: #B8A88A; border-color: #5C4A2F; }
+.status-review { color: #E7D9B7; border-color: #8C6B2A; }
+.status-interview { color: #D9B46A; border-color: #B88A2A; }
+.status-accepted { color: #4ade80; border-color: #22c55e; }
+.status-rejected { color: #9ca3af; border-color: #4b5563; }
 </style>
 {% endblock %}
 
 {% block content %}
-
 <div class="max-w-7xl mx-auto px-6 py-10">
-
-    <h1 class="text-5xl font-display text-[#E7D9B7]">
-        Application Qi
-    </h1>
-
-    <p class="text-[#B8A88A] mt-2">
-        Track every Recruitment Scroll you have accepted.
-    </p>
+    <h1 class="text-5xl font-display text-[#E7D9B7]">Application Qi</h1>
+    <p class="text-[#B8A88A] mt-2">Track every Recruitment Scroll you have accepted.</p>
 
     {% if applications %}
-
-    {% for application in applications %}
-
-    <div class="quest-card rounded-lg p-8 mb-8">
-
+      {% for application in applications %}
+      <div class="quest-card rounded-lg p-8 mb-8 border border-[var(--hairline)] bg-[var(--panel)]">
         <!-- Header -->
-        <div class="flex justify-between items-start">
-
-            <div>
-
-                <h2 class="font-display text-3xl text-[#E7D9B7]">
-                    {{ application.internship.company }}
-                </h2>
-
-                <p class="font-ui text-[#B8A88A] mt-2">
-                    {{ application.internship.title }}
-                </p>
-
-            </div>
-
-            <div>
-
-                <span class="tag px-4 py-2 rounded-sm">
-
-                    {% if application.status == "Applied" %}
-
-                    📜 Scroll Submitted
-
-                    {% elif application.status == "Under Review" %}
-
-                    👁️ Elders Reviewing
-
-                    {% elif application.status == "Interview" %}
-
-                    ⚔️ Trial Awaits
-
-                    {% elif application.status == "Accepted" %}
-
-                    👑 Joined the Sect
-
-                    {% elif application.status == "Rejected" %}
-
-                    🌑 Scroll Returned
-
-                    {% else %}
-
-                    {{ application.status }}
-
-                    {% endif %}
-
-                </span>
-
-            </div>
-
+        <div class="flex justify-between items-start flex-wrap gap-4">
+          <div>
+            <h2 class="font-display text-3xl text-[#E7D9B7]">{{ application.internship.company }}</h2>
+            <p class="font-ui text-[#B8A88A] mt-2">{{ application.internship.title }}</p>
+          </div>
+          <div>
+            {% set status_class = "status-applied" %}
+            {% if application.status == "Applied" %}
+              {% set status_label = "📜 Scroll Submitted" %}
+            {% elif application.status == "Under Review" %}
+              {% set status_label = "👁️ Elders Reviewing" %}
+              {% set status_class = "status-review" %}
+            {% elif application.status == "Interview" %}
+              {% set status_label = "⚔️ Trial Awaits" %}
+              {% set status_class = "status-interview" %}
+            {% elif application.status == "Accepted" %}
+              {% set status_label = "👑 Joined the Sect" %}
+              {% set status_class = "status-accepted" %}
+            {% elif application.status == "Rejected" %}
+              {% set status_label = "🌑 Scroll Returned" %}
+              {% set status_class = "status-rejected" %}
+            {% else %}
+              {% set status_label = application.status %}
+            {% endif %}
+            <span class="tag px-4 py-2 rounded-sm border {{ status_class }}">{{ status_label }}</span>
+          </div>
         </div>
 
-        <!-- Information -->
-
-        <div class="grid grid-cols-2 gap-6 mt-8">
-
-            <div>
-
-                <p class="text-[#8F8065] text-sm">
-                    LOCATION
-                </p>
-
-                <p class="text-[#E7D9B7] mt-1">
-                    {{ application.internship.location }}
-                </p>
-
-            </div>
-
-            <div>
-
-                <p class="text-[#8F8065] text-sm">
-                    APPLIED ON
-                </p>
-
-                <p class="text-[#E7D9B7] mt-1">
-
-                    {{ application.applied_at.strftime("%d %b %Y") }}
-
-                </p>
-
-            </div>
-
+        <!-- Meta -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mt-8 mb-6">
+          <div>
+            <p class="text-[#8F8065] text-sm uppercase tracking-wider">Location</p>
+            <p class="text-[#E7D9B7] mt-1">{{ application.internship.location }}</p>
+          </div>
+          <div>
+            <p class="text-[#8F8065] text-sm uppercase tracking-wider">Work Mode</p>
+            <p class="text-[#E7D9B7] mt-1">{{ application.internship.internship_type }}</p>
+          </div>
+          <div>
+            <p class="text-[#8F8065] text-sm uppercase tracking-wider">Applied On</p>
+            <p class="text-[#E7D9B7] mt-1">{{ application.applied_at.strftime("%d %b %Y") }}</p>
+          </div>
+          <div>
+            <p class="text-[#8F8065] text-sm uppercase tracking-wider">Current Status</p>
+            <p class="text-[#E7D9B7] mt-1">{{ application.status }}</p>
+          </div>
         </div>
 
-        <!-- Button -->
-
-        <button
-            type="button"
-            onclick="toggleDetails({{ application.id }})"
-            class="btn-primary flex items-center gap-2 font-ui text-xs tracking-widest px-6 py-3 rounded-sm">
-
-            <span id="button-text-{{ application.id }}">
-                View Scroll
-            </span>
-
-            <span
-                id="arrow-{{ application.id }}"
-                class="arrow transition-transform duration-300">
-
-                ▼
-
-            </span>
-
+        <!-- Toggle Button -->
+        <button type="button" onclick="toggleDetails({{ application.id }})"
+          class="btn-primary flex items-center gap-2 font-ui text-xs tracking-widest px-6 py-3 rounded-sm">
+          <span id="button-text-{{ application.id }}">View Scroll</span>
+          <span id="arrow-{{ application.id }}" class="arrow">▼</span>
         </button>
 
-        <div
-            id="details-{{ application.id }}"
-            class="details mt-6 overflow-hidden border-t border-[#5C4A2F]">
-
-            <div class="pt-6 pb-2">
-
-                <div>
-
-                    <h3 class="text-[#8F8065] text-sm uppercase tracking-wider">
-                        Description
-                    </h3>
-
-                    <p class="text-[#E7D9B7] mt-2">
-                        {{ application.internship.description }}
-                    </p>
-
-                </div>
-
-                <div>
-
-                    <h3 class="text-[#8F8065] text-sm uppercase tracking-wider">
-                        Required Techniques
-                    </h3>
-
-                    <div class="flex flex-wrap gap-2 mt-3">
-
-                        {% for skill in application.internship.internship_skills
-                        %}
-
-                        <span class="tag px-3 py-1 rounded-sm">
-
-                            {{ skill.skill_name }}
-
-                        </span>
-
-                        {% endfor %}
-
-                    </div>
-
-                </div>
-
-                <div class="grid md:grid-cols-2 gap-6">
-
-                    <div>
-
-                        <h3
-                            class="text-[#8F8065] text-sm uppercase tracking-wider">
-                            Realm
-                        </h3>
-
-                        <p class="text-[#E7D9B7] mt-2">
-                            {{ application.internship.location }}
-                        </p>
-
-                    </div>
-
-                    <div>
-
-                        <h3
-                            class="text-[#8F8065] text-sm uppercase tracking-wider">
-                            Cultivation Path
-                        </h3>
-
-                        <p class="text-[#E7D9B7] mt-2">
-                            {{ application.internship.internship_type }}
-                        </p>
-
-                    </div>
-
-                </div>
-
-                <div class="grid md:grid-cols-2 gap-6 mt-6">
-
-                    <div>
-
-                        <h3
-                            class="text-[#8F8065] text-sm uppercase tracking-wider">
-                            Scroll Accepted On
-                        </h3>
-
-                        <p class="text-[#E7D9B7] mt-2">
-
-                            {{ application.applied_at.strftime("%d %b %Y") }}
-
-                        </p>
-
-                    </div>
-
-                    <div>
-
-                        <h3
-                            class="text-[#8F8065] text-sm uppercase tracking-wider">
-                            Current Status
-                        </h3>
-
-                        <span class="tag px-3 py-1 rounded-sm">
-
-                            {{ application.status }}
-
-                        </span>
-
-                    </div>
-
-                </div>
-
-                <div class="mt-6">
-
-                    <h3 class="text-[#8F8065] text-sm uppercase tracking-wider">
-                        Cultivation Resonance
-                    </h3>
-
-                    <p class="text-[#E7D9B7] mt-2">
-                        Calculated during recommendation.
-                    </p>
-
-                </div>
-
+        <!-- Expandable Details -->
+        <div id="details-{{ application.id }}" class="details border-t border-[#5C4A2F] mt-4">
+          <div class="pb-2 space-y-6">
+            <div>
+              <h3 class="text-[#8F8065] text-sm uppercase tracking-wider mb-2">Description</h3>
+              <p class="text-[#E7D9B7] leading-relaxed">{{ application.internship.description }}</p>
             </div>
 
+            <div>
+              <h3 class="text-[#8F8065] text-sm uppercase tracking-wider mb-2">Required Techniques</h3>
+              <div class="flex flex-wrap gap-2">
+                {% for skill in application.internship.internship_skills %}
+                <span class="tag px-3 py-1 rounded-sm">{{ skill.skill_name }}</span>
+                {% endfor %}
+              </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6">
+              <div>
+                <h3 class="text-[#8F8065] text-sm uppercase tracking-wider mb-2">Realm</h3>
+                <p class="text-[#E7D9B7]">{{ application.internship.location }}</p>
+              </div>
+              <div>
+                <h3 class="text-[#8F8065] text-sm uppercase tracking-wider mb-2">Cultivation Path</h3>
+                <p class="text-[#E7D9B7]">{{ application.internship.internship_type }}</p>
+              </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6">
+              <div>
+                <h3 class="text-[#8F8065] text-sm uppercase tracking-wider mb-2">Scroll Accepted On</h3>
+                <p class="text-[#E7D9B7]">{{ application.applied_at.strftime("%d %b %Y") }}</p>
+              </div>
+              <div>
+                <h3 class="text-[#8F8065] text-sm uppercase tracking-wider mb-2">External Link</h3>
+                <a href="{{ application.internship.apply_link }}" target="_blank" rel="noopener"
+                   class="text-[var(--gold)] hover:text-[var(--gold-bright)] underline text-sm">
+                  Open Apply Portal →
+                </a>
+              </div>
+            </div>
+          </div>
         </div>
-    </div>
-
-    {% endfor %}
-
+      </div>
+      {% endfor %}
     {% else %}
-
-    <div class="text-center py-24">
-
-        <h2 class="text-4xl font-display text-[#E7D9B7]">
-            No Recruitment Scrolls Yet
-        </h2>
-
-        <p class="text-[#B8A88A] mt-4">
-            Accept your first Recruitment Scroll to begin your journey.
+      <div class="text-center py-24">
+        <div class="mb-6 inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#16120F] border border-[#5C4A2F]">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5">
+            <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z" />
+            <path d="M3.27 6.96L12 12.01l8.73-5.05M12 22.08V12" />
+          </svg>
+        </div>
+        <h2 class="text-4xl font-display text-[#E7D9B7] mb-3">No Recruitment Scrolls Yet</h2>
+        <p class="text-[#B8A88A] max-w-md mx-auto mb-8">
+          Accept your first Recruitment Scroll to begin your journey into the startup sects.
         </p>
-
-        <a
-            href="{{ url_for('internship.interns') }}"
-            class="btn-primary mt-8 inline-block px-8 py-3">
-
-            Explore Scrolls
-
+        <a href="{{ url_for('internship.interns') }}" class="btn-primary font-ui text-xs tracking-widest px-8 py-3 rounded-sm inline-block">
+          Explore Scrolls
         </a>
-
-    </div>
-
+      </div>
     {% endif %}
-
 </div>
-
 {% endblock %}
 
 {% block scripts %}
-
 <script>
-
-function toggleDetails(id){
-
-    const allDetails =
-        document.querySelectorAll(".details");
-
-    const allButtons =
-        document.querySelectorAll("[id^='button-text-']");
-
-    const current =
-        document.getElementById("details-"+id);
-
-    const currentButton =
-        document.getElementById("button-text-"+id);
-
+function toggleDetails(id) {
+    const current = document.getElementById("details-" + id);
     const arrow = document.getElementById("arrow-" + id);
+    const btnText = document.getElementById("button-text-" + id);
+    const allDetails = document.querySelectorAll(".details");
+    const allArrows = document.querySelectorAll(".arrow");
+    const allBtnTexts = document.querySelectorAll("[id^='button-text-']");
 
-    allDetails.forEach(detail=>{
+    // Close all others
+    allDetails.forEach(d => { if (d !== current) d.classList.remove("open"); });
+    allArrows.forEach(a => { if (a !== arrow) a.classList.remove("rotate"); });
+    allBtnTexts.forEach(b => { if (b !== btnText) b.textContent = "View Scroll"; });
 
-        if(detail!==current){
-
-            detail.classList.remove("open");
-
-        }
-
-    });
-
-    document.querySelectorAll(".arrow").forEach(a => {
-
-    if(a !== arrow){
-
-            a.classList.remove("rotate");
-
-        }
-
-    });
-
-    allButtons.forEach(button=>{
-
-        if(button!==currentButton){
-
-            button.innerHTML="▼ View Scroll";
-
-        }
-
-    });
-
-    current.classList.toggle("open");
-    
-    arrow.classList.toggle("rotate");
+    // Toggle current
+    const isOpen = current.classList.contains("open");
+    if (isOpen) {
+        current.classList.remove("open");
+        arrow.classList.remove("rotate");
+        btnText.textContent = "View Scroll";
+    } else {
+        current.classList.add("open");
+        arrow.classList.add("rotate");
+        btnText.textContent = "Hide Scroll";
+    }
 }
 </script>
 {% endblock %}

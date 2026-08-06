@@ -1,304 +1,355 @@
 {% extends "layouts/base.html" %}
 
-{% block title %}
-Dashboard
-{% endblock %}
+{% block title %}Certificates{% endblock %}
 
 {% block styles %}
+<style>
+  body { background-color: #0d0d0d; font-family: 'Inter', sans-serif; }
+  .serif { font-family: 'Playfair Display', serif; }
+  .font-display { font-family: 'Cinzel', serif; }
 
-<link rel="stylesheet"
-  href="{{ url_for('static', filename='css/certificate.css') }}">
+  #toast {
+    position: fixed; bottom: 24px; right: 24px;
+    background: #161616; border: 1px solid rgba(232,184,75,0.3);
+    color: white; padding: 12px 20px; border-radius: 10px;
+    transform: translateY(100px); opacity: 0;
+    transition: all 0.3s ease; z-index: 9999;
+    display: flex; align-items: center; gap: 10px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+  }
+  #toast.show { transform: translateY(0); opacity: 1; }
 
+  .cert-card {
+    background: linear-gradient(145deg, #141414, #1a1a1a);
+    border: 1px solid rgba(255,255,255,0.08);
+    transition: all 0.4s ease;
+  }
+  .cert-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+  }
+  .cert-card.unlocked {
+    border-color: rgba(232,184,75,0.35);
+  }
+  .cert-card.unlocked:hover {
+    box-shadow: 0 12px 40px rgba(232,184,75,0.12);
+  }
+  .cert-card.locked {
+    opacity: 0.65;
+    filter: grayscale(0.4);
+  }
+  .cert-card.locked:hover {
+    opacity: 0.85;
+    filter: grayscale(0.2);
+  }
+
+  .badge-hex {
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  }
+
+  .progress-track {
+    background: rgba(255,255,255,0.06);
+  }
+  .progress-fill {
+    background: linear-gradient(90deg, #E8B84B, #c99a2e);
+    transition: width 1s ease-out;
+  }
+  .progress-fill.locked-fill {
+    background: linear-gradient(90deg, #4a4a4a, #666);
+  }
+
+  .locked-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(10,10,10,0.3);
+    border-radius: inherit;
+    pointer-events: none;
+  }
+
+  .milestone-banner {
+    background: linear-gradient(135deg, rgba(232,184,75,0.08), rgba(139,92,246,0.05));
+    border: 1px solid rgba(232,184,75,0.15);
+  }
+</style>
 {% endblock %}
 
 {% block content %}
 
-<!-- TOP BAR -->
-<header =
-   class=" top-0 z-40 bg-[#0c0a08]/95 backdrop-blur-md border-b border-[var(--hairline)]">
-<div class="flex items-center justify-between mb-6">
-  <h2 class="serif text-xl font-bold text-white flex items-center gap-2">
+<!-- ==================== HEADER ==================== -->
+<header class="sticky top-0 z-40 bg-[#0c0a08]/95 backdrop-blur-md border-b border-[var(--hairline)]">
   <div class="h-[76px] flex items-center justify-between px-6 lg:px-10">
-
     <h1 class="font-display text-2xl text-[var(--gold-bright)]">Certificates</h1>
-    </div>
-  </h2>
     <div class="flex items-center gap-5">
-        <button class="text-gray-400 hover:text-white">
-            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24"
-                stroke="currentColor" stroke-width="2"><path
-                    stroke-linecap="round" stroke-linejoin="round"
-                    d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>
-        </button>
-        <div
-            class="flex items-center gap-1.5 border border-gold/50 rounded-full px-3 py-1 text-gold text-xs font-medium">
-            <span>🔥</span> 12 Day Streak
-        </div>
-        <span class="text-sm text-gray-200">{{user.name}}</span>
-        <div
-            class="w-9 h-9 rounded-full border-2 border-gold overflow-hidden bg-gray-700">
-            <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=Arjun"
-                class="w-full h-full object-cover" alt="{{user.name}}">
-        </div>
+      <div class="flex items-center gap-1.5 border border-gold/50 rounded-full px-3 py-1 text-gold text-xs font-medium">
+        <span>🔥</span> {{ user.streak|default(0) }} Day Streak
+      </div>
+      <span class="text-sm text-gray-200 hidden sm:block">{{ user.name }}</span>
+      <div class="w-9 h-9 rounded-full border-2 border-gold overflow-hidden bg-gray-700">
+        <img src="https://api.dicebear.com/7.x/adventurer/svg?seed={{ user.name }}" class="w-full h-full object-cover" alt="{{ user.name }}">
+      </div>
     </div>
+  </div>
 </header>
 
-<main class="px-6 lg:px-10 py-10 max-w-[1360px]">
+<div class="px-6 lg:px-10 py-10 max-w-[1360px] mx-auto">
 
   <!-- Heading -->
-  <div class="fade-up mb-10" data-fade>
-    <h1
-      class="font-display text-2xl md:text-[28px] text-[var(--parchment)] mb-2">Achievement
-      Pavilion</h1>
-    <p
-      class="font-ui font-light text-sm text-[var(--muted)] max-w-xl leading-relaxed">Behold
-      the scrolls of your mastery. These digital talismans mark your
-      transcendence through the ranks of the Forge.</p>
+  <div class="mb-10">
+    <h1 class="font-display text-2xl md:text-[28px] text-white mb-2">Achievement Pavilion</h1>
+    <p class="text-sm text-gray-500 max-w-xl leading-relaxed">
+      Behold the scrolls of your mastery. These digital talismans mark your transcendence through the ranks of the Forge.
+      <span class="text-gold font-medium">{{ unlocked_count|default(0) }} of {{ total_count|default(10) }} earned.</span>
+    </p>
   </div>
 
-  <!-- Seals of Mastery -->
-  <div class="fade-up flex items-center justify-between mb-6" data-fade>
+  <!-- ==================== EARNED CERTIFICATES ==================== -->
+  {% set earned = unlocked_certs|default([]) %}
+  {% if earned %}
+  <div class="flex items-center justify-between mb-6">
     <div class="flex items-center gap-2.5">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
-        stroke="var(--gold)" stroke-width="1.6"><circle cx="12" cy="8"
-          r="6" /><path d="M8.5 13.5L7 22l5-3 5 3-1.5-8.5" /></svg>
-      <h2 class="font-display text-xl text-[var(--parchment)]">Seals of
-        Mastery</h2>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E8B84B" stroke-width="1.6"><circle cx="12" cy="8" r="6"/><path d="M8.5 13.5L7 22l5-3 5 3-1.5-8.5"/></svg>
+      <h2 class="font-display text-xl text-white">Seals of Mastery</h2>
     </div>
-    <div class="flex items-center gap-2 font-ui text-xs">
-      <button
-        class="pill active px-4 py-2 rounded-full text-[var(--muted)] transition-colors">All
-        Types</button>
-      <button
-        class="pill px-4 py-2 rounded-full text-[var(--muted)] hover:text-[var(--parchment)] transition-colors">Recent</button>
+    <span class="text-xs text-gray-500">{{ earned|length }} Earned</span>
+  </div>
+
+  <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-14">
+    {% for cert in earned %}
+    <div class="cert-card unlocked rounded-xl p-6 flex flex-col relative overflow-hidden">
+      <div class="absolute -right-10 -top-10 w-32 h-32 rounded-full bg-gold/5 blur-2xl pointer-events-none"></div>
+
+      <div class="flex items-start justify-between mb-5 relative">
+        <div class="badge-hex w-14 h-14 flex items-center justify-center bg-gold/15 border-2 border-gold text-2xl">
+          {{ cert.icon|default('🏆') }}
+        </div>
+        <div class="text-right">
+          <div class="text-[11px] tracking-widest text-gold/70">{{ cert.level|default('MASTERY') }}</div>
+          <div class="text-[11px] text-gray-500 mt-0.5">{{ cert.date|default('Recently') }}</div>
+        </div>
+      </div>
+
+      <h3 class="text-lg font-bold text-white mb-1">{{ cert.title|default('Certificate') }}</h3>
+      <p class="text-xs text-gold/70 mb-2">{{ cert.subtitle|default('Achievement') }}</p>
+      <p class="text-sm text-gray-400 leading-relaxed flex-1">{{ cert.description|default('Earned through dedication.') }}</p>
+
+      <div class="flex items-center gap-2 mt-5">
+        <span class="text-[10px] px-2 py-0.5 rounded-full bg-white/5 text-gray-400 border border-white/10">{{ cert.rarity|default('Common') }}</span>
+        <span class="text-[10px] text-green-400">✅ Unlocked</span>
+      </div>
+
+      <div class="flex items-center gap-3 mt-4">
+        <button onclick="showToast('📜 Certificate viewer coming in v2.0!')" class="flex-1 flex items-center justify-center gap-2 bg-gold hover:bg-gold-light text-black text-sm font-semibold py-2.5 rounded-lg transition">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          View Scroll
+        </button>
+        <button onclick="showToast('🔗 Share link copied!')" class="w-10 h-10 flex items-center justify-center rounded-lg bg-white/5 hover:bg-white/10 text-gray-400 hover:text-gold transition" title="Share">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 3.9M15.4 6.5L8.6 10.4"/></svg>
+        </button>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <!-- ==================== LOCKED CERTIFICATES ==================== -->
+  {% set locked = locked_certs|default([]) %}
+  {% if locked %}
+  <div class="flex items-center justify-between mb-6">
+    <div class="flex items-center gap-2.5">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="1.6"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+      <h2 class="font-display text-xl text-gray-400">Sealed Scrolls</h2>
+    </div>
+    <span class="text-xs text-gray-600">{{ locked|length }} Locked</span>
+  </div>
+
+  <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-14">
+    {% for cert in locked %}
+    <div class="cert-card locked rounded-xl p-6 flex flex-col relative">
+      <div class="locked-overlay">
+        <div class="text-center">
+          <div class="text-3xl mb-2">🔒</div>
+          <p class="text-xs text-gray-500">{{ "%.0f"|format(cert.progress|default(0)) }}% Complete</p>
+        </div>
+      </div>
+
+      <div class="flex items-start justify-between mb-5">
+        <div class="badge-hex w-14 h-14 flex items-center justify-center bg-white/5 border-2 border-white/10 text-2xl grayscale">
+          {{ cert.icon|default('🔒') }}
+        </div>
+        <div class="text-right">
+          <div class="text-[11px] tracking-widest text-gray-600">{{ cert.level|default('LOCKED') }}</div>
+          <div class="text-[11px] text-gray-700 mt-0.5">Locked</div>
+        </div>
+      </div>
+
+      <h3 class="text-lg font-bold text-gray-400 mb-1">{{ cert.title|default('Unknown Scroll') }}</h3>
+      <p class="text-xs text-gray-600 mb-2">{{ cert.subtitle|default('Hidden') }}</p>
+      <p class="text-sm text-gray-600 leading-relaxed flex-1">{{ cert.description|default('Complete requirements to unlock.') }}</p>
+
+      <!-- Progress Bar -->
+      <div class="mt-4 mb-2">
+        <div class="flex justify-between text-[10px] text-gray-500 mb-1">
+          <span>{{ cert.progress_text|default('0/1') }}</span>
+          <span>{{ "%.0f"|format(cert.progress|default(0)) }}%</span>
+        </div>
+        <div class="progress-track w-full h-2 rounded-full overflow-hidden">
+          <div class="progress-fill locked-fill h-full rounded-full" style="width: {{ cert.progress|default(0) }}%"></div>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2 mt-2">
+        <span class="text-[10px] px-2 py-0.5 rounded-full bg-white/5 text-gray-600 border border-white/5">{{ cert.rarity|default('Common') }}</span>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <!-- ==================== FALLBACK: NO DATA ==================== -->
+  {% if not earned and not locked %}
+  <div class="text-center py-16 bg-[#141414] border border-white/5 rounded-xl mb-14">
+    <div class="text-5xl mb-4">🏆</div>
+    <h3 class="text-xl font-bold text-white mb-2">Achievement Pavilion Loading...</h3>
+    <p class="text-gray-500 text-sm mb-5 max-w-md mx-auto">Certificates are calculated from your cultivation progress. Practice your skills to unlock seals of mastery!</p>
+    <a href="{{ url_for('skills.skills') }}" class="inline-flex items-center gap-2 bg-gold hover:bg-gold-light text-black font-semibold px-5 py-2.5 rounded-lg transition">
+      ⚔️ Start Practicing
+    </a>
+  </div>
+
+  <!-- Show default locked certificates as motivation -->
+  <div class="flex items-center justify-between mb-6">
+    <div class="flex items-center gap-2.5">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="1.6"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+      <h2 class="font-display text-xl text-gray-400">Available Scrolls</h2>
     </div>
   </div>
 
-  <!-- Certificate cards -->
-  <div class="grid md:grid-cols-3 gap-6 mb-14">
-
-    <div class="card fade-up rounded-sm p-6 flex flex-col" data-fade>
-      <div class="flex items-start justify-between mb-6">
-        <div
-          class="badge-hex w-14 h-14 flex items-center justify-center border-2 border-[var(--gold)] bg_color">
-          <span class="font-display text-sm text-[var(--gold-bright)]">SF</span>
+  <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-14">
+    {% set default_certs = [
+      {"icon": "⚔️", "title": "First Step", "subtitle": "The Journey Begins", "description": "Create your first technique and begin the path of cultivation.", "level": "MASTERY LEVEL I", "rarity": "Common", "progress": 0, "progress_text": "0/1 Skills"},
+      {"icon": "📖", "title": "Initiate Practitioner", "subtitle": "First Cultivation", "description": "Complete your first learning session and earn initial XP.", "level": "MASTERY LEVEL I", "rarity": "Common", "progress": 0, "progress_text": "0/1 Sessions"},
+      {"icon": "🏆", "title": "Technique Grandmaster", "subtitle": "Mastery Achieved", "description": "Reach Level 10 in a single technique.", "level": "MASTERY LEVEL X", "rarity": "Rare", "progress": 0, "progress_text": "0/1000 XP"},
+      {"icon": "🚪", "title": "Inner Gate Disciple", "subtitle": "Rank Ascension", "description": "Transcend the outer gates with 1500 total XP.", "level": "RANK UP", "rarity": "Uncommon", "progress": 0, "progress_text": "0/1500 XP"},
+      {"icon": "🔥", "title": "Flame Keeper", "subtitle": "Unbroken Dedication", "description": "Maintain a 7-day cultivation streak.", "level": "DEDICATION", "rarity": "Uncommon", "progress": 0, "progress_text": "0/7 Days"},
+      {"icon": "💎", "title": "Core Disciple", "subtitle": "Rank Ascension", "description": "Achieve 5000 total XP.", "level": "RANK UP", "rarity": "Rare", "progress": 0, "progress_text": "0/5000 XP"}
+    ] %}
+    {% for cert in default_certs %}
+    <div class="cert-card locked rounded-xl p-6 flex flex-col relative">
+      <div class="locked-overlay">
+        <div class="text-center">
+          <div class="text-3xl mb-2">🔒</div>
+          <p class="text-xs text-gray-500">0% Complete</p>
         </div>
+      </div>
+      <div class="flex items-start justify-between mb-5">
+        <div class="badge-hex w-14 h-14 flex items-center justify-center bg-white/5 border-2 border-white/10 text-2xl grayscale">{{ cert.icon }}</div>
         <div class="text-right">
-          <div
-            class="font-ui text-[11px] tracking-widest text-[var(--muted)]">MASTERY
-            LEVEL IV</div>
-          <div class="font-ui text-[11px] text-[var(--muted)] mt-0.5">Dec
-            2023</div>
+          <div class="text-[11px] tracking-widest text-gray-600">{{ cert.level }}</div>
+          <div class="text-[11px] text-gray-700 mt-0.5">Locked</div>
         </div>
       </div>
-      <h3 class="font-display text-lg text-[var(--parchment)] mb-2">Cloud
-        Architecture Sovereign</h3>
-      <p
-        class="font-ui font-light text-sm text-[var(--muted)] leading-relaxed flex-1">Mastery
-        of distributed qi systems and celestial load balancing across
-        realms.</p>
-      <div class="flex items-center gap-3 mt-7">
-        <button
-          class="btn-primary flex-1 flex items-center justify-center gap-2 font-ui text-sm py-3 rounded-sm">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="1.8"><path
-              d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12"
-              cy="12" r="3" /></svg>
-          View Scroll
-        </button>
-        <button aria-label="Share"
-          class="btn-icon w-12 h-12 flex items-center justify-center rounded-sm text-[var(--muted)] hover:text-[var(--gold)]">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="1.8"><circle cx="18" cy="5"
-              r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19"
-              r="3" /><path d="M8.6 13.5l6.8 3.9M15.4 6.5L8.6 10.4" /></svg>
-        </button>
+      <h3 class="text-lg font-bold text-gray-400 mb-1">{{ cert.title }}</h3>
+      <p class="text-xs text-gray-600 mb-2">{{ cert.subtitle }}</p>
+      <p class="text-sm text-gray-600 leading-relaxed flex-1">{{ cert.description }}</p>
+      <div class="mt-4 mb-2">
+        <div class="flex justify-between text-[10px] text-gray-500 mb-1">
+          <span>{{ cert.progress_text }}</span>
+          <span>0%</span>
+        </div>
+        <div class="progress-track w-full h-2 rounded-full overflow-hidden">
+          <div class="progress-fill locked-fill h-full rounded-full" style="width: 0%"></div>
+        </div>
       </div>
+      <span class="text-[10px] px-2 py-0.5 rounded-full bg-white/5 text-gray-600 border border-white/5 w-fit">{{ cert.rarity }}</span>
     </div>
+    {% endfor %}
+  </div>
+  {% endif %}
 
-    <div class="card fade-up rounded-sm p-6 flex flex-col effect_1" data-fade>
-      <div class="flex items-start justify-between mb-6">
-        <div
-          class="badge-hex w-14 h-14 flex items-center justify-center border-2 border-dashed bg_color br_color1">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="var(--jade)"
-            stroke="none"><path
-              d="M12 2l2.5 7.5H22l-6.2 4.5 2.4 7.5L12 17l-6.2 4.5 2.4-7.5L2 9.5h7.5z" /></svg>
-        </div>
-        <div class="text-right">
-          <div
-            class="font-ui text-[11px] tracking-widest text-[var(--muted)]">MASTERY
-            LEVEL II</div>
-          <div class="font-ui text-[11px] text-[var(--muted)] mt-0.5">Oct
-            2023</div>
-        </div>
-      </div>
-      <h3 class="font-display text-lg text-[var(--parchment)] mb-2">Blade of
-        JavaScript</h3>
-      <p
-        class="font-ui font-light text-sm text-[var(--muted)] leading-relaxed flex-1">Precision
-        manipulation of the DOM elements and asynchronous spirits.</p>
-      <div class="flex items-center gap-3 mt-7">
-        <button
-          class="btn-primary flex-1 flex items-center justify-center gap-2 font-ui text-sm py-3 rounded-sm">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="1.8"><path
-              d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12"
-              cy="12" r="3" /></svg>
-          View Scroll
-        </button>
-        <button aria-label="Share"
-          class="btn-icon w-12 h-12 flex items-center justify-center rounded-sm text-[var(--muted)] hover:text-[var(--gold)]">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="1.8"><circle cx="18" cy="5"
-              r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19"
-              r="3" /><path d="M8.6 13.5l6.8 3.9M15.4 6.5L8.6 10.4" /></svg>
-        </button>
-      </div>
-    </div>
-
-    <div class="card fade-up rounded-sm p-6 flex flex-col effect_2" data-fade>
-      <div class="flex items-start justify-between mb-6">
-        <div
-          class="w-14 h-14 rounded-full flex items-center justify-center border-2 br_color2 ">
-          <span class="w-3.5 h-3.5 rounded-full br_color2"></span>
-        </div>
-        <div class="text-right">
-          <div
-            class="font-ui text-[11px] tracking-widest text-[var(--muted)]">GRANDMASTER</div>
-          <div class="font-ui text-[11px] text-[var(--muted)] mt-0.5">Jan
-            2024</div>
-        </div>
-      </div>
-      <h3 class="font-display text-lg text-[var(--parchment)] mb-2">Strategic
-        Product Sage</h3>
-      <p
-        class="font-ui font-light text-sm text-[var(--muted)] leading-relaxed flex-1">The
-        art of leading war-rooms and defining the destiny of multi-realm
-        products.</p>
-      <div class="flex items-center gap-3 mt-7">
-        <button
-          class="btn-primary flex-1 flex items-center justify-center gap-2 font-ui text-sm py-3 rounded-sm">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="1.8"><path
-              d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12"
-              cy="12" r="3" /></svg>
-          View Scroll
-        </button>
-        <button aria-label="Share"
-          class="btn-icon w-12 h-12 flex items-center justify-center rounded-sm text-[var(--muted)] hover:text-[var(--gold)]">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="1.8"><circle cx="18" cy="5"
-              r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19"
-              r="3" /><path d="M8.6 13.5l6.8 3.9M15.4 6.5L8.6 10.4" /></svg>
-        </button>
-      </div>
-    </div>
+  <!-- ==================== ONGOING CULTIVATIONS ==================== -->
+  {% set ongoing_list = ongoing|default([]) %}
+  {% if ongoing_list %}
+  <div class="flex items-center gap-2.5 mb-6">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="1.8"><path d="M21 12a9 9 0 11-3.3-6.9"/><path d="M21 4v5h-5"/></svg>
+    <h2 class="font-display text-xl text-white">Ongoing Cultivations</h2>
   </div>
 
-  <!-- Ongoing Cultivations -->
-  <div class="fade-up flex items-center gap-2.5 mb-6" data-fade>
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
-      stroke="var(--jade)" stroke-width="1.8"><path
-        d="M21 12a9 9 0 11-3.3-6.9" /><path d="M21 4v5h-5" /></svg>
-    <h2 class="font-display text-xl text-[var(--parchment)]">Ongoing
-      Cultivations</h2>
-  </div>
-
-  <div class="card fade-up rounded-sm p-8 mb-8 grid md:grid-cols-2 gap-10"
-    data-fade>
+  <div class="bg-[#141414] border border-white/5 rounded-xl p-8 mb-8 grid md:grid-cols-2 gap-10">
+    {% for cert in ongoing_list %}
     <div>
       <div class="flex items-baseline justify-between mb-1">
-        <h3 class="font-display text-base text-[var(--parchment)]">Deep Learning
-          Alchemist</h3>
-        <span class="font-ui text-lg text-[var(--gold-bright)]">78%</span>
+        <h3 class="text-base font-bold text-white">{{ cert.title|default('In Progress') }}</h3>
+        <span class="text-lg text-gold font-bold">{{ "%.0f"|format(cert.progress|default(0)) }}%</span>
       </div>
-      <p class="font-ui font-light text-sm text-[var(--muted)] mb-4">Forging
-        Neural Pathfinders</p>
+      <p class="text-sm text-gray-500 mb-4">{{ cert.subtitle|default('Keep going!') }}</p>
       <div class="progress-track w-full h-2 rounded-full overflow-hidden mb-3">
-        <div class="progress-fill h-full rounded-full w-[78%]"></div>
+        <div class="progress-fill h-full rounded-full" style="width: {{ cert.progress|default(0) }}%"></div>
       </div>
-      <div
-        class="flex items-center justify-between font-ui text-xs text-[var(--muted)]">
-        <span>3 of 4 Trials Complete</span>
+      <div class="flex items-center justify-between text-xs text-gray-500">
+        <span>{{ cert.progress_text|default('In progress') }}</span>
         <span class="flex items-center gap-1.5">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12"
-              r="10" /><path d="M12 6v6l4 2" /></svg>
-          12 days remaining
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          Keep practicing!
         </span>
       </div>
     </div>
-
-    <div>
-      <div class="flex items-baseline justify-between mb-1">
-        <h3 class="font-display text-base text-[var(--parchment)]">Cyber Defense
-          Warden</h3>
-        <span class="font-ui text-lg text-[var(--gold-bright)]">45%</span>
-      </div>
-      <p class="font-ui font-light text-sm text-[var(--muted)] mb-4">Hardening
-        the Sect's Gates</p>
-      <div class="progress-track w-full h-2 rounded-full overflow-hidden mb-3">
-        <div class="progress-fill h-full rounded-full w-[45%]"></div>
-      </div>
-      <div
-        class="flex items-center justify-between font-ui text-xs text-[var(--muted)]">
-        <span>1 of 3 Trials Complete</span>
-        <span class="flex items-center gap-1.5">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12"
-              r="10" /><path d="M12 6v6l4 2" /></svg>
-          28 days remaining
-        </span>
-      </div>
-    </div>
+    {% endfor %}
   </div>
+  {% endif %}
 
-  <!-- Milestone banner -->
-  <div class="fade-up milestone-banner rounded-sm overflow-hidden mb-4"
-    data-fade>
+  <!-- ==================== MILESTONE BANNER ==================== -->
+  {% set milestone = next_milestone|default(None) %}
+  {% if milestone %}
+  <div class="milestone-banner rounded-xl overflow-hidden mb-4">
     <div class="px-8 py-12 md:py-16 max-w-lg">
-      <span
-        class="font-ui text-[11px] tracking-widest pill inline-block px-4 py-1.5 rounded-full text-[var(--muted)] mb-5">RARE
-        MILESTONE</span>
-      <h3 class="font-display text-2xl text-[var(--parchment)] mb-4">The
-        Librarian's Favor</h3>
-      <p
-        class="font-ui font-light text-sm text-[var(--muted)] leading-relaxed mb-7">Complete
-        50 unique skill scrolls to unlock the legendary 'Celestial Archivist'
-        rank and permanent 2x XP boost.</p>
-      <button
-        class="btn-primary flex items-center gap-2 font-ui text-sm px-6 py-3 rounded-sm">
+      <span class="text-[11px] tracking-widest inline-block px-4 py-1.5 rounded-full bg-white/5 text-gray-400 border border-white/10 mb-5">NEXT MILESTONE</span>
+      <h3 class="font-display text-2xl text-white mb-4">{{ milestone.title|default('Next Achievement') }}</h3>
+      <p class="text-sm text-gray-500 leading-relaxed mb-7">{{ milestone.description|default('Keep practicing to unlock.') }}</p>
+
+      <div class="mb-6">
+        <div class="flex justify-between text-xs text-gray-400 mb-2">
+          <span>{{ milestone.progress_text|default('In progress') }}</span>
+          <span class="text-gold">{{ "%.0f"|format(milestone.progress|default(0)) }}%</span>
+        </div>
+        <div class="progress-track w-full h-2 rounded-full overflow-hidden">
+          <div class="progress-fill h-full rounded-full" style="width: {{ milestone.progress|default(0) }}%"></div>
+        </div>
+      </div>
+
+      <a href="{{ url_for('skills.skills') }}" class="inline-flex items-center gap-2 bg-gold hover:bg-gold-light text-black text-sm font-semibold px-6 py-3 rounded-lg transition">
         Continue the Journey
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
-          stroke="currentColor" stroke-width="2"><path
-            d="M5 12h14M13 6l6 6-6 6" /></svg>
-      </button>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
     </div>
   </div>
+  {% endif %}
 
-</main>
+</div>
+
+<!-- Toast -->
+<div id="toast"><span id="toastIcon">🔔</span><span id="toastMsg"></span></div>
 
 {% endblock %}
 
 {% block scripts %}
 <script>
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('in');
-        observer.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.1 });
+  function showToast(msg, icon='🔔') {
+    const t = document.getElementById('toast');
+    document.getElementById('toastMsg').textContent = msg;
+    document.getElementById('toastIcon').textContent = icon;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3500);
+  }
 
-  document.querySelectorAll('[data-fade]').forEach(el => observer.observe(el));
-
-  document.querySelectorAll('.pill').forEach(btn => {
-    btn.addEventListener('click', () => {
-      btn.parentElement.querySelectorAll('.pill').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-    });
-  });
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+        setTimeout(() => showToast("{{ message }}", "{% if category == 'success' %}✅{% elif category == 'error' %}❌{% else %}ℹ️{% endif %}"), 300);
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
 </script>
-
 {% endblock %}
