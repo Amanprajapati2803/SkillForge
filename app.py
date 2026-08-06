@@ -23,6 +23,7 @@ from routes.settings import setting_bp
 from routes.achievement import achievement_bp
 # from seeders.internships_seeder import seed_internships
 from flask_migrate import Migrate
+from routes.community import community_bp
 # from seeders.resources_seeder import seed_resources
 #from seeders.sessions_seeder import seed_sessionsfrom routes.community import community_bp
 

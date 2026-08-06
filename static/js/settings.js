@@ -4,28 +4,22 @@ document.querySelectorAll('[data-toggle]').forEach(sw => {
     });
 });
 
-const editModal = document.getElementById("editProfileModal");
+// const editModal = document.getElementById("editProfileModal");
 
-document.getElementById("editProfileBtn").addEventListener("click", () => {
-    editModal.classList.remove("hidden");
-});
+// document.getElementById("editProfileBtn").addEventListener("click", () => {
+//     editModal.classList.remove("hidden");
+// });
 
-document.getElementById("closeEditModal").addEventListener("click", () => {
-    editModal.classList.add("hidden");
-});
+// document.getElementById("closeEditModal").addEventListener("click", () => {
+//     editModal.classList.add("hidden");
+// });
 
 
 
 (function () {
   "use strict";
 
-  var URLS = {
-    notifications: "{{ url_for('settings.update_notifications') }}",
-    appearance: "{{ url_for('settings.update_appearance') }}",
-    password: "{{ url_for('settings.change_password') }}",
-    link: "/setting/link/",
-    unlink: "/setting/unlink/"
-  };
+  var URLS = window.SETTINGS_URLS;
 
   function toast(message, isError) {
     var stack = document.getElementById('toastStack');

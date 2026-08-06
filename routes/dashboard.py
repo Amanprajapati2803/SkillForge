@@ -180,19 +180,20 @@ def certify():
     return render_template("dashboard/certificate.html", user=user)
 
 
-@dashboard_bp.route("/community")
-def community():
-    return render_template("dashboard/community.html")
+# @dashboard_bp.route("/community")
+# def community():
+#     return render_template("dashboard/community.html")
 
 @dashboard_bp.route("/leaderboard")
 @login_required
 def leaderboard():
     users = User.query.order_by(User.xp.desc()).all()
 
-    # Assign ranks
+ # assign rank 
     for index, u in enumerate(users, start=1):
         u.rank = index
-
+        u.sect_title = get_sect_title(u.level)
+        
     top_users = users[:3]
 
     current_user_obj = next(
@@ -216,13 +217,12 @@ def leaderboard():
         next_rank = users[current_user_obj.rank - 2]
         xp_needed = max(0, next_rank.xp - current_user_obj.xp + 1)
 
-    for index, u in enumerate(users, start=1):
-        u.rank = index
-        u.sect_title = get_sect_title(u.level)
+
 
     return render_template(
         "dashboard/leaderboard.html",
         user=current_user_obj,
+        users=users,
         top_users=top_users,
         current_user=current_user_obj,
         total_users=total_users,

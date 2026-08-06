@@ -818,6 +818,17 @@ Settings
 {% endblock %}
 
 {% block scripts %}
+
+<script>
+window.SETTINGS_URLS = {
+    notifications: "{{ url_for('settings.update_notifications') }}",
+    appearance: "{{ url_for('settings.update_appearance') }}",
+    password: "{{ url_for('settings.change_password') }}",
+    link: "{{ url_for('settings.link_account', provider='') }}",
+    unlink: "{{ url_for('settings.unlink_account', provider='') }}"
+};
+</script>
+
 <script src="{{ url_for('static', filename='js/settings.js') }}"></script>
 
 {% endblock %}

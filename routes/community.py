@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session, abort,jsonify
-
+from models.user import User
 from utils.auth import login_required
 from services.community_service import (
     create_post,
@@ -16,12 +16,13 @@ community_bp = Blueprint("communities", __name__)
 @community_bp.route("/community")
 @login_required
 def community():
-
+    user = User.query.get(session["user_id"])
     posts = get_all_posts()
 
     return render_template(
         "dashboard/community.html",
-        posts=posts
+        posts=posts,
+        user=user
     )
     
 @community_bp.route("/community/create", methods=["POST"])
@@ -45,6 +46,8 @@ def create_community_post():
         category=category,
         image_url=image_url,
         attachment_url=attachment_url,
+        # image=image,
+        # attachment=attachment,
     )
 
     return redirect(url_for("communities.community"))
