@@ -1,0 +1,123 @@
+{% extends "layouts/base.html" %}
+{% block title %}{{ game.source_title }} · Learning Game{% endblock %}
+{% block styles %}
+<style>
+  .game-panel { background: linear-gradient(145deg, #141414, #191713); }
+  .choice:has(input:checked) { border-color: #e8b84b; background: rgba(232,184,75,.12); }
+  @keyframes lantern-float { 0%,100% { transform: translateY(0) } 50% { transform: translateY(-5px) } }
+  .lantern-guide { animation: lantern-float 3s ease-in-out infinite; }
+  .story-glow { background: radial-gradient(ellipse at 75% 10%,rgba(244,190,75,.2),transparent 30%),linear-gradient(135deg,#131a25,#211b2c 55%,#38291c); }
+</style>
+{% endblock %}
+{% block content %}
+<header class="h-[76px] flex items-center justify-between px-6 lg:px-10 border-b border-white/10">
+  <div>
+    <a href="{{ url_for('skills.skill_realm', skill_id=game.skill_id) }}" class="text-sm text-gray-400 hover:text-white">← {{ game.skill.name }}</a>
+    <h1 class="font-display text-xl text-yellow-300">{{ game.source_title }}</h1>
+  </div>
+  <span class="text-xs uppercase tracking-widest text-gray-500">Resource learning game</span>
+</header>
+<main class="max-w-4xl mx-auto px-5 py-8">
+  {% set learned_pct = ((progress.completed_sections / section_count) * 100)|round|int if section_count else 0 %}
+  <div class="game-panel rounded-2xl border border-white/10 p-5 sm:p-8 mb-6">
+    <div class="flex justify-between text-sm text-gray-400 mb-2">
+      <span>Learning stages</span><span>{{ progress.completed_sections }} / {{ section_count }} complete</span>
+    </div>
+    <div class="h-2 rounded-full bg-white/10 overflow-hidden"><div class="h-full bg-yellow-400" style="width: {{ learned_pct }}%"></div></div>
+    {% if progress.attempts %}
+    <p class="mt-3 text-xs text-gray-400">Quiz attempts: {{ progress.attempts }} · Best score: {{ progress.best_score }}% · {% if progress.quiz_passed %}<span class="text-green-400">Skill demonstrated</span>{% else %}<span class="text-yellow-300">70% needed to demonstrate this skill</span>{% endif %}</p>
+    {% else %}<p class="mt-3 text-xs text-gray-500">Complete all stages, then take the quiz. A score of {{ pass_score }}% records evidence for internship matching.</p>{% endif %}
+  </div>
+
+  {% if mode == 'study' %}
+  <section class="story-glow relative mb-5 overflow-hidden rounded-2xl border border-amber-200/20 p-6 sm:p-8" aria-label="Story chapter">
+    <div class="absolute right-10 top-8 h-24 w-24 rounded-full bg-amber-200/10 blur-2xl" aria-hidden="true"></div>
+    <div class="relative max-w-3xl">
+      <p class="text-[10px] font-bold uppercase tracking-[.28em] text-amber-200">{{ story.story_title }} · Chapter {{ story.chapter_number }}</p>
+      <h2 class="mt-2 font-display text-2xl text-white">{{ story.chapter_title }}</h2>
+      <p class="mt-3 text-sm leading-6 text-gray-300">{{ story.narration }}</p>
+      <div class="mt-5 inline-flex items-center gap-2 rounded-full border border-white/10 bg-black/20 px-3 py-1.5 text-xs text-gray-300"><span class="text-amber-200">✧</span> Your clue comes from <strong class="text-white">{{ story.source_title }}</strong></div>
+      {% if story.lesson_clue %}<blockquote class="mt-5 max-w-2xl rounded-xl border-l-2 border-amber-200/60 bg-black/20 px-4 py-3 text-sm italic leading-6 text-amber-50/90">“{{ story.lesson_clue }}”<footer class="mt-2 text-[10px] not-italic uppercase tracking-wider text-gray-500">A clue from your uploaded resource</footer></blockquote>{% endif %}
+      <p class="mt-4 text-xs text-amber-100/70">The adventure points to a real passage in your upload. Read the full lesson below before moving on.</p>
+    </div>
+  </section>
+
+  <section class="game-panel rounded-2xl border border-white/10 p-6 sm:p-10">
+    <div class="flex items-center justify-between mb-5">
+      <span class="text-xs uppercase tracking-widest text-yellow-300">Stage {{ section_index + 1 }} of {{ section_count }}</span>
+      {% if section_index < progress.completed_sections %}<span class="text-xs text-green-400">✓ Completed</span>{% endif %}
+    </div>
+    <h2 class="font-display text-2xl text-white mb-6">{{ section.title }}</h2>
+    <div class="whitespace-pre-wrap leading-8 text-gray-200">{{ section.body }}</div>
+    <div class="flex flex-wrap gap-3 mt-8 pt-6 border-t border-white/10">
+      {% if section_index > 0 %}<a class="rounded-lg border border-white/10 px-4 py-2 text-gray-300 hover:bg-white/5" href="{{ url_for('learning_game.play', game_id=game.id, section=section_index - 1) }}">Previous stage</a>{% endif %}
+      {% if section_index == progress.completed_sections %}
+      <form method="POST" action="{{ url_for('learning_game.complete_section', game_id=game.id, section_index=section_index) }}" class="ml-auto">
+        <button class="rounded-lg bg-yellow-400 px-5 py-2.5 font-semibold text-black hover:bg-yellow-300">I learned this · Continue →</button>
+      </form>
+      {% elif section_index + 1 < section_count %}
+      <a class="ml-auto rounded-lg bg-yellow-400 px-5 py-2.5 font-semibold text-black hover:bg-yellow-300" href="{{ url_for('learning_game.play', game_id=game.id, section=section_index + 1) }}">Next stage →</a>
+      {% endif %}
+    </div>
+  </section>
+
+  <button id="openMira" type="button" class="fixed bottom-5 right-5 z-30 flex items-center gap-2 rounded-full border border-amber-200/30 bg-[#17151b] px-4 py-3 text-sm font-semibold text-amber-100 shadow-xl shadow-black/40 hover:bg-[#25202a]" aria-controls="miraOverlay" aria-expanded="{{ 'true' if story.guide_opens else 'false' }}"><span class="lantern-guide text-xl" aria-hidden="true">🧝🏻‍♀️</span> Ask Mira</button>
+  <aside id="miraOverlay" class="{% if not story.guide_opens %}hidden{% endif %} fixed bottom-20 right-5 z-40 w-[min(22rem,calc(100vw-2.5rem))] rounded-2xl border border-amber-200/25 bg-[#17151b] p-5 shadow-2xl shadow-black/60" role="dialog" aria-label="Mira the guide" aria-live="polite">
+    <div class="flex items-start gap-3">
+      <div class="lantern-guide flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-amber-200/20 bg-amber-200/10 text-2xl" aria-hidden="true">🧝🏻‍♀️</div>
+      <div class="min-w-0"><p class="font-semibold text-amber-100">Mira · your trail guide</p><p class="mt-1 text-sm leading-6 text-gray-300">{{ story.guide_line }}</p></div>
+      <button id="closeMira" type="button" class="ml-auto rounded p-1 text-gray-400 hover:text-white" aria-label="Dismiss guide">×</button>
+    </div>
+  </aside>
+  {% else %}
+  <section class="game-panel rounded-2xl border border-white/10 p-6 sm:p-10">
+    <div class="flex flex-wrap items-start justify-between gap-4 mb-7">
+      <div><p class="text-xs uppercase tracking-widest text-yellow-300 mb-2">Final challenge</p><h2 class="font-display text-2xl text-white">Check what you learned</h2></div>
+      {% if progress.quiz_passed %}<span class="rounded-full bg-green-400/10 px-3 py-1 text-sm text-green-300">✓ Demonstrated</span>{% endif %}
+    </div>
+    {% if progress.attempts %}<p class="text-gray-400 text-sm mb-6">Best score: <strong class="text-white">{{ progress.best_score }}%</strong> · Attempts: {{ progress.attempts }}</p>{% endif %}
+    <form method="POST" action="{{ url_for('learning_game.submit_quiz', game_id=game.id) }}" class="space-y-7">
+      {% for question in questions %}
+      {% set question_index = loop.index0 %}
+      <fieldset class="border-t border-white/10 pt-5">
+        <legend class="text-sm font-semibold text-gray-300 mb-3">Question {{ loop.index }}</legend>
+        <p class="text-white leading-7 mb-4">{{ question.prompt }}</p>
+        <div class="grid sm:grid-cols-2 gap-2">
+          {% for option in question.options %}
+          <label class="choice flex items-start gap-3 border border-white/10 rounded-lg p-3 cursor-pointer hover:bg-white/5">
+            <input type="radio" name="answer_{{ question_index }}" value="{{ loop.index0 }}" required class="mt-1 accent-yellow-400">
+            <span class="text-sm text-gray-200">{{ option }}</span>
+          </label>
+          {% endfor %}
+        </div>
+      </fieldset>
+      {% endfor %}
+      <div class="flex flex-wrap justify-between gap-3 pt-3">
+        <a href="{{ url_for('learning_game.play', game_id=game.id, section=section_count - 1) }}" class="rounded-lg border border-white/10 px-4 py-2 text-gray-300 hover:bg-white/5">Review last stage</a>
+        <button class="rounded-lg bg-yellow-400 px-5 py-2.5 font-semibold text-black hover:bg-yellow-300">Submit answers</button>
+      </div>
+    </form>
+    <p class="mt-6 text-xs text-gray-500">This short quiz checks recall of the uploaded resource. It is a learning signal, not a professional certification.</p>
+  </section>
+  {% endif %}
+</main>
+{% endblock %}
+
+
+{% block scripts %}
+<script>
+  (() => {
+    const panel = document.getElementById('miraOverlay');
+    const open = document.getElementById('openMira');
+    const close = document.getElementById('closeMira');
+    if (!panel || !open) return;
+    const setOpen = (value) => {
+      panel.classList.toggle('hidden', !value);
+      open.setAttribute('aria-expanded', String(value));
+    };
+    open.addEventListener('click', () => setOpen(panel.classList.contains('hidden')));
+    close?.addEventListener('click', () => setOpen(false));
+    document.addEventListener('keydown', (event) => { if (event.key === 'Escape') setOpen(false); });
+  })();
+</script>
+{% endblock %}

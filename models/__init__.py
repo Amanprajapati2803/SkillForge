@@ -14,3 +14,4 @@ from .community_comment import CommunityComment
 from .community_like import CommunityLike
 from .community_post import CommunityPost
 from .session import Session
+from .learning_game import LearningGame, LearningGameProgress, LearningGameMatch

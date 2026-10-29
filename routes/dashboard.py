@@ -21,82 +21,54 @@ dashboard_bp = Blueprint("dashboard", __name__)
 @login_required
 def home():
     user = get_user(session["user_id"])
-    ensure_daily_challenges(user.id)
+    skills = Skill.query.filter_by(user_id=user.id).order_by(Skill.name.asc()).all()
+    from services.skill_progress import get_skill_progress
+    from models.learning_game import LearningGame, LearningGameProgress
+    from models.resources import Resource
+    from models.applied_internship import AppliedInternship
 
-    progress_percent = user.xp % 100
-    circumference = 515.2
-    dash_offset = circumference * (100 - progress_percent) / 100
-    current_rank = get_current_rank(user.xp)
-    next_rank, xp_remaining = get_next_rank(user.xp)
-    recent_activities = get_recent_activities(user.id)
+    skill_progress = get_skill_progress(user.id)
+    recent_games = (LearningGame.query.join(Skill)
+                    .filter(Skill.user_id == user.id)
+                    .order_by(LearningGame.created_at.desc()).limit(5).all())
+    progress_by_game = {
+        item.game_id: item
+        for item in LearningGameProgress.query.filter_by(user_id=user.id).all()
+    }
+    next_game = next((game for game in recent_games
+                      if len(game.sections or []) > (progress_by_game.get(game.id).completed_sections if progress_by_game.get(game.id) else 0)), None)
+    if next_game:
+        next_game_progress = progress_by_game.get(next_game.id)
+        next_action_url = url_for("learning_game.play", game_id=next_game.id)
+        next_action_label = "Continue learning"
+        completed = next_game_progress.completed_sections if next_game_progress else 0
+        next_action_detail = f"{next_game.source_title} · Stage {completed + 1} of {len(next_game.sections)}"
+    elif recent_games:
+        next_game = recent_games[0]
+        next_action_url = url_for("learning_game.play", game_id=next_game.id, mode="match")
+        next_action_label = "Play the skill challenge"
+        next_action_detail = f"Your study stages are ready for a quiz · {next_game.skill.name}"
+    elif skills:
+        next_action_url = url_for("skills.skill_realm", skill_id=skills[0].id)
+        next_action_label = "Add a learning resource"
+        next_action_detail = f"Start with {skills[0].name}"
+    else:
+        next_action_url = url_for("skills.skills")
+        next_action_label = "Add your first skill"
+        next_action_detail = "Choose a skill you want to learn"
 
-    total_skills = Skill.query.filter_by(user_id=user.id).count()
-
-    completed_sessions = (
-        LearningSession.query
-        .join(Skill)
-        .filter(Skill.user_id == user.id)
-        .count()
-    )
-
-    total_minutes = (
-        db.session.query(func.sum(LearningSession.duration))
-        .join(Skill)
-        .filter(Skill.user_id == user.id)
-        .scalar() or 0
-    )
-
-    hours = total_minutes // 60
-    minutes = total_minutes % 60
-
-    recent_sessions = (
-        LearningSession.query
-        .join(Skill)
-        .filter(Skill.user_id == user.id)
-        .order_by(LearningSession.created_at.desc())
-        .limit(3)
-        .all()
-    )
-
-    top_skills = (
-        Skill.query
-        .filter_by(user_id=user.id)
-        .order_by(Skill.xp.desc())
-        .limit(3)
-        .all()
-    )
-
-    today = datetime.now(timezone.utc).date()
-
-    daily_challenges = (
-        DailyChallenge.query
-        .filter_by(user_id=user.id)
-        .all()
-    )
-
-    daily_challenges = [
-        challenge
-        for challenge in daily_challenges
-        if challenge.created_at.date() == today
-    ]
+    recent_applications = (AppliedInternship.query.filter_by(user_id=user.id)
+                           .order_by(AppliedInternship.applied_at.desc()).limit(3).all())
+    resources_count = Resource.query.join(Skill).filter(Skill.user_id == user.id).count()
+    demonstrated_count = sum(1 for item in skill_progress.values() if item["demonstrated"])
 
     return render_template(
-        "dashboard/home.html",
-        user=user,
-        progress_percent=progress_percent,
-        dash_offset=dash_offset,
-        current_rank=current_rank,
-        next_rank=next_rank,
-        xp_remaining=xp_remaining,
-        recent_activities=recent_activities,
-        total_skills=total_skills,
-        completed_sessions=completed_sessions,
-        total_minutes=total_minutes,
-        minutes=minutes,
-        hours=hours,
-        recent_sessions=recent_sessions,
-        top_skills=top_skills,
-        daily_challenges=daily_challenges
+        "dashboard/home.html", user=user, skills=skills,
+        skill_progress=skill_progress, recent_games=recent_games,
+        game_progress_by_id=progress_by_game,
+        recent_applications=recent_applications, resources_count=resources_count,
+        demonstrated_count=demonstrated_count, next_action_url=next_action_url,
+        next_action_label=next_action_label, next_action_detail=next_action_detail,
     )
 
 
@@ -114,119 +86,19 @@ def claim_challenge(challenge_id):
 @dashboard_bp.route("/sessions")
 @login_required
 def sessions():
-    user = User.query.get(session["user_id"])
-
-    # Fetch all learning sessions for this user
-    user_skills = Skill.query.filter_by(user_id=user.id).all()
-    skill_ids = [s.id for s in user_skills]
-
-    all_sessions = []
-    if skill_ids:
-        all_sessions = (
-            LearningSession.query
-            .filter(LearningSession.skill_id.in_(skill_ids))
-            .order_by(LearningSession.created_at.desc())
-            .all()
-        )
-
-    # Categorize sessions (handle naive vs aware datetime mismatch)
-    from datetime import datetime, timedelta, timezone
-    now = datetime.now(timezone.utc)
-    today_start = now.replace(hour=0, minute=0, second=0, microsecond=0)
-
-    live_sessions = []
-    recorded_sessions = []
-
-    for s in all_sessions:
-        if not s.created_at:
-            continue
-        # Make both datetimes aware for comparison
-        session_time = s.created_at
-        if session_time.tzinfo is None:
-            session_time = session_time.replace(tzinfo=timezone.utc)
-
-        if session_time >= today_start:
-            live_sessions.append(s)
-        else:
-            recorded_sessions.append(s)
-
-    # Total stats
-    total_minutes = sum(s.duration or 0 for s in all_sessions)
-    total_xp = sum(s.xp_earned or 0 for s in all_sessions)
-
-    return render_template(
-        "dashboard/sessions.html",
-        user=user,
-        all_sessions=all_sessions,
-        live_sessions=live_sessions,
-        recorded_sessions=recorded_sessions,
-        total_minutes=total_minutes,
-        total_xp=total_xp,
-        session_count=len(all_sessions)
-    )
-
+    return redirect(url_for("dashboard.home"))
 
 @dashboard_bp.route("/rewards")
 @login_required
 def rewards():
-    user = User.query.get(session["user_id"])
-    return render_template("dashboard/rewards.html", user=user)
-
+    return redirect(url_for("dashboard.home"))
 
 @dashboard_bp.route("/certify")
 @login_required
 def certify():
-    user = User.query.get(session["user_id"])
-    return render_template("dashboard/certificate.html", user=user)
-
-
-# @dashboard_bp.route("/community")
-# def community():
-#     return render_template("dashboard/community.html")
+    return redirect(url_for("dashboard.home"))
 
 @dashboard_bp.route("/leaderboard")
 @login_required
 def leaderboard():
-    users = User.query.order_by(User.xp.desc()).all()
-
- # assign rank 
-    for index, u in enumerate(users, start=1):
-        u.rank = index
-        u.sect_title = get_sect_title(u.level)
-        
-    top_users = users[:3]
-
-    current_user_obj = next(
-        (u for u in users if u.id == session["user_id"]),
-        None
-    )
-
-    total_users = len(users)
-
-    if current_user_obj:
-        percentile = round(
-            ((total_users - current_user_obj.rank + 1) / total_users) * 100
-        )
-    else:
-        percentile = 0
-
-    next_rank = None
-    xp_needed = 0
-
-    if current_user_obj and current_user_obj.rank > 1:
-        next_rank = users[current_user_obj.rank - 2]
-        xp_needed = max(0, next_rank.xp - current_user_obj.xp + 1)
-
-
-
-    return render_template(
-        "dashboard/leaderboard.html",
-        user=current_user_obj,
-        users=users,
-        top_users=top_users,
-        current_user=current_user_obj,
-        total_users=total_users,
-        percentile=percentile,
-        next_rank=next_rank,
-        xp_needed=xp_needed
-    )
+    return redirect(url_for("dashboard.home"))

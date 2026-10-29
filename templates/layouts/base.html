@@ -40,22 +40,55 @@
 
 </head>
 
-<body class="bg-gradient-to-br from-[#08090d] via-[#11141b] to-[#171d28] text-white antialiased">
-    <!-- Sidebar -->
+<body class="bg-[#0c1110] text-gray-100 antialiased">
     {% include "partials/advsidebar.html" %}
 
+    <header class="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-white/10 bg-[#0c0f10]/95 px-4 backdrop-blur lg:hidden">
+        <button id="openSidebar" type="button" class="-ml-2 rounded-lg p-2 text-gray-200 hover:bg-white/5" aria-label="Open navigation" aria-controls="appSidebar" aria-expanded="false"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+        <a href="{{ url_for('dashboard.home') }}" class="text-sm font-bold tracking-wide text-white">Skill<span class="text-yellow-200">Forge</span></a>
+        <span class="w-8" aria-hidden="true"></span>
+    </header>
 
-    <!-- Page Content -->
-    <main class="ml-64 p-3">
+    <div class="min-h-screen ml-0 p-0 lg:ml-64 lg:p-3">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+          <div class="mx-auto max-w-7xl space-y-2 px-4 pt-4" aria-live="polite">
+            {% for category, message in messages %}
+            <div class="rounded-lg border px-4 py-3 text-sm {% if category == 'success' %}border-emerald-400/30 bg-emerald-400/10 text-emerald-100{% elif category == 'error' %}border-red-400/30 bg-red-400/10 text-red-100{% else %}border-sky-400/30 bg-sky-400/10 text-sky-100{% endif %}">{{ message }}</div>
+            {% endfor %}
+          </div>
+          {% endif %}
+        {% endwith %}
 
         {% block content %}
 
         {% endblock %}
 
-    </main>
+    </div>
 
     {% block scripts %}
     {% endblock %}
+    <script>
+      (() => {
+        const sidebar = document.getElementById('appSidebar');
+        const backdrop = document.getElementById('sidebarBackdrop');
+        const openButton = document.getElementById('openSidebar');
+        const closeButton = document.getElementById('closeSidebar');
+        if (!sidebar || !backdrop || !openButton) return;
+        const setMenuOpen = (open) => {
+          sidebar.classList.toggle('-translate-x-full', !open);
+          backdrop.classList.toggle('hidden', !open);
+          openButton.setAttribute('aria-expanded', String(open));
+          document.body.classList.toggle('overflow-hidden', open);
+        };
+        openButton.addEventListener('click', () => setMenuOpen(true));
+        closeButton?.addEventListener('click', () => setMenuOpen(false));
+        backdrop.addEventListener('click', () => setMenuOpen(false));
+        sidebar.querySelectorAll('a').forEach((link) => link.addEventListener('click', () => setMenuOpen(false)));
+        document.addEventListener('keydown', (event) => { if (event.key === 'Escape') setMenuOpen(false); });
+        window.addEventListener('resize', () => { if (window.innerWidth >= 1024) setMenuOpen(false); });
+      })();
+    </script>
 </body>
 
 </html>

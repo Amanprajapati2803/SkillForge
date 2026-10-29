@@ -1,7 +1,8 @@
-from flask import Blueprint, session, render_template, request, url_for, redirect, flash
+from flask import Blueprint, session, render_template, request, url_for, redirect, flash, send_file
 from models.skill import Skill
 from models.learning_session import LearningSession
 from models.resources import Resource
+from models.learning_game import LearningGame, LearningGameProgress
 from utils.auth import login_required
 from database.database import db
 from utils.progression import award_skill_xp, award_user_xp
@@ -11,6 +12,8 @@ from services.challenge_service import update_challenge_progress
 from utils.achievements import check_achievements
 from utils.cultivation import get_current_rank
 from datetime import datetime, timezone
+from services.skill_progress import get_skill_progress
+from utils.resource_files import resource_file_path
 
 skills_bp = Blueprint("skills", __name__)
 
@@ -34,7 +37,7 @@ def skills():
         update_challenge_progress(session["user_id"], "Skill Builder")
         unlock_achievement(session["user_id"], "First Step")
 
-        flash(f"New technique mastered: {skill_name}!", "success")
+        flash(f"Added {skill_name} to your skills.", "success")
         return redirect(url_for("skills.skills"))
 
     skills = Skill.query.filter_by(user_id=session["user_id"]).all()
@@ -43,10 +46,9 @@ def skills():
     current_rank = get_current_rank(total_xp)
     skill_count = len(skills)
 
-    top_skills = sorted(skills, key=lambda s: s.xp or 0, reverse=True)
-    top_skill = top_skills[0] if len(top_skills) > 0 else None
-    second_skill = top_skills[1] if len(top_skills) > 1 else None
-    third_skill = top_skills[2] if len(top_skills) > 2 else None
+    skill_progress = get_skill_progress(user.id)
+    game_progress = {skill_id: evidence["percent"] for skill_id, evidence in skill_progress.items()}
+
 
     return render_template(
         "dashboard/skills.html",
@@ -55,9 +57,10 @@ def skills():
         total_xp=total_xp,
         current_rank=current_rank,
         skill_count=skill_count,
-        top_skill=top_skill,
-        second_skill=second_skill,
-        third_skill=third_skill
+        game_progress=game_progress,
+        skill_progress=skill_progress,
+        resource_count=Resource.query.join(Skill).filter(Skill.user_id == user.id).count(),
+        demonstrated_count=sum(1 for item in skill_progress.values() if item["demonstrated"]),
     )
 
 
@@ -182,6 +185,10 @@ def skill_realm(skill_id):
     # FIXED: removed .order_by(Resource.created_at.desc()) since Resource has no created_at
     resources = Resource.query.filter_by(skill_id=skill.id).all()
 
+    games = LearningGame.query.filter_by(skill_id=skill.id).order_by(LearningGame.created_at.desc()).all()
+    progress_by_game = {item.game_id: item for item in LearningGameProgress.query.filter_by(user_id=user.id).all()}
+    game_progress = {game.id: progress_by_game.get(game.id) for game in games}
+
     sessions = sorted(
         skill.sessions,
         key=lambda s: s.created_at if s.created_at else datetime.min.replace(tzinfo=timezone.utc),
@@ -193,7 +200,10 @@ def skill_realm(skill_id):
         user=user,
         skill=skill,
         resources=resources,
-        sessions=sessions
+        sessions=sessions,
+        games=games,
+        game_progress=game_progress,
+        skill_learning_progress=get_skill_progress(user.id).get(skill.id, {"percent": 0, "studied": 0, "total": 0, "best_accuracy": 0, "attempts": 0, "demonstrated": False, "resources": 0}),
     )
 
 
@@ -232,6 +242,30 @@ def add_resource(skill_id):
     return redirect(url_for("skills.skill_realm", skill_id=skill.id))
 
 
+@skills_bp.route("/resources/<int:resource_id>/download")
+@login_required
+def download_resource(resource_id):
+    resource = Resource.query.get_or_404(resource_id)
+    Skill.query.filter_by(id=resource.skill_id, user_id=session["user_id"]).first_or_404()
+    if resource.storage_key:
+        path = resource_file_path(resource.storage_key)
+        if not path:
+            flash("The saved file is missing from storage.", "error")
+            return redirect(url_for("skills.skill_realm", skill_id=resource.skill_id))
+        return send_file(path, as_attachment=True, download_name=resource.original_filename or resource.title)
+    if resource.source_post_id:
+        from models.community_post import CommunityPost
+        post = CommunityPost.query.get(resource.source_post_id)
+        if post and post.attachment_url:
+            return redirect(url_for("communities.download_attachment", post_id=post.id))
+        if post and post.external_url:
+            return redirect(post.external_url)
+    if resource.url and resource.url != "#":
+        return redirect(resource.url)
+    flash("This resource has no file or link to open.", "error")
+    return redirect(url_for("skills.skill_realm", skill_id=resource.skill_id))
+
+
 @skills_bp.route("/resources/<int:resource_id>/delete", methods=["POST"])
 @login_required
 def delete_resource(resource_id):
@@ -240,8 +274,13 @@ def delete_resource(resource_id):
         id=resource.skill_id, user_id=session["user_id"]
     ).first_or_404()
 
+    storage_key = resource.storage_key
     db.session.delete(resource)
     db.session.commit()
+    if storage_key:
+        path = resource_file_path(storage_key)
+        if path:
+            path.unlink(missing_ok=True)
     flash("Resource removed from archive.", "info")
     return redirect(url_for("skills.skill_realm", skill_id=skill.id))
 

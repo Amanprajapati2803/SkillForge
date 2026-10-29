@@ -1,465 +1,86 @@
 {% extends "layouts/base.html" %}
-
-{% block title %}Dashboard{% endblock %}
-
-{% block styles %}
-<style>
-  body { background-color: #0A0A0A; font-family: 'Inter', sans-serif; }
-  .font-serif { font-family: 'Playfair Display', serif; }
-  ::-webkit-scrollbar { width: 8px; }
-  ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
-
-  /* Progress bars */
-  .progress-track { background-color: #262626; }
-  .progress-fill { background: linear-gradient(90deg, #22c55e, #E8B84B); }
-
-  /* Card styling fallback */
-  .card {
-    background: linear-gradient(145deg, #161616, #1a1a1a);
-    border: 1px solid #2A2A2A;
-  }
-
-  /* Ritual modal */
-  #ritualModal {
-    backdrop-filter: blur(8px);
-  }
-  .ritual-skill-btn {
-    transition: all 0.2s ease;
-  }
-  .ritual-skill-btn:hover {
-    transform: translateX(4px);
-    border-color: #E8B84B;
-  }
-
-  /* Notification dropdown */
-  #notifDropdown {
-    transform-origin: top right;
-    transition: opacity 0.2s, transform 0.2s;
-  }
-  .hidden-dropdown {
-    opacity: 0;
-    transform: scale(0.95);
-    pointer-events: none;
-  }
-  .visible-dropdown {
-    opacity: 1;
-    transform: scale(1);
-    pointer-events: auto;
-  }
-</style>
-{% endblock %}
-
+{% block title %}Home · SkillForge{% endblock %}
 {% block content %}
-
-<!-- ==================== TOP HEADER ==================== -->
-<header class="sticky top-0 z-40 bg-[#0c0a08]/95 backdrop-blur-md border-b border-[var(--hairline)]">
-  <div class="h-[76px] flex items-center justify-between px-6 lg:px-10">
-    <h1 class="font-display text-2xl text-[var(--gold-bright)]">Home</h1>
-    <div class="flex items-center gap-5">
-      <!-- Notification Bell -->
-      <div class="relative">
-        <button id="notifBtn" class="text-gray-400 hover:text-white relative transition-colors">
-          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
-          </svg>
-          <span id="notifDot" class="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full {% if not daily_challenges %}hidden{% endif %}"></span>
-        </button>
-        <!-- Notification Dropdown -->
-        <div id="notifDropdown" class="hidden-dropdown absolute right-0 mt-3 w-72 bg-[#161616] border border-[#2A2A2A] rounded-lg shadow-2xl z-50 p-4">
-          <p class="text-xs tracking-widest text-gray-500 mb-3">NOTIFICATIONS</p>
-          {% if daily_challenges %}
-            {% for challenge in daily_challenges %}
-              {% if not challenge.completed %}
-              <div class="flex items-start gap-3 mb-3 pb-3 border-b border-[#2A2A2A] last:border-0 last:mb-0 last:pb-0">
-                <span class="text-gold text-lg">🎯</span>
-                <div>
-                  <p class="text-sm text-white font-medium">{{ challenge.title }}</p>
-                  <p class="text-xs text-gray-400">Complete your daily quest!</p>
-                </div>
-              </div>
-              {% endif %}
-            {% endfor %}
-          {% else %}
-            <p class="text-sm text-gray-500">No new notifications</p>
-          {% endif %}
-        </div>
-      </div>
-
-      <!-- Streak Badge -->
-      <div class="flex items-center gap-1.5 border border-gold/50 rounded-full px-3 py-1 text-gold text-xs font-medium">
-        <span>🔥</span> <span id="streakCount">{{ user.streak or 12 }}</span> Day Streak
-      </div>
-
-      <!-- User Name -->
-      <span class="text-sm text-gray-200 hidden sm:block">{{ user.name }}</span>
-
-      <!-- Avatar -->
-      <a href="{{ url_for('setting_bp.settings') if setting_bp else '#' }}" class="w-9 h-9 rounded-full border-2 border-gold overflow-hidden bg-gray-700 hover:opacity-80 transition cursor-pointer">
-        <img src="https://api.dicebear.com/7.x/adventurer/svg?seed={{ user.name }}" class="w-full h-full object-cover" alt="{{ user.name }}">
-      </a>
-    </div>
-  </div>
-</header>
-
-<!-- ==================== MAIN CONTENT ==================== -->
-<div class="px-6 lg:px-10 py-8">
-
-  <!-- Title Row -->
-  <div class="flex flex-col sm:flex-row items-start justify-between mb-8 gap-4">
+<main class="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-9 lg:px-8">
+  <header class="mb-6 flex flex-wrap items-end justify-between gap-4 sm:mb-8">
     <div>
-      <p class="text-xs tracking-widest text-gray-500 mb-2">MORNING, DISCIPLE {{ user.name|upper }}</p>
-      <h2 class="font-serif text-4xl lg:text-5xl font-bold text-white">Forge Your Path</h2>
+      <p class="text-xs font-semibold uppercase tracking-[.2em] text-emerald-300">Your learning workspace</p>
+      <h1 class="mt-2 text-3xl font-bold tracking-tight text-white sm:text-4xl">Welcome back, {{ user.name }}</h1>
+      <p class="mt-2 max-w-2xl text-sm leading-6 text-gray-400">Learn from your own resources, build evidence for each skill, and use it to find relevant internships.</p>
     </div>
-    <button onclick="openRitualModal()" class="flex items-center gap-2 bg-gold hover:bg-gold-light text-black font-semibold px-5 py-3 rounded-md text-sm transition-all hover:scale-105 active:scale-95 shadow-lg shadow-gold/20">
-      <span>✨</span> Commence Daily Ritual
-    </button>
-  </div>
+    <a href="{{ url_for('skills.skills') }}" class="hidden rounded-xl border border-white/10 px-4 py-2.5 text-sm font-medium text-gray-200 transition hover:border-yellow-300/40 hover:bg-white/5 sm:inline-flex">Manage skills</a>
+  </header>
 
-  <!-- ==================== ROW 1: ESSENCE + SCROLLS ==================== -->
-  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-
-    <!-- Cultivation Essence -->
-    <div class="lg:col-span-2 bg-panel border border-panelborder rounded-lg p-6 lg:p-8 flex flex-col sm:flex-row items-center gap-8 relative overflow-hidden">
-      <!-- Progress Ring -->
-      <div class="relative w-[160px] h-[160px] lg:w-[190px] lg:h-[190px] shrink-0">
-        <svg class="w-full h-full -rotate-90" viewBox="0 0 190 190">
-          <circle cx="95" cy="95" r="82" fill="none" stroke="#262626" stroke-width="14"/>
-          <circle cx="95" cy="95" r="82" fill="none" stroke="#E8B84B" stroke-width="14"
-            stroke-dasharray="515.2" stroke-dashoffset="{{ dash_offset }}" stroke-linecap="round"/>
-        </svg>
-        <div class="absolute inset-0 flex flex-col items-center justify-center">
-          <span class="font-serif text-3xl lg:text-4xl font-bold text-white">{{ progress_percent }}%</span>
-          <span class="text-xs tracking-widest text-gray-400 mt-1">Level {{ user.level }}</span>
-        </div>
+  <section class="relative overflow-hidden rounded-3xl border border-yellow-300/20 bg-gradient-to-br from-[#272012] via-[#191914] to-[#111a18] p-5 sm:p-8">
+    <div aria-hidden="true" class="pointer-events-none absolute -right-16 -top-20 h-64 w-64 rounded-full bg-yellow-300/10 blur-3xl"></div>
+    <div class="relative grid gap-7 lg:grid-cols-[1fr_auto] lg:items-center">
+      <div>
+        <span class="inline-flex items-center gap-2 rounded-full border border-emerald-200/20 bg-emerald-200/5 px-3 py-1.5 text-xs font-medium text-emerald-100"><span class="h-1.5 w-1.5 rounded-full bg-emerald-300"></span>Your next step</span>
+        <h2 class="mt-4 max-w-2xl text-2xl font-bold text-white sm:text-3xl">{{ next_action_label }}</h2>
+        <p class="mt-2 text-sm text-gray-300">{{ next_action_detail }}</p>
+        <a href="{{ next_action_url }}" class="mt-6 inline-flex items-center gap-2 rounded-xl bg-yellow-300 px-5 py-3 text-sm font-bold text-[#17130a] shadow-lg shadow-yellow-300/10 transition hover:-translate-y-0.5 hover:bg-yellow-200">{{ next_action_label }} <span aria-hidden="true">→</span></a>
       </div>
-
-      <div class="flex-1 text-center sm:text-left">
-        <h3 class="font-serif text-2xl font-semibold text-white mb-2">Cultivation Essence</h3>
-        <p class="text-gray-400 text-sm mb-6 max-w-sm mx-auto sm:mx-0">
-          You are <span class="text-white font-semibold">{{ xp_remaining }}</span> XP away from the 
-          <span class="text-gold">{{ next_rank }}</span> rank.
-        </p>
-        <div class="flex justify-center sm:justify-start gap-0">
-          <div class="pr-6 lg:pr-8">
-            <p class="text-xs tracking-widest text-gray-500 mb-1 flex items-center justify-center sm:justify-start gap-1">🔥 STREAK</p>
-            <p class="font-serif text-2xl font-bold text-white">{{ user.streak or 12 }} Days</p>
-          </div>
-          <div class="pl-6 lg:pl-8 border-l border-panelborder">
-            <p class="text-xs tracking-widest text-gray-500 mb-1 flex items-center justify-center sm:justify-start gap-1">🏅 RANK</p>
-            <p class="font-serif text-2xl font-bold text-white">{{ current_rank }}</p>
-          </div>
-        </div>
+      <div class="grid grid-cols-3 gap-2 text-center lg:w-[300px]">
+        <div class="rounded-xl border border-white/10 bg-black/20 p-3"><span class="block text-lg">🎯</span><span class="mt-2 block text-[10px] font-semibold uppercase tracking-wide text-gray-300">Choose skill</span></div>
+        <div class="rounded-xl border border-white/10 bg-black/20 p-3"><span class="block text-lg">📚</span><span class="mt-2 block text-[10px] font-semibold uppercase tracking-wide text-gray-300">Learn resource</span></div>
+        <div class="rounded-xl border border-white/10 bg-black/20 p-3"><span class="block text-lg">⚔️</span><span class="mt-2 block text-[10px] font-semibold uppercase tracking-wide text-gray-300">Show evidence</span></div>
       </div>
-
-      <!-- Decorative Sun -->
-      <svg class="absolute right-4 top-6 w-14 h-14 lg:w-16 lg:h-16 text-gray-800" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-        <circle cx="12" cy="12" r="4"/>
-        <path stroke-linecap="round" d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
-      </svg>
     </div>
+  </section>
 
-    <!-- Sect Scrolls -->
-    <div class="bg-panel border border-panelborder rounded-lg p-6">
-      <div class="flex items-center justify-between mb-4">
-        <h3 class="font-serif text-xl font-semibold text-white">Sect Scrolls</h3>
-        <svg class="w-4 h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-        </svg>
-      </div>
-      <div class="space-y-4">
-        <div>
-          <p class="text-[10px] tracking-widest text-gold mb-1">NEW EVENT</p>
-          <p class="text-sm font-semibold text-white mb-0.5">The Grand Tournament Begins</p>
-          <p class="text-xs text-gray-500">Register before the next moon cycle...</p>
-        </div>
-        <hr class="border-panelborder">
-        <div>
-          <p class="text-[10px] tracking-widest text-green-500 mb-1">TECHNIQUE UPDATE</p>
-          <p class="text-sm font-semibold text-white mb-0.5">Advanced Algorithm Scripts</p>
-          <p class="text-xs text-gray-500">New modules added to the Back-end...</p>
-        </div>
-        <hr class="border-panelborder">
-        <div>
-          <p class="text-[10px] tracking-widest text-red-400 mb-1">MAINTENANCE</p>
-          <p class="text-sm font-semibold text-white mb-0.5">Cloud Pillar Calibration</p>
-          <p class="text-xs text-gray-500">System meditation for 2 hours...</p>
-        </div>
-      </div>
-      <button onclick="showToast('📜 Sect Scrolls updated! Stay tuned for more events.')" class="inline-flex items-center gap-1 text-sm text-gray-300 hover:text-white mt-5 transition-colors cursor-pointer bg-transparent border-none">
-        Read All Scrolls <span>→</span>
-      </button>
+  <section aria-label="Learning summary" class="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-3">
+    <article class="rounded-2xl border border-white/10 bg-[#15171a] p-4 sm:p-5"><p class="text-xs font-medium text-gray-400">Skills in your plan</p><p class="mt-2 text-3xl font-bold text-white">{{ skills|length }}</p><p class="mt-1 text-xs text-gray-500">Skills you’ve chosen to learn</p></article>
+    <article class="rounded-2xl border border-white/10 bg-[#15171a] p-4 sm:p-5"><p class="text-xs font-medium text-gray-400">Learning resources</p><p class="mt-2 text-3xl font-bold text-white">{{ resources_count }}</p><p class="mt-1 text-xs text-gray-500">Saved across your skill libraries</p></article>
+    <article class="rounded-2xl border border-white/10 bg-[#15171a] p-4 sm:p-5"><p class="text-xs font-medium text-gray-400">Skills with quiz evidence</p><p class="mt-2 text-3xl font-bold text-emerald-200">{{ demonstrated_count }}</p><p class="mt-1 text-xs text-gray-500">At least one resource game passed</p></article>
+  </section>
+
+  <section class="mt-9">
+    <div class="mb-4 flex flex-wrap items-end justify-between gap-3">
+      <div><h2 class="text-xl font-bold text-white">Your skills</h2><p class="mt-1 text-sm text-gray-500">Study completion and quiz evidence are shown separately.</p></div>
+      <a href="{{ url_for('skills.skills') }}" class="text-sm font-medium text-yellow-200 hover:text-yellow-100">See all skills →</a>
     </div>
-  </div>
-
-  <!-- ==================== DAILY QUESTS ==================== -->
-  <div class="card rounded-lg p-6 mb-8 fade-up">
-    <h2 class="font-display text-xl text-[var(--gold-bright)] mb-5">🎯 Daily Quests</h2>
-
-    {% if daily_challenges %}
-      {% for challenge in daily_challenges %}
-      <div class="mb-5 last:mb-0">
-        <div class="flex justify-between items-center mb-2">
-          <div>
-            <h3 class="font-ui text-[var(--parchment)] font-medium">{{ challenge.title }}</h3>
-            <p class="text-xs text-[var(--muted)]">{{ challenge.description }}</p>
-          </div>
-          <span class="text-sm text-[var(--gold)] font-mono">{{ challenge.progress }}/{{ challenge.target }}</span>
+    {% if skills %}
+    <div class="grid gap-3 md:grid-cols-2">
+      {% for skill in skills %}
+      {% set evidence = skill_progress.get(skill.id) %}
+      <article class="rounded-2xl border border-white/10 bg-[#15171a] p-4 transition hover:border-white/20 sm:p-5">
+        <div class="flex items-start justify-between gap-4">
+          <div><h3 class="font-semibold text-white">{{ skill.name }}</h3><p class="mt-1 text-xs text-gray-500">{{ evidence.studied }} of {{ evidence.total }} study stages complete</p></div>
+          <span class="rounded-lg bg-yellow-300/10 px-2.5 py-1 text-sm font-bold text-yellow-100">{{ evidence.percent }}%</span>
         </div>
-        <div class="progress-track w-full h-2 rounded-full overflow-hidden">
-          <div class="progress-fill h-full rounded-full transition-all duration-500" style="width: {{ (challenge.progress / challenge.target * 100) if challenge.target else 0 }}%;"></div>
+        <div class="mt-3 h-2 overflow-hidden rounded-full bg-white/10" role="progressbar" aria-label="{{ skill.name }} study progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ evidence.percent }}"><div class="h-full rounded-full bg-gradient-to-r from-emerald-400 to-yellow-300 transition-all" style="width:{{ evidence.percent }}%"></div></div>
+        <div class="mt-4 flex flex-wrap items-center justify-between gap-2">
+          <span class="text-xs {% if evidence.demonstrated %}text-emerald-300{% elif evidence.attempts %}text-yellow-200{% else %}text-gray-500{% endif %}">{% if evidence.demonstrated %}Quiz passed · best {{ evidence.best_accuracy }}%{% elif evidence.attempts %}Best quiz result {{ evidence.best_accuracy }}% · 70% to pass{% else %}Quiz evidence not recorded yet{% endif %}</span>
+          <a href="{{ url_for('skills.skill_realm', skill_id=skill.id) }}" class="text-sm font-medium text-gray-200 hover:text-yellow-100">Open skill →</a>
         </div>
-        <div class="flex justify-between mt-2">
-          <span class="text-xs text-[var(--jade)]">+{{ challenge.xp_reward }} XP</span>
-          {% if challenge.completed and not challenge.claimed %}
-          <form action="{{ url_for('dashboard.claim_challenge', challenge_id=challenge.id) }}" method="POST" class="m-0">
-            <button type="submit" class="text-xs bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded transition-colors cursor-pointer border-none">
-              Claim +{{ challenge.xp_reward }} XP
-            </button>
-          </form>
-          {% elif challenge.claimed %}
-          <span class="text-green-400 text-xs font-medium">✅ Reward Claimed</span>
-          {% else %}
-          <span class="text-yellow-400 text-xs font-medium">In Progress</span>
-          {% endif %}
-        </div>
-      </div>
+      </article>
       {% endfor %}
+    </div>
     {% else %}
-      <p class="text-[var(--muted)]">No daily quests available. Check back tomorrow!</p>
+    <div class="rounded-2xl border border-dashed border-white/15 bg-white/[.02] p-7 text-center sm:p-10"><div class="text-3xl">🎯</div><h3 class="mt-3 font-semibold text-white">Start with one skill</h3><p class="mx-auto mt-2 max-w-md text-sm text-gray-400">Add a skill you want to improve. Then save your notes to it and learn through a short game.</p><a href="{{ url_for('skills.skills') }}" class="mt-5 inline-flex rounded-lg bg-yellow-300 px-4 py-2.5 text-sm font-semibold text-black hover:bg-yellow-200">Add your first skill</a></div>
     {% endif %}
-  </div>
+    <p class="mt-3 text-xs leading-5 text-gray-600">Study percentage counts completed stages across your resource games. Passing a quiz records learning evidence; it is not a professional certification.</p>
+  </section>
 
-  <!-- ==================== ACTIVE TECHNIQUES ==================== -->
-  <div class="flex items-end justify-between mb-4">
-    <div>
-      <h3 class="font-serif text-2xl font-semibold text-white">Active Techniques</h3>
-      <p class="text-gray-500 text-sm mt-1">Continue your path to mastery.</p>
-    </div>
-    <a href="{{ url_for('skills.skills') }}" class="text-sm text-gray-300 hover:text-white transition-colors">View All Skills →</a>
-  </div>
-
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-    {% if top_skills %}
-      {% for skill in top_skills %}
-      <div class="bg-panel border border-panelborder rounded-lg p-6 hover:border-gold/30 transition-all cursor-pointer group"
-           onclick="window.location.href='{{ url_for('skills.skill_realm', skill_id=skill.id) }}'">
-        <div class="flex justify-between items-center mb-5">
-          <h4 class="font-serif text-xl font-semibold text-white group-hover:text-gold transition-colors">{{ skill.name }}</h4>
-          <span class="text-gold font-semibold">Lv. {{ skill.level or 1 }}</span>
-        </div>
-        <p class="text-gray-400 text-sm mb-4">{{ skill.xp or 0 }} XP Earned</p>
-        <div class="flex justify-between text-xs text-gray-400 mb-2">
-          <span>Mastery</span>
-          <span>{{ (skill.xp or 0) % 100 }}%</span>
-        </div>
-        <div class="h-2 bg-[#262626] rounded-full overflow-hidden">
-          <div class="h-full bg-gradient-to-r from-green-500 to-gold rounded-full transition-all duration-500" style="width: {{ (skill.xp or 0) % 100 }}%;"></div>
-        </div>
+  <section class="mt-9 grid gap-4 lg:grid-cols-2">
+    <article class="rounded-2xl border border-white/10 bg-[#15171a] p-5 sm:p-6">
+      <div class="flex items-start justify-between gap-3"><div><h2 class="font-bold text-white">Recent learning games</h2><p class="mt-1 text-xs text-gray-500">Pick up where you left off</p></div><a href="{{ url_for('skills.skills') }}" class="text-sm text-yellow-200 hover:text-yellow-100">Browse skills →</a></div>
+      <div class="mt-4 space-y-2">
+        {% for game in recent_games[:4] %}
+        {% set gp = game_progress_by_id.get(game.id) %}
+        {% set pct = ((gp.completed_sections / (game.sections|length)) * 100)|round|int if gp and game.sections else 0 %}
+        <a href="{{ url_for('learning_game.play', game_id=game.id) }}" class="flex items-center justify-between gap-3 rounded-xl border border-white/5 bg-white/[.025] p-3 transition hover:border-white/15 hover:bg-white/[.05]"><div class="min-w-0 flex-1"><p class="truncate text-sm font-medium text-white">{{ game.source_title }}</p><p class="mt-1 text-xs text-gray-500">{{ game.skill.name }} · {{ pct }}% of stages studied</p></div><span class="shrink-0 text-xs text-yellow-100">{% if pct >= 100 %}Challenge →{% elif pct %}Continue →{% else %}Start →{% endif %}</span></a>
+        {% else %}<p class="rounded-xl bg-white/[.025] p-4 text-sm leading-6 text-gray-400">Your learning games will appear here after you add notes to a skill.</p>{% endfor %}
       </div>
-      {% endfor %}
-    {% else %}
-      <div class="md:col-span-2 lg:col-span-3 bg-panel border border-panelborder rounded-lg p-8 text-center">
-        <p class="text-gray-500 mb-3">No skills created yet. Begin your journey by creating your first technique.</p>
-        <a href="{{ url_for('skills.skills') }}" class="inline-flex items-center gap-2 bg-gold hover:bg-gold-light text-black font-semibold px-4 py-2 rounded text-sm transition-all">
-          <span>⚔️</span> Create Skill
-        </a>
+    </article>
+    <article class="rounded-2xl border border-white/10 bg-[#15171a] p-5 sm:p-6">
+      <div class="flex items-start justify-between gap-3"><div><h2 class="font-bold text-white">Internships and applications</h2><p class="mt-1 text-xs text-gray-500">Use skill evidence to find a relevant next step</p></div><a href="{{ url_for('internship.interns') }}" class="text-sm text-yellow-200 hover:text-yellow-100">Explore internships →</a></div>
+      <div class="mt-4 space-y-2">
+        {% for application in recent_applications %}<div class="rounded-xl border border-white/5 bg-white/[.025] p-3"><p class="text-sm font-medium text-white">{{ application.internship.title }}</p><p class="mt-1 text-xs text-gray-500">{{ application.internship.company }} · {{ application.status }}</p></div>
+        {% else %}<p class="rounded-xl bg-white/[.025] p-4 text-sm leading-6 text-gray-400">You haven’t tracked an application yet. Internship matches explain which skills you already demonstrate and which you can build next.</p>{% endfor %}
       </div>
-    {% endif %}
-  </div>
-
-  <!-- ==================== RECENT ACTIVITIES ==================== -->
-  <div class="bg-panel border border-panelborder rounded-lg p-6 mb-6">
-    <h3 class="font-serif text-xl font-semibold text-white mb-5">Recent Activities</h3>
-    {% if recent_activities %}
-      <div class="space-y-4">
-        {% for activity in recent_activities %}
-        <div class="flex items-center justify-between border-b border-panelborder pb-3 last:border-0 last:pb-0">
-          <div>
-            <p class="text-white font-medium">{{ activity.description }}</p>
-            <p class="text-xs text-gray-500 mt-0.5">{{ activity.created_at.strftime("%d %b %Y %I:%M %p") }}</p>
-          </div>
-          <span class="text-gold text-sm font-semibold">+{{ activity.xp_earned }} XP</span>
-        </div>
-        {% endfor %}
-      </div>
-    {% else %}
-      <p class="text-gray-500">No activities yet. Start practicing to see your progress!</p>
-    {% endif %}
-  </div>
-
-  <!-- ==================== RECENT LEARNING SESSIONS ==================== -->
-  <div class="bg-panel border border-panelborder rounded-lg p-6 mb-8">
-    <div class="flex items-center justify-between mb-5">
-      <h3 class="font-serif text-xl font-semibold text-white">Recent Learning Sessions</h3>
-      <a href="{{ url_for('skills.skills') }}" class="text-xs text-gold hover:text-gold-light transition-colors">Start New →</a>
-    </div>
-    {% if recent_sessions %}
-      <div class="space-y-3">
-        {% for session in recent_sessions %}
-        <div class="flex items-center justify-between border-b border-panelborder py-3 last:border-0">
-          <div class="flex items-center gap-4">
-            <div class="w-10 h-10 rounded-full bg-gold/10 flex items-center justify-center text-gold text-lg">📖</div>
-            <div>
-              <h4 class="text-white font-semibold">{{ session.title }}</h4>
-              <p class="text-gray-400 text-sm">{{ session.skill.name }} • {{ session.duration }} mins</p>
-            </div>
-          </div>
-          <span class="text-green-400 text-sm font-semibold">+{{ session.xp_earned }} XP</span>
-        </div>
-        {% endfor %}
-      </div>
-    {% else %}
-      <div class="text-center py-6">
-        <p class="text-gray-500 mb-3">No learning sessions yet.</p>
-        <button onclick="openRitualModal()" class="text-xs bg-gold/10 hover:bg-gold/20 text-gold px-4 py-2 rounded transition-colors border border-gold/30">
-          Start Your First Session
-        </button>
-      </div>
-    {% endif %}
-  </div>
-
-  <!-- ==================== FOOTER ==================== -->
-  <footer class="border-t border-panelborder py-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-    <div class="flex items-center gap-4">
-      <span class="font-serif text-lg font-semibold text-gray-400">SkillForge</span>
-      <span class="text-gray-600">|</span>
-      <span class="text-xs tracking-widest text-gray-500">THE PATH IS ETERNAL</span>
-    </div>
-    <div class="flex items-center gap-6 text-xs tracking-widest text-gray-500">
-      <button onclick="showToast('📜 Sect Laws: Work hard, stay humble.')" class="hover:text-white transition-colors bg-transparent border-none cursor-pointer">SECT LAWS</button>
-      <button onclick="showToast('📚 Grand Library coming in v2.0')" class="hover:text-white transition-colors bg-transparent border-none cursor-pointer">GRAND LIBRARY</button>
-      <button onclick="showToast('📨 Message the Elders at elders@skillforge.com')" class="hover:text-white transition-colors bg-transparent border-none cursor-pointer">CONTACT ELDERS</button>
-    </div>
-  </footer>
-
-</div>
-
-<!-- ==================== DAILY RITUAL MODAL ==================== -->
-<div id="ritualModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/60">
-  <div class="bg-[#161616] border border-[#2A2A2A] rounded-xl p-6 w-full max-w-md mx-4 shadow-2xl transform transition-all">
-    <div class="flex items-center justify-between mb-6">
-      <h3 class="font-serif text-xl text-gold">✨ Commence Daily Ritual</h3>
-      <button onclick="closeRitualModal()" class="text-gray-400 hover:text-white text-2xl leading-none">&times;</button>
-    </div>
-    <p class="text-gray-400 text-sm mb-4">Select a technique to focus on:</p>
-
-    {% if top_skills %}
-      <div class="space-y-2 mb-6">
-        {% for skill in top_skills %}
-        <form action="{{ url_for('learning_session.add_session', skill_id=skill.id) }}" method="POST" class="m-0">
-          <input type="hidden" name="title" value="Daily Ritual: {{ skill.name }}">
-          <input type="hidden" name="duration" value="25">
-          <input type="hidden" name="notes" value="Focused practice session started from dashboard">
-          <button type="submit" class="ritual-skill-btn w-full text-left bg-[#1a1a1a] border border-[#2A2A2A] rounded-lg p-4 flex items-center justify-between group cursor-pointer">
-            <div>
-              <p class="text-white font-medium group-hover:text-gold transition-colors">{{ skill.name }}</p>
-              <p class="text-xs text-gray-500">Level {{ skill.level or 1 }} • {{ skill.xp or 0 }} XP</p>
-            </div>
-            <span class="text-gold opacity-0 group-hover:opacity-100 transition-opacity">Start →</span>
-          </button>
-        </form>
-        {% endfor %}
-      </div>
-    {% else %}
-      <div class="text-center py-4 mb-4">
-        <p class="text-gray-500 text-sm mb-3">No skills found. Create one first!</p>
-        <a href="{{ url_for('skills.skills') }}" class="inline-block text-sm bg-gold hover:bg-gold-light text-black font-semibold px-4 py-2 rounded transition-colors">
-          Create Skill
-        </a>
-      </div>
-    {% endif %}
-
-    <div class="border-t border-[#2A2A2A] pt-4">
-      <p class="text-xs text-gray-500 text-center">Each ritual grants XP based on focus time. Stay consistent to maintain your streak!</p>
-    </div>
-  </div>
-</div>
-
-<!-- Toast Notification -->
-<div id="toast" class="fixed bottom-6 right-6 bg-[#161616] border border-gold/30 text-white px-4 py-3 rounded-lg shadow-2xl transform translate-y-20 opacity-0 transition-all duration-300 z-50 flex items-center gap-2">
-  <span id="toastIcon">🔔</span>
-  <span id="toastMsg">Notification</span>
-</div>
-
-{% endblock %}
-
-{% block scripts %}
-<script>
-  // Tailwind config
-  tailwind.config = {
-    theme: {
-      extend: {
-        fontFamily: {
-          serif: ['"Playfair Display"', 'serif'],
-          sans: ['Inter', 'sans-serif'],
-        },
-        colors: {
-          gold: {
-            DEFAULT: '#E8B84B',
-            light: '#F0C868',
-          },
-          panel: '#161616',
-          panelborder: '#2A2A2A',
-        }
-      }
-    }
-  }
-
-  // Notification dropdown
-  const notifBtn = document.getElementById('notifBtn');
-  const notifDropdown = document.getElementById('notifDropdown');
-  let notifOpen = false;
-
-  notifBtn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    notifOpen = !notifOpen;
-    notifDropdown.className = notifOpen 
-      ? 'visible-dropdown absolute right-0 mt-3 w-72 bg-[#161616] border border-[#2A2A2A] rounded-lg shadow-2xl z-50 p-4'
-      : 'hidden-dropdown absolute right-0 mt-3 w-72 bg-[#161616] border border-[#2A2A2A] rounded-lg shadow-2xl z-50 p-4';
-  });
-
-  document.addEventListener('click', () => {
-    if (notifOpen) {
-      notifOpen = false;
-      notifDropdown.className = 'hidden-dropdown absolute right-0 mt-3 w-72 bg-[#161616] border border-[#2A2A2A] rounded-lg shadow-2xl z-50 p-4';
-    }
-  });
-
-  // Ritual Modal
-  function openRitualModal() {
-    document.getElementById('ritualModal').classList.remove('hidden');
-    document.getElementById('ritualModal').classList.add('flex');
-  }
-
-  function closeRitualModal() {
-    document.getElementById('ritualModal').classList.add('hidden');
-    document.getElementById('ritualModal').classList.remove('flex');
-  }
-
-  document.getElementById('ritualModal').addEventListener('click', (e) => {
-    if (e.target === document.getElementById('ritualModal')) closeRitualModal();
-  });
-
-  // Toast system
-  function showToast(message, icon = '🔔') {
-    const toast = document.getElementById('toast');
-    document.getElementById('toastMsg').textContent = message;
-    document.getElementById('toastIcon').textContent = icon;
-    toast.classList.remove('translate-y-20', 'opacity-0');
-    toast.classList.add('translate-y-0', 'opacity-100');
-    setTimeout(() => {
-      toast.classList.add('translate-y-20', 'opacity-0');
-      toast.classList.remove('translate-y-0', 'opacity-100');
-    }, 3000);
-  }
-
-  // Show flash messages as toasts
-  {% with messages = get_flashed_messages() %}
-    {% if messages %}
-      {% for message in messages %}
-        setTimeout(() => showToast("{{ message }}", "✨"), 500);
-      {% endfor %}
-    {% endif %}
-  {% endwith %}
-</script>
+      <a href="{{ url_for('communities.community') }}" class="mt-5 inline-flex items-center gap-2 text-sm font-medium text-emerald-200 hover:text-emerald-100">Explore community learning resources <span aria-hidden="true">→</span></a>
+    </article>
+  </section>
+</main>
 {% endblock %}

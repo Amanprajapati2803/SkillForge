@@ -1,0 +1,57 @@
+{% extends "layouts/base.html" %}
+{% block title %}Tug-of-War · {{ game.source_title }}{% endblock %}
+{% block styles %}
+<style>
+  .lobby-panel { background: radial-gradient(circle at 50% 0%, rgba(232,184,75,.13), transparent 42%), linear-gradient(145deg,#141414,#191713); }
+  .rope-line { height: 8px; background: repeating-linear-gradient(90deg,#c59447 0 10px,#8a5e2b 10px 20px); border-radius: 999px; }
+  .rope-knot { width: 22px; height: 22px; border: 4px solid #f7d675; background: #bb493f; border-radius: 50%; }
+</style>
+{% endblock %}
+{% block content %}
+<header class="h-[76px] flex items-center justify-between px-6 lg:px-10 border-b border-white/10">
+  <div>
+    <a href="{{ url_for('skills.skill_realm', skill_id=game.skill_id) }}" class="text-sm text-gray-400 hover:text-white">← {{ game.skill.name }}</a>
+    <h1 class="font-display text-xl text-yellow-300">{{ game.source_title }}</h1>
+  </div>
+  <span class="text-xs uppercase tracking-widest text-gray-500">Computer arena</span>
+</header>
+<main class="max-w-4xl mx-auto px-5 py-8">
+  <section class="lobby-panel rounded-2xl border border-yellow-500/20 p-6 sm:p-10">
+    <p class="text-xs uppercase tracking-[0.25em] text-yellow-300">Final challenge</p>
+    <h2 class="mt-2 font-display text-3xl text-white">Tug-of-War Quiz</h2>
+    <p class="mt-3 max-w-2xl text-sm leading-6 text-gray-400">Race the computer through one question at a time. Choose the right answer before the opponent or before the 12-second timer ends to pull the rope your way.</p>
+
+    <div class="my-9 rounded-2xl border border-white/10 bg-black/25 p-6">
+      <div class="mb-3 flex justify-between text-3xl"><span>🧑‍🎓</span><span>🤖</span></div>
+      <div class="relative px-2">
+        <div class="rope-line"></div>
+        <div class="rope-knot absolute top-1/2 -translate-x-1/2 -translate-y-1/2" style="left:50%"></div>
+      </div>
+      <div class="mt-3 flex justify-between text-xs uppercase tracking-widest text-gray-500"><span>You</span><span>Computer</span></div>
+    </div>
+
+    {% if progress.attempts %}
+    <div class="mb-6 rounded-xl border border-white/10 bg-black/20 p-4 text-sm text-gray-300">
+      Best match accuracy: <strong class="text-white">{{ progress.best_score }}%</strong>
+      {% if progress.quiz_passed %}<span class="ml-2 text-green-300">✓ Skill demonstrated</span>{% else %}<span class="ml-2 text-yellow-200">{{ pass_score }}% needed to demonstrate this skill</span>{% endif %}
+    </div>
+    {% endif %}
+
+    <form action="{{ url_for('learning_game.start_match', game_id=game.id) }}" method="POST" class="flex flex-col sm:flex-row sm:items-end gap-3">
+      <label class="flex-1 text-xs text-gray-400">Computer difficulty
+        <select name="difficulty" class="mt-2 w-full rounded-lg border border-white/10 bg-[#0d0d0d] px-3 py-3 text-sm text-white">
+          <option value="easy">Easy · slower answers</option>
+          <option value="medium" selected>Medium · balanced</option>
+          <option value="hard">Hard · faster and more accurate</option>
+        </select>
+      </label>
+      <button class="rounded-lg bg-yellow-400 px-6 py-3 font-semibold text-black hover:bg-yellow-300">Start tug-of-war →</button>
+    </form>
+    <p class="mt-4 text-xs text-gray-500">Each right answer pulls one step. The first side to reach the edge wins. Get {{ pass_score }}% accuracy to record evidence for internship matching.</p>
+  </section>
+
+  {% if latest_match and latest_match.status == 'completed' %}
+  <p class="mt-5 text-center text-sm text-gray-400">Last match: {{ latest_match.player_correct }} correct · {{ latest_match.rounds|length }} rounds · {% if latest_match.rope_position > 0 %}You won{% elif latest_match.rope_position < 0 %}Computer won{% else %}Draw{% endif %}</p>
+  {% endif %}
+</main>
+{% endblock %}

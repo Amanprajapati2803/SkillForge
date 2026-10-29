@@ -15,9 +15,15 @@ class CommunityPost(db.Model):
 
     category = db.Column(db.String(50), nullable=False)
 
+    skill_name = db.Column(db.String(100), nullable=True, index=True)
+
     image_url = db.Column(db.String(255))
 
-    attachment_url = db.Column(db.String(255))
+    attachment_url = db.Column(db.String(255))  # private stored filename
+
+    attachment_name = db.Column(db.String(255))  # original filename shown to learners
+
+    external_url = db.Column(db.String(1000))
 
     is_pinned = db.Column(db.Boolean, default=False)
 

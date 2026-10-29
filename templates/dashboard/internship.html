@@ -1,6 +1,6 @@
 {% extends "layouts/base.html" %}
 
-{% block title %}Dashboard{% endblock %}
+{% block title %}Internship matches · SkillForge{% endblock %}
 
 {% block styles %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/internship.css') }}">
@@ -41,8 +41,8 @@ html { scroll-behavior: smooth; }
     transition: opacity .25s ease, transform .25s ease;
     z-index: 100;
     padding: 20px;
-    background: #16120F;
-    border: 1px solid #5C4A2F;
+    background: #151a18;
+    border: 1px solid rgba(255,255,255,.12);
     border-radius: 8px;
     box-shadow: 0 10px 30px rgba(0,0,0,.45);
 }
@@ -57,9 +57,9 @@ html { scroll-behavior: smooth; }
     margin-top: 8px;
     margin-bottom: 16px;
     padding: 10px;
-    background: #0F0C09;
-    border: 1px solid #8C6B2A;
-    color: #E7D9B7;
+    background: #111715;
+    border: 1px solid rgba(255,255,255,.12);
+    color: #f1f4f2;
     border-radius: 6px;
 }
 
@@ -103,132 +103,101 @@ html { scroll-behavior: smooth; }
 {% endblock %}
 
 {% block content %}
-<!-- TOP BAR -->
-<header class="top-0 z-40 bg-[#0c0a08]/95 backdrop-blur-md border-b border-[var(--hairline)]">
-  <div class="h-[76px] flex items-center justify-between px-6 lg:px-10">
-    <h1 class="font-display text-2xl text-[var(--gold-bright)]">Internships</h1>
-    <div class="flex items-center gap-5">
-      <div class="tag flex items-center gap-2 font-ui text-xs px-4 py-2 rounded-full">
-        <button class="text-gray-400 hover:text-white">
-            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-            </svg>
-        </button>
-        <div class="flex items-center gap-1.5 border border-gold/50 rounded-full px-3 py-1 text-gold text-xs font-medium">
-            <span>🔥</span> {{ user.streak or 0 }} Day Streak
-        </div>
-        <span class="text-sm text-gray-200">{{ user.name }}</span>
-        <div class="w-9 h-9 rounded-full border-2 border-gold overflow-hidden bg-gray-700">
-            {% if user.avatar and user.avatar != "default-avatar.png" %}
-                <img src="{{ user.avatar }}" class="w-full h-full object-cover" alt="{{ user.name }}">
-            {% else %}
-                <img src="https://api.dicebear.com/7.x/adventurer/svg?seed={{ user.name }}" class="w-full h-full object-cover" alt="{{ user.name }}">
-            {% endif %}
-        </div>
-      </div>
-    </div>
+<!-- Page heading -->
+<header class="mx-auto flex max-w-7xl flex-wrap items-end justify-between gap-4 px-4 pt-7 sm:px-6 lg:px-8">
+  <div>
+    <p class="text-xs font-semibold uppercase tracking-[.18em] text-emerald-300">Career next steps</p>
+    <h1 class="mt-2 text-3xl font-bold tracking-tight text-white sm:text-4xl">Internship matches</h1>
+    <p class="mt-2 max-w-2xl text-sm leading-6 text-gray-400">Explore opportunities matched to the skills you’re building and the learning evidence you’ve earned.</p>
   </div>
+  <a href="{{ url_for('internship.applications') }}" class="inline-flex rounded-xl border border-white/10 px-4 py-2.5 text-sm font-medium text-gray-200 transition hover:border-yellow-300/40 hover:bg-white/5">My applications</a>
 </header>
 
-<main class="px-6 lg:px-10 py-10 max-w-[1500px]">
+<main class="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
 
-  <!-- Hero banner -->
-  <div class="hero-banner fade-up rounded-sm p-10 md:p-12 relative overflow-hidden mb-8" data-fade>
-    <img src="https://images.unsplash.com/photo-1614850523060-8da1d56ae167?q=80&w=800&auto=format&fit=crop"
-      alt="Ancient scroll" class="hidden md:block absolute right-8 top-1/2 -translate-y-1/2 w-64 h-64 object-cover opacity-40 rounded-sm">
-    <div class="relative max-w-xl">
-      <span class="font-ui text-xs tracking-[0.25em] text-[var(--gold)]">SECT INVITATIONS</span>
-      <h2 class="font-display text-4xl md:text-[42px] text-[var(--parchment)] leading-tight mt-4 mb-5">
-        Forge Your Future in the Startup Sects
-      </h2>
-      <p class="font-ui font-light text-[15px] text-[var(--muted)] leading-relaxed mb-8">
-        Great Sects are seeking disciples of high talent. Your cultivation path has led you here. Will you answer the Recruitment Scrolls?
-      </p>
-      <div class="flex flex-wrap gap-4">
-        <button class="btn-primary font-ui text-xs tracking-widest px-7 py-3.5 rounded-sm">
-          OPEN ALL SCROLLS
-        </button>
-        <a href="{{ url_for('internship.applications') }}" class="btn-secondary font-ui text-xs tracking-widest px-7 py-3.5 rounded-sm">
-          TRACK APPLICATION QI
-        </a>
+  <!-- Intro banner -->
+  <section class="relative mb-6 overflow-hidden rounded-3xl border border-yellow-200/15 bg-gradient-to-br from-[#242319] via-[#191d1a] to-[#111816] p-6 sm:p-8">
+    <div aria-hidden="true" class="pointer-events-none absolute -right-12 -top-16 h-56 w-56 rounded-full bg-yellow-200/10 blur-3xl"></div>
+    <div class="relative max-w-2xl">
+      <p class="text-xs font-semibold uppercase tracking-[.18em] text-yellow-200">Recommended for your path</p>
+      <h2 class="mt-2 text-2xl font-bold tracking-tight text-white sm:text-3xl">Find a role that fits what you know</h2>
+      <p class="mt-2 text-sm leading-6 text-gray-300">Compare required skills with your study progress and quiz evidence. Save roles you apply to so you can track each next step.</p>
+      <div class="mt-5 flex flex-wrap gap-3">
+        <a href="#internship-listings" class="inline-flex rounded-xl bg-yellow-300 px-4 py-2.5 text-sm font-semibold text-[#17130a] hover:bg-yellow-200">Browse opportunities <span class="ml-2" aria-hidden="true">↓</span></a>
+        <a href="{{ url_for('internship.applications') }}" class="inline-flex rounded-xl border border-white/15 px-4 py-2.5 text-sm font-medium text-white hover:bg-white/5">Track applications</a>
       </div>
     </div>
-  </div>
+  </section>
 
   <!-- Summary -->
-  <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-    <div class="card">
-      <p class="text-gray-400 text-sm">Recruitment Scrolls</p>
+  <section aria-label="Internship match summary" class="mb-7 grid grid-cols-2 gap-3 sm:grid-cols-4">
+    <div class="card rounded-2xl border border-white/10 bg-[#151a18] p-4 sm:p-5">
+      <p class="text-xs font-medium text-gray-400">Open listings</p>
       <h2 class="text-3xl font-bold">{{ total_scrolls }}</h2>
     </div>
-    <div class="card">
-      <p class="text-gray-400 text-sm">Legendary Matches</p>
+    <div class="card rounded-2xl border border-white/10 bg-[#151a18] p-4 sm:p-5">
+      <p class="text-xs font-medium text-gray-400">90%+ skill matches</p>
       <h2 class="text-3xl font-bold">{{ legendary_matches }}</h2>
     </div>
-    <div class="card">
-      <p class="text-gray-400 text-sm">Epic Matches</p>
+    <div class="card rounded-2xl border border-white/10 bg-[#151a18] p-4 sm:p-5">
+      <p class="text-xs font-medium text-gray-400">75%+ skill matches</p>
       <h2 class="text-3xl font-bold">{{ epic_matches }}</h2>
     </div>
-    <div class="card">
-      <p class="text-gray-400 text-sm">Average Match</p>
+    <div class="card rounded-2xl border border-white/10 bg-[#151a18] p-4 sm:p-5">
+      <p class="text-xs font-medium text-gray-400">Average skill match</p>
       <h2 class="text-3xl font-bold">{{ average_match }}%</h2>
     </div>
-  </div>
+  </section>
 
-  <!-- Progress + rank -->
-  <div class="grid lg:grid-cols-[1fr_320px] gap-6 mb-14">
-    <div class="card fade-up rounded-sm p-8" data-fade>
-      <span class="font-ui text-xs tracking-[0.2em] text-[var(--gold)] mb-6 block">CULTIVATION PROGRESS</span>
+  <!-- Progress and matching guide -->
+  <div class="mb-10 grid gap-4 lg:grid-cols-[minmax(0,1fr)_300px]">
+    <div class="card fade-up rounded-2xl border border-white/10 bg-[#151a18] p-5 sm:p-6" data-fade>
+      <span class="mb-5 block text-xs font-semibold uppercase tracking-[.18em] text-yellow-200">Your learning evidence</span>
 
       {% if has_skills %}
         {% for skill in skill_progress %}
         <div class="mb-6">
           <div class="flex items-center justify-between mb-2.5">
             <span class="font-ui text-[15px] text-[var(--parchment)]">{{ skill.name }}</span>
-            <span class="font-ui text-sm text-[var(--gold-bright)]">{{ skill.pct }}% Mastery</span>
+            <span class="font-ui text-sm text-[var(--gold-bright)]">{{ skill.pct }}% of learning stages complete</span>
           </div>
           <div class="progress-track w-full h-2 rounded-full overflow-hidden">
             <div class="progress-fill h-full rounded-full" style="width: {{ skill.pct }}%"></div>
           </div>
+          <p class="mt-1 text-xs text-[var(--muted)]">{% if skill.demonstrated %}Quiz passed · demonstrated{% else %}Study stages and pass a quiz to demonstrate this skill{% endif %}</p>
         </div>
         {% endfor %}
         <p class="font-ui font-light italic text-sm text-[var(--muted)]">
-          Matching with {{ total_scrolls }} Sects based on current attainment levels.
+          Study progress counts completed material stages. Match percentages count only required skills demonstrated by a passed resource game; they are evidence, not certification.
         </p>
       {% else %}
         <div class="text-center py-8 empty-cta rounded-sm">
-          <p class="text-[var(--muted)] font-ui text-sm mb-4">No cultivation arts recorded yet.</p>
+          <p class="text-[var(--muted)] font-ui text-sm mb-4">Add a skill to see your matches.</p>
           <a href="{{ url_for('skills.skills') }}" class="btn-primary font-ui text-xs tracking-widest px-6 py-2.5 rounded-sm inline-block">
-            BEGIN CULTIVATION
+            Add a skill
           </a>
         </div>
       {% endif %}
     </div>
 
-    <div class="rank-card fade-up rounded-sm p-8 flex flex-col items-center text-center effect2" data-fade>
-      <div class="w-14 h-14 rounded-full border-2 border-[var(--gold)] flex items-center justify-center mb-5">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--gold-bright)" stroke-width="1.6">
-          <circle cx="12" cy="8" r="6" />
-          <path d="M8.5 13.5L7 22l5-3 5 3-1.5-8.5" />
-        </svg>
-      </div>
-      <h3 class="font-display text-xl text-[var(--gold-bright)] mb-3">Sect Disciple Rank</h3>
-      <p class="font-ui font-light text-sm text-[var(--parchment)]/80 leading-relaxed mb-6">
-        Your current rank is recognized by top-tier startup sects.
+    <div class="rank-card fade-up flex flex-col rounded-2xl border border-white/10 bg-[#151a18] p-5 sm:p-6" data-fade>
+      <div class="mb-4 flex h-11 w-11 items-center justify-center rounded-xl border border-yellow-200/20 bg-yellow-200/[.06] text-xl text-yellow-100" aria-hidden="true">✓</div>
+      <h3 class="text-lg font-semibold tracking-tight text-white">How matching works</h3>
+      <p class="text-sm leading-6 text-gray-400">
+        Study progress shows what you’ve completed. A passed resource quiz counts as demonstrated evidence when an internship requires that skill.
       </p>
-      <button class="btn-primary font-ui text-xs tracking-widest px-7 py-3 rounded-sm w-full">VIEW RANK</button>
     </div>
   </div>
 
-  <!-- Active recruitment scrolls -->
-  <div class="fade-up flex items-center justify-between mb-8" data-fade>
-    <h2 class="font-display text-2xl text-[var(--parchment)]">Active Recruitment Scrolls</h2>
-    <div class="flex items-center gap-3">
+  <!-- Internship results -->
+  <div id="internship-listings" class="fade-up mb-5 flex flex-wrap items-end justify-between gap-4" data-fade>
+    <div><h2 class="text-xl font-bold tracking-tight text-white">Current opportunities</h2><p class="mt-1 text-sm text-gray-500">Sort through roles using your skills and preferred work mode.</p></div>
+    <div class="flex w-full flex-wrap items-center gap-2 sm:w-auto sm:gap-3">
       <div id="searchContainer" class="search-container">
         <form action="{{ url_for('internship.interns') }}" method="GET" id="searchForm">
           <input id="searchInput" type="text" name="search" placeholder="Search internships..."
             value="{{ filter_search }}"
-            class="w-full bg-[#16120F] border border-[#8C6B2A] rounded px-4 py-2 text-white focus:outline-none">
+            class="w-full rounded-xl border border-white/10 bg-[#111715] px-4 py-2.5 text-sm text-white placeholder:text-gray-500 focus:border-yellow-200/40 focus:outline-none">
         </form>
       </div>
       <button aria-label="Search" id="searchBtn" class="icon-btn w-10 h-10 flex items-center justify-center rounded-sm text-[var(--muted)]">
@@ -255,7 +224,7 @@ html { scroll-behavior: smooth; }
               <option value="On-site" {% if filter_type == "On-site" %}selected{% endif %}>On-site</option>
             </select>
 
-            <label class="text-xs text-[var(--muted)] uppercase tracking-wider">Minimum Resonance</label>
+            <label class="text-xs text-[var(--muted)] uppercase tracking-wider">Minimum skill match</label>
             <select name="match" class="filter-select">
               <option value="" {% if filter_match == "" %}selected{% endif %}>Any Match</option>
               <option value="25" {% if filter_match == "25" %}selected{% endif %}>25%+</option>
@@ -273,11 +242,11 @@ html { scroll-behavior: smooth; }
     </div>
   </div>
 
-  <!-- Scrolls Grid -->
-  <div class="grid md:grid-cols-2 gap-6">
+  <!-- Opportunity cards -->
+  <div class="grid gap-4 md:grid-cols-2">
     {% if recommendations %}
       {% for item in recommendations %}
-      <div class="card job-card fade-up rounded-sm p-7 flex flex-col" data-fade>
+      <div class="card job-card fade-up flex flex-col rounded-2xl border border-white/10 bg-[#151a18] p-5 sm:p-6" data-fade>
         <div class="flex items-start justify-between mb-6">
           <div class="flex items-center gap-4">
             <div class="icon-frame w-12 h-12 rounded-sm flex items-center justify-center flex-shrink-0">
@@ -287,13 +256,13 @@ html { scroll-behavior: smooth; }
               </svg>
             </div>
             <div>
-              <h3 class="font-display text-lg text-[var(--parchment)]">{{ item.internship.company }}</h3>
-              <span class="font-ui text-sm text-[var(--gold)]">{{ item.internship.title }}</span>
+              <h3 class="text-base font-semibold text-white">{{ item.internship.company }}</h3>
+              <span class="text-sm text-gray-400">{{ item.internship.title }}</span>
             </div>
           </div>
           <div class="text-right flex-shrink-0">
-            <div class="font-display text-2xl text-[var(--jade)]">{{ item.match_percentage }}%</div>
-            <div class="font-ui text-[10px] tracking-widest text-[var(--muted)]">{{ item.match_rank }}</div>
+            <div class="text-2xl font-bold text-emerald-200">{{ item.match_percentage }}%</div>
+            <div class="text-[10px] font-semibold uppercase tracking-wider text-gray-500">skill match</div>
           </div>
         </div>
 
@@ -302,16 +271,30 @@ html { scroll-behavior: smooth; }
         </p>
 
         {% if item.matched_skills %}
-        <div class="flex flex-wrap gap-2 mb-4">
+        <div class="mb-4">
+          <p class="text-xs text-green-300/80 mb-2 uppercase tracking-wider">Demonstrated skills</p>
+          <div class="flex flex-wrap gap-2">
           {% for skill in item.matched_skills %}
           <span class="tag font-ui text-xs px-3 py-1.5 rounded-sm">{{ skill }}</span>
           {% endfor %}
+          </div>
+        </div>
+        {% endif %}
+
+        {% if item.developing_skills %}
+        <div class="mb-4">
+          <p class="text-xs text-yellow-200/70 mb-2 uppercase tracking-wider">Added to your skills · not demonstrated yet</p>
+          <div class="flex flex-wrap gap-2">
+            {% for skill in item.developing_skills %}
+            <span class="tag font-ui text-xs px-3 py-1.5 rounded-sm">{{ skill }}</span>
+            {% endfor %}
+          </div>
         </div>
         {% endif %}
 
         {% if item.missing_skills %}
         <div class="mb-6">
-          <p class="text-xs text-[var(--muted)] mb-2 uppercase tracking-wider">Missing Techniques</p>
+          <p class="text-xs text-[var(--muted)] mb-2 uppercase tracking-wider">Skills still needed</p>
           <div class="flex flex-wrap gap-2">
             {% for skill in item.missing_skills %}
             <span class="tag font-ui text-xs px-3 py-1.5 rounded-sm opacity-50">{{ skill }}</span>
@@ -328,10 +311,9 @@ html { scroll-behavior: smooth; }
             </svg>
             {{ item.internship.internship_type }}
           </span>
-          <a href="{{ url_for('internship.apply_internship', internship_id=item.internship.id) }}"
-             class="btn-primary font-ui text-xs tracking-widest px-6 py-3 rounded-sm">
-            Accept Scroll
-          </a>
+          <form action="{{ url_for('internship.apply_internship', internship_id=item.internship.id) }}" method="POST" target="_blank">
+            <button class="btn-primary font-ui text-xs tracking-widest px-6 py-3 rounded-sm" type="submit">Track & open application</button>
+          </form>
         </div>
       </div>
       {% endfor %}
@@ -343,21 +325,21 @@ html { scroll-behavior: smooth; }
             <path d="M3.27 6.96L12 12.01l8.73-5.05M12 22.08V12" />
           </svg>
         </div>
-        <h2 class="text-3xl font-display text-[#E7D9B7] mb-3">No Recruitment Scrolls Found</h2>
+        <h2 class="text-3xl font-display text-[#E7D9B7] mb-3">No internship listings found</h2>
         <p class="text-[#B8A88A] max-w-md mx-auto mb-8">
           {% if filter_search or filter_type or filter_match %}
-            Adjust your search filters to discover more sects seeking disciples.
+            Adjust your search filters to see more opportunities.
           {% else %}
-            The scrolls are currently sealed. Return later when new sects open their gates.
+            No opportunities match these filters right now. Try again later.
           {% endif %}
         </p>
         {% if filter_search or filter_type or filter_match %}
         <a href="{{ url_for('internship.interns') }}" class="btn-primary font-ui text-xs tracking-widest px-7 py-3 rounded-sm inline-block">
-          Clear Filters
+          Clear filters
         </a>
         {% else %}
         <a href="{{ url_for('skills.skills') }}" class="btn-secondary font-ui text-xs tracking-widest px-7 py-3 rounded-sm inline-block">
-          Cultivate New Skills
+          Add a skill
         </a>
         {% endif %}
       </div>

@@ -1,29 +1,38 @@
   :root {
-      --ink: #0c0a08;
-      --panel: #15110d;
-      --panel-2: #1c1712;
+      --ink: #0c1110;
+      --panel: #141a18;
+      --panel-2: #1a211f;
       --gold: #d9b46a;
+      --gold-soft: #d9b46a;
       --gold-bright: #f0d999;
-      --jade: #5a8f6e;
-      --rose: #d98a8a;
-      --parchment: #efe6d4;
-      --muted: #a89a84;
-      --hairline: #2c2419;
+      --jade: #72b99a;
+      --rose: #e69a9a;
+      --parchment: #f1f4f2;
+      --muted: #a1aca7;
+      --hairline: rgba(255,255,255,.1);
   }
+
+  html { scroll-behavior: smooth; scroll-padding-top: 1.5rem; }
 
   body {
       background: var(--ink);
       color: var(--parchment);
-      font-family: 'Noto Serif', serif;
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
   }
 
-  .font-display {
-      font-family: 'Cinzel', serif;
+  input, select, textarea, button { font: inherit; }
+  button, a { -webkit-tap-highlight-color: transparent; }
+  :focus-visible { outline: 2px solid var(--gold-bright); outline-offset: 3px; }
+  ::selection { background: rgba(217,180,106,.3); color: #fff; }
+
+  .font-display, .font-ui {
+      font-family: 'Inter', sans-serif;
   }
 
-  .font-ui {
-      font-family: 'Jost', sans-serif;
-  }
+  .font-display { letter-spacing: -.025em; }
 
   .card {
       background: var(--panel);
@@ -126,4 +135,8 @@
   ::-webkit-scrollbar-thumb {
       background: var(--hairline);
       border-radius: 4px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
   }

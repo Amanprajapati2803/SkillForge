@@ -27,58 +27,92 @@
 
 {% block content %}
 
-<!-- ==================== HEADER ==================== -->
-<header class="sticky top-0 z-40 bg-[#0c0a08]/95 backdrop-blur-md border-b border-[var(--hairline)]">
-  <div class="h-[76px] flex items-center justify-between px-6 lg:px-10">
-    <div class="flex items-center gap-4">
-      <a href="{{ url_for('skills.skills') }}" class="text-gray-400 hover:text-white transition">
-        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
-      </a>
-      <h1 class="font-display text-2xl text-[var(--gold-bright)]">{{ skill.name }} Realm</h1>
-    </div>
-    <div class="flex items-center gap-5">
-      <div class="flex items-center gap-1.5 border border-gold/50 rounded-full px-3 py-1 text-gold text-xs font-medium">
-        <span>🔥</span> {{ user.streak or 0 }} Day Streak
-      </div>
-      <span class="text-sm text-gray-200 hidden sm:block">{{ user.name }}</span>
-      <div class="w-9 h-9 rounded-full border-2 border-gold overflow-hidden bg-gray-700">
-        <img src="https://api.dicebear.com/7.x/adventurer/svg?seed={{ user.name }}" class="w-full h-full object-cover" alt="{{ user.name }}">
-      </div>
-    </div>
+<!-- Page heading -->
+<header class="mx-auto flex max-w-7xl flex-wrap items-end justify-between gap-4 px-4 pt-7 sm:px-6 lg:px-8">
+  <div>
+    <a href="{{ url_for('skills.skills') }}" class="text-sm font-medium text-gray-400 hover:text-white">← My skills</a>
+    <h1 class="mt-2 text-3xl font-bold tracking-tight text-white sm:text-4xl">{{ skill.name }}</h1>
+    <p class="mt-2 text-sm text-gray-400">Your learning path · {{ resources|length }} resource{{ 's' if resources|length != 1 else '' }}</p>
   </div>
+  <span class="rounded-full border border-emerald-200/15 bg-emerald-200/[.04] px-3 py-1.5 text-xs text-emerald-100">{{ skill_learning_progress.percent }}% study progress</span>
 </header>
 
-<div class="px-6 lg:px-10 py-8 max-w-7xl mx-auto">
+<div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
 
   <!-- Skill Stats Banner -->
-  <div class="bg-[#141414] border border-white/5 rounded-xl p-6 mb-8 flex flex-col md:flex-row items-center justify-between gap-4">
+  <div class="bg-[#141414] border border-white/5 rounded-xl p-6 mb-5 flex flex-col md:flex-row items-center justify-between gap-4">
     <div class="flex items-center gap-4">
       <div class="w-14 h-14 rounded-xl bg-yellow-400/10 border border-yellow-400/30 flex items-center justify-center text-2xl font-bold text-yellow-400">
         {{ skill.name[:2]|upper }}
       </div>
       <div>
-        <h2 class="text-xl font-bold text-white">{{ skill.name }}</h2>
-        <p class="text-sm text-gray-400">Level {{ skill.level or 1 }} • {{ skill.xp or 0 }} XP • {{ sessions|length }} Sessions</p>
+        <h2 class="text-xl font-bold text-white">Your learning overview</h2>
+        <p class="text-sm text-gray-400">Study, checkpoints, and shared resources in one place.</p>
       </div>
-    </div>
-    <div class="flex items-center gap-3">
-      <form action="{{ url_for('skills.add_skill_xp', skill_id=skill.id) }}" method="POST" class="m-0">
-        <button type="submit" class="bg-green-600 hover:bg-green-500 text-white font-semibold px-4 py-2 rounded-lg transition active:scale-95">
-          +10 XP
-        </button>
-      </form>
-      <button onclick="openSessionModal()" class="bg-blue-600 hover:bg-blue-500 text-white font-semibold px-4 py-2 rounded-lg transition active:scale-95">
-        + Add Session
-      </button>
     </div>
   </div>
 
+
+  <nav aria-label="Skill page sections" class="mb-6 flex gap-2 overflow-x-auto pb-1 text-sm">
+    <a href="#skill-progress" class="shrink-0 rounded-full border border-white/10 px-4 py-2 text-gray-300 hover:border-yellow-300/50 hover:text-yellow-200">Progress</a>
+    <a href="#add-resource" class="shrink-0 rounded-full border border-white/10 px-4 py-2 text-gray-300 hover:border-yellow-300/50 hover:text-yellow-200">Add resource</a>
+    {% if games %}<a href="#learning-games" class="shrink-0 rounded-full border border-white/10 px-4 py-2 text-gray-300 hover:border-yellow-300/50 hover:text-yellow-200">Your games</a>{% endif %}
+    <a href="#resource-library" class="shrink-0 rounded-full border border-white/10 px-4 py-2 text-gray-300 hover:border-yellow-300/50 hover:text-yellow-200">Resource library</a>
+  </nav>
+
+  <section id="skill-progress" class="scroll-mt-28 mb-8 grid gap-4 sm:grid-cols-3">
+    <div class="rounded-xl border border-white/10 bg-[#141414] p-5"><p class="text-xs uppercase tracking-wider text-gray-500">Study progress</p><p class="mt-2 text-2xl font-bold text-white">{{ skill_learning_progress.percent }}%</p><p class="mt-1 text-xs text-gray-500">{{ skill_learning_progress.studied }} of {{ skill_learning_progress.total }} stages completed across {{ skill_learning_progress.resources }} game resource(s)</p><div class="mt-3 h-1.5 overflow-hidden rounded bg-white/10"><div class="h-full bg-yellow-400" style="width:{{ skill_learning_progress.percent }}%"></div></div></div>
+    <div class="rounded-xl border border-white/10 bg-[#141414] p-5"><p class="text-xs uppercase tracking-wider text-gray-500">Quiz evidence</p><p class="mt-2 text-2xl font-bold {% if skill_learning_progress.demonstrated %}text-green-300{% else %}text-gray-200{% endif %}">{% if skill_learning_progress.demonstrated %}Demonstrated{% else %}Not yet demonstrated{% endif %}</p><p class="mt-1 text-xs text-gray-500">{% if skill_learning_progress.attempts %}Best accuracy {{ skill_learning_progress.best_accuracy }}% over {{ skill_learning_progress.attempts }} attempts{% else %}Pass a resource game with at least 70% accuracy{% endif %}</p></div>
+    <div class="rounded-xl border border-white/10 bg-[#141414] p-5"><p class="text-xs uppercase tracking-wider text-gray-500">Next step</p><p class="mt-2 text-sm font-semibold text-white">{% if not skill_learning_progress.total %}Add a learning resource{% elif skill_learning_progress.percent < 100 %}Continue the next study stage{% elif not skill_learning_progress.demonstrated %}Play the tug-of-war challenge{% else %}Review a resource or improve your score{% endif %}</p><p class="mt-1 text-xs text-gray-500">Progress is based on your uploaded material, not XP.</p></div>
+  </section>
+
+  <!-- ==================== RESOURCE TO GAME ==================== -->
+  <section id="add-resource" class="scroll-mt-28 mb-10 rounded-2xl border border-yellow-500/20 bg-[#141414] p-6 sm:p-8">
+    <div class="mb-5">
+      <p class="text-xs uppercase tracking-[0.25em] text-yellow-300">Learn by playing</p>
+      <h2 class="mt-2 text-2xl font-bold text-white">Turn a resource into a learning game</h2>
+      <p class="mt-2 max-w-3xl text-sm leading-6 text-gray-400">Upload notes or a text-based PDF. SkillForge splits the material into short study stages and makes a review quiz from its sentences. Read each stage, then pass the quiz to record evidence for this skill.</p>
+    </div>
+    <form action="{{ url_for('learning_game.upload_resource', skill_id=skill.id) }}" method="POST" enctype="multipart/form-data" class="grid gap-3 md:grid-cols-[1fr_1.4fr_auto] md:items-end">
+      <label class="text-xs text-gray-400">Resource title (optional)
+        <input name="title" maxlength="180" placeholder="e.g. Python functions notes" class="mt-2 w-full rounded-lg border border-white/10 bg-[#0d0d0d] px-3 py-2.5 text-sm text-white">
+      </label>
+      <label class="text-xs text-gray-400">Choose a file · TXT, Markdown, or PDF · up to 10 MB
+        <input type="file" name="material" accept=".txt,.md,.markdown,.pdf" required class="mt-2 block w-full rounded-lg border border-white/10 bg-[#0d0d0d] px-3 py-2 text-sm text-gray-200 file:mr-3 file:rounded-md file:border-0 file:bg-yellow-400 file:px-3 file:py-2 file:font-semibold file:text-black">
+      </label>
+      <button type="submit" class="rounded-lg bg-yellow-400 px-5 py-2.5 font-semibold text-black hover:bg-yellow-300">Build game</button>
+    </form>
+    {% if games %}
+    <div id="learning-games" class="scroll-mt-28 mt-7 border-t border-white/10 pt-6">
+      <h3 class="mb-4 text-lg font-semibold text-white">Your learning games</h3>
+      <div class="grid gap-3 md:grid-cols-2">
+        {% for game in games %}
+        {% set gp = game_progress.get(game.id) %}
+        {% set pct = ((gp.completed_sections / (game.sections|length)) * 100)|round|int if gp and game.sections else 0 %}
+        <article class="rounded-xl border border-white/10 bg-black/20 p-4">
+          <div class="flex items-start justify-between gap-3">
+            <div><h4 class="font-semibold text-white">{{ game.source_title }}</h4><p class="mt-1 text-xs text-gray-500">{{ game.sections|length }} stages · {{ game.questions|length }} tug-of-war rounds</p></div>
+            {% if gp and gp.quiz_passed %}<span class="text-xs text-green-400">✓ Skill demonstrated</span>{% endif %}
+          </div>
+          <div class="mt-4 flex items-center justify-between text-xs text-gray-400"><span>{{ pct }}% of stages studied</span>{% if gp and gp.attempts %}<span>Best accuracy: {{ gp.best_score }}%</span>{% endif %}</div>
+          <div class="mt-2 h-1.5 overflow-hidden rounded-full bg-white/10"><div class="h-full bg-yellow-400" style="width: {{ pct }}%"></div></div>
+          <div class="mt-4 flex items-center justify-between">
+            <a href="{{ url_for('learning_game.play', game_id=game.id) }}" class="rounded-lg bg-white/10 px-4 py-2 text-sm text-white hover:bg-white/15">{% if pct >= 100 %}Battle computer{% elif pct %}Continue learning{% else %}Start learning{% endif %}</a>
+            <form action="{{ url_for('learning_game.delete_game', game_id=game.id) }}" method="POST" onsubmit="return confirm('Delete this learning game and its progress?')"><button class="px-3 py-2 text-xs text-gray-500 hover:text-red-300">Remove</button></form>
+          </div>
+        </article>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+  </section>
+
   <!-- ==================== LEARNING RESOURCES ==================== -->
-  <div class="mb-10">
+  <div id="resource-library" class="scroll-mt-28 mb-10">
     <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
       <div>
         <h2 class="text-2xl font-bold text-white flex items-center gap-2">📚 Learning Resources</h2>
-        <p class="text-gray-400 text-sm mt-1">Explore curated resources to improve your {{ skill.name }} skills.</p>
+        <p class="text-gray-400 text-sm mt-1">External links and shared notes saved to this skill appear here. Build a game from supported files.</p>
         <p id="resourceCount" class="text-sm text-gray-500 mt-1 font-medium">Showing {{ resources|length }} Resource{{ 's' if resources|length != 1 else '' }}</p>
       </div>
       <div class="flex flex-col sm:flex-row gap-3">
@@ -151,11 +185,17 @@
         </p>
 
         <div class="flex items-center gap-2 mt-auto">
-          <a href="{{ resource.url }}" target="_blank" class="flex-1 group inline-flex items-center justify-center gap-2 bg-yellow-500 hover:bg-yellow-400 text-black font-semibold px-4 py-2.5 rounded-xl transition-all active:scale-95 text-sm">
-            Open Resource <span class="transition-transform group-hover:translate-x-1">↗</span>
+          <a href="{{ resource.url }}" {% if not resource.storage_key and not resource.source_post_id %}target="_blank" rel="noopener noreferrer"{% endif %} class="flex-1 group inline-flex items-center justify-center gap-2 bg-yellow-500 hover:bg-yellow-400 text-black font-semibold px-4 py-2.5 rounded-xl transition-all active:scale-95 text-sm">
+            {% if resource.storage_key or (resource.source_post_id and resource.original_filename) %}Download resource{% else %}Open Resource{% endif %} <span class="transition-transform group-hover:translate-x-1">↗</span>
           </a>
-          <button onclick="openEditResourceModal({{ resource.id }}, '{{ resource.title|replace("'", "\'") }}', '{{ resource.resource_type }}', '{{ resource.url|replace("'", "\'") }}', '{{ (resource.description or '')|replace("'", "\'") }}', '{{ resource.difficulty or 'Beginner' }}')"
-            class="bg-white/5 hover:bg-white/10 text-gray-300 px-3 py-2.5 rounded-xl transition text-sm" title="Edit">✏️</button>
+          {% set file_ext = (resource.original_filename or '').lower() %}
+          {% if resource.storage_key or (resource.source_post_id and resource.original_filename) %}
+            {% if file_ext.endswith('.txt') or file_ext.endswith('.md') or file_ext.endswith('.markdown') or file_ext.endswith('.pdf') %}
+            <form action="{{ url_for('learning_game.build_game_from_resource', resource_id=resource.id) }}" method="POST"><button class="rounded-xl bg-emerald-500/15 px-3 py-2.5 text-xs font-semibold text-emerald-200 hover:bg-emerald-500/25">Build game</button></form>
+            {% endif %}
+          {% endif %}
+          {% if not resource.source_post_id %}<button onclick="openEditResourceModal({{ resource.id }}, '{{ resource.title|replace("'", "\'") }}', '{{ resource.resource_type }}', '{{ resource.url|replace("'", "\'") }}', '{{ (resource.description or '')|replace("'", "\'") }}', '{{ resource.difficulty or 'Beginner' }}')"
+            class="bg-white/5 hover:bg-white/10 text-gray-300 px-3 py-2.5 rounded-xl transition text-sm" title="Edit">✏️</button>{% endif %}
           <form action="{{ url_for('skills.delete_resource', resource_id=resource.id) }}" method="POST" class="m-0" onsubmit="return confirm('Remove this resource from archive?')">
             <button type="submit" class="bg-white/5 hover:bg-red-500/20 text-gray-300 hover:text-red-400 px-3 py-2.5 rounded-xl transition text-sm" title="Delete">🗑️</button>
           </form>
@@ -175,6 +215,7 @@
     {% endif %}
   </div>
 
+  {% if false %} {# Sessions are hidden while the product focuses on resource-based learning. #}
   <!-- ==================== LEARNING SESSIONS ==================== -->
   <div class="mb-8">
     <div class="flex items-center justify-between mb-5">
@@ -224,6 +265,8 @@
   </div>
 
 </div>
+
+  {% endif %}
 
 <!-- ==================== ADD RESOURCE MODAL ==================== -->
 <div id="addResourceModal" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 modal-overlay">

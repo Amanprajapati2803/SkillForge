@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, session, flash, redirect, url_for
+from flask import Blueprint, render_template, session, redirect, url_for, flash
 from utils.auth import login_required
 from models.achievement import Achievement
 from models.user_achievement import UserAchievement
@@ -264,24 +264,4 @@ def get_certificate_progress(user):
 @achievement_bp.route("/achievements")
 @login_required
 def achievements():
-    user = User.query.get(session["user_id"])
-    unlocked_certs, locked_certs, total_hours, total_sessions = get_certificate_progress(user)
-
-    # Ongoing cultivations (top 2 closest to unlock)
-    ongoing = locked_certs[:2] if locked_certs else []
-
-    # Next milestone
-    next_milestone = locked_certs[0] if locked_certs else None
-
-    return render_template(
-        "dashboard/certificate.html",
-        user=user,
-        unlocked_certs=unlocked_certs,
-        locked_certs=locked_certs,
-        ongoing=ongoing,
-        next_milestone=next_milestone,
-        total_hours=total_hours,
-        total_sessions=total_sessions,
-        unlocked_count=len(unlocked_certs),
-        total_count=len(unlocked_certs) + len(locked_certs)
-    )
+    return redirect(url_for("dashboard.home"))

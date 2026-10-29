@@ -4,9 +4,7 @@
 
 {% block styles %}
 <style>
-  body { background-color: #0d0d0d; font-family: 'Inter', sans-serif; }
-  .serif { font-family: 'Playfair Display', serif; }
-  .font-display { font-family: 'Cinzel', serif; }
+  .serif { font-family: 'Inter', sans-serif; }
 
   #toast {
     position: fixed; bottom: 24px; right: 24px;
@@ -40,78 +38,39 @@
 
 {% block content %}
 
-<!-- ==================== HEADER ==================== -->
-<header class="sticky top-0 z-40 bg-[#0c0a08]/95 backdrop-blur-md border-b border-[var(--hairline)]">
-  <div class="h-[76px] flex items-center justify-between px-6 lg:px-10">
-    <h1 class="font-display text-2xl text-[var(--gold-bright)]">Skills</h1>
-    <div class="flex items-center gap-5">
-      <div class="relative">
-        <button id="notifBtn" class="text-gray-400 hover:text-white relative transition-colors">
-          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
-          </svg>
-        </button>
-      </div>
-      <div class="flex items-center gap-1.5 border border-gold/50 rounded-full px-3 py-1 text-gold text-xs font-medium">
-        <span>🔥</span> {{ user.streak|default(0) }} Day Streak
-      </div>
-      <span class="text-sm text-gray-200 hidden sm:block">{{ user.name }}</span>
-      <a href="{{ url_for('setting_bp.settings') if setting_bp else '#' }}" class="w-9 h-9 rounded-full border-2 border-gold overflow-hidden bg-gray-700 hover:opacity-80 transition cursor-pointer">
-        <img src="https://api.dicebear.com/7.x/adventurer/svg?seed={{ user.name }}" class="w-full h-full object-cover" alt="{{ user.name }}">
-      </a>
-    </div>
-  </div>
+<!-- Page heading -->
+<header class="mx-auto max-w-7xl px-4 pt-7 sm:px-6 lg:px-8">
+  <p class="text-xs font-semibold uppercase tracking-[.18em] text-emerald-300">Learning workspace</p>
+  <h1 class="mt-2 text-3xl font-bold tracking-tight text-white sm:text-4xl">My skills</h1>
+  <p class="mt-2 max-w-2xl text-sm leading-6 text-gray-400">Choose what you’re learning, keep resources together, and see the evidence you build.</p>
 </header>
 
-<div class="px-6 lg:px-10 py-8">
+<div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
 
-  <!-- ==================== STATS CARDS ==================== -->
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
-    <div class="bg-[#141414] border border-white/5 rounded-xl p-5 flex items-center justify-between">
-      <div>
-        <p class="text-[11px] tracking-widest text-gray-500 mb-2">TOTAL CULTIVATION</p>
-        <p class="text-3xl font-bold text-white">{{ "{:,}".format(total_xp|default(0)|int) }} <span class="text-sm text-gray-500 font-normal">XP</span></p>
-      </div>
-      <div class="w-10 h-10 rounded-full border border-yellow-500/40 flex items-center justify-center text-yellow-400 text-lg">✦</div>
-    </div>
-
-    <div class="bg-[#141414] border border-white/5 rounded-xl p-5">
-      <div class="flex items-start justify-between">
-        <div>
-          <p class="text-[11px] tracking-widest text-gray-500 mb-2">SPIRIT RANK</p>
-          <p class="serif text-xl lg:text-2xl font-bold text-green-400 leading-tight">{{ current_rank|default("Disciple") }}</p>
-        </div>
-        <div class="w-10 h-10 rounded-full border border-green-500/40 flex items-center justify-center text-green-400 text-lg">📈</div>
-      </div>
-      <div class="w-16 h-0.5 bg-green-500 mt-3"></div>
-    </div>
-
-    <div class="bg-[#141414] border border-white/5 rounded-xl p-5 flex items-center justify-between">
-      <div>
-        <p class="text-[11px] tracking-widest text-gray-500 mb-2">TECHNIQUES MASTERED</p>
-        <p class="text-3xl font-bold text-white">{{ skill_count|default(skills|length) }} <span class="text-sm text-gray-500 font-normal">Scrolls</span></p>
-      </div>
-      <div class="w-10 h-10 rounded-full border border-pink-500/40 flex items-center justify-center text-pink-400 text-lg">🏵</div>
-    </div>
-  </div>
+  <section aria-label="Learning summary" class="grid grid-cols-1 gap-3 sm:grid-cols-3 mb-8">
+    <article class="rounded-2xl border border-white/10 bg-[#151a18] p-5"><p class="text-xs font-medium text-gray-400">Skills in your plan</p><p class="mt-2 text-3xl font-bold text-white">{{ skill_count|default(skills|length) }}</p><p class="mt-1 text-xs text-gray-500">Skills you’re working on</p></article>
+    <article class="rounded-2xl border border-white/10 bg-[#151a18] p-5"><p class="text-xs font-medium text-gray-400">Learning resources</p><p class="mt-2 text-3xl font-bold text-white">{{ resource_count }}</p><p class="mt-1 text-xs text-gray-500">Saved across your skill libraries</p></article>
+    <article class="rounded-2xl border border-white/10 bg-[#151a18] p-5"><p class="text-xs font-medium text-gray-400">Skills with quiz evidence</p><p class="mt-2 text-3xl font-bold text-emerald-200">{{ demonstrated_count }}</p><p class="mt-1 text-xs text-gray-500">Passed at least one resource game</p></article>
+  </section>
 
   <!-- ==================== YOUR SKILLS ==================== -->
   <div class="flex flex-col sm:flex-row gap-3 items-end justify-between mb-5">
-    <h3 class="serif text-xl font-bold text-white">Your Skills</h3>
+    <h2 class="text-xl font-bold tracking-tight text-white">Your skills</h2>
     <div class="flex items-center gap-4">
       <button id="openSkillModal" class="flex items-center gap-2 bg-yellow-400 hover:bg-yellow-300 text-black font-semibold px-4 py-2 rounded-xl transition duration-300 shadow-lg shadow-yellow-400/20">
         <span class="text-xl font-bold leading-none">+</span>
         <span>Add Skill</span>
       </button>
-      <p class="text-[10px] tracking-widest text-gray-500 hidden sm:block">CURRENT PROFICIENCY</p>
+      <p class="text-xs text-gray-500 hidden sm:block">Study completion and quiz evidence are separate</p>
     </div>
   </div>
 
   <!-- Skill Grid -->
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-8">
+  <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 mb-8">
     {% for skill in skills %}
-    {% set mastery = (skill.xp|default(0)|int) % 100 %}
-    <div class="skill-card bg-[#141414] border border-white/5 rounded-xl p-5 relative overflow-hidden">
+    {% set mastery = game_progress.get(skill.id, 0) %}
+    {% set evidence = skill_progress.get(skill.id) %}
+    <div class="skill-card rounded-2xl border border-white/10 bg-[#151a18] p-5 relative overflow-hidden">
       <!-- Top Row -->
       <div class="flex items-center justify-between mb-4">
         <div class="flex items-center gap-2.5">
@@ -124,11 +83,11 @@
         </div>
         <div class="flex items-center gap-2">
           <span class="text-sm font-semibold text-gray-300">{{ mastery }}%</span>
-          <button type="button" class="edit-btn text-blue-400 hover:text-blue-300 transition text-sm" data-id="{{ skill.id }}" data-name="{{ skill.name }}" title="Edit Skill">
+          <button type="button" class="edit-btn text-blue-400 hover:text-blue-300 transition text-sm" data-id="{{ skill.id }}" data-name="{{ skill.name }}" aria-label="Edit {{ skill.name }}" title="Edit skill">
             ✏️
           </button>
           <form action="{{ url_for('skills.delete_skill', skill_id=skill.id) }}" method="POST" class="m-0 inline" onsubmit="return confirm('Forget this technique?')">
-            <button type="submit" class="text-red-400 hover:text-red-300 transition text-sm" title="Delete Skill">🗑️</button>
+            <button type="submit" class="text-red-400 hover:text-red-300 transition text-sm" aria-label="Delete {{ skill.name }}" title="Delete skill">🗑️</button>
           </form>
         </div>
       </div>
@@ -139,23 +98,18 @@
       </div>
 
       <!-- Bottom Row -->
-      <div class="flex items-center justify-between text-[11px] text-gray-500 mb-3">
-        <span>Mastery Level {{ skill.level|default(1) }}</span>
-        <span class="text-yellow-500">⚡ {{ skill.xp|default(0) }} XP</span>
+      <div class="flex items-center justify-between gap-2 text-[11px] text-gray-500 mb-3">
+        <span>{% if evidence %}{{ evidence.studied }} / {{ evidence.total }} study stages{% else %}No study stages yet{% endif %}</span>
+        <a href="{{ url_for('skills.skill_realm', skill_id=skill.id) }}" class="font-semibold text-yellow-300 hover:text-yellow-200">Open learning path →</a>
       </div>
+      <p class="text-xs {% if evidence and evidence.demonstrated %}text-emerald-300{% else %}text-gray-500{% endif %}">{% if evidence and evidence.demonstrated %}Quiz passed · best accuracy {{ evidence.best_accuracy }}%{% elif evidence and evidence.attempts %}Best quiz accuracy {{ evidence.best_accuracy }}% · pass mark 70%{% else %}No quiz evidence yet{% endif %}</p>
 
-      <!-- +10 XP Button -->
-      <form action="{{ url_for('skills.add_skill_xp', skill_id=skill.id) }}" method="POST" class="m-0">
-        <button type="submit" class="w-full bg-green-600 hover:bg-green-500 text-white text-sm font-semibold py-2 rounded-lg transition-all active:scale-95">
-          +10 XP
-        </button>
-      </form>
     </div>
     {% else %}
     <div class="md:col-span-2 lg:col-span-3 bg-[#141414] border border-white/5 rounded-xl p-10 text-center">
       <div class="text-4xl mb-3">⚔️</div>
-      <h4 class="text-lg font-semibold text-white mb-2">No Techniques Yet</h4>
-      <p class="text-gray-500 text-sm mb-4">Begin your cultivation journey by creating your first skill.</p>
+      <h4 class="text-lg font-semibold text-white mb-2">No skills yet</h4>
+      <p class="text-gray-500 text-sm mb-4">Add a skill you want to improve, then save notes or resources to it.</p>
       <button onclick="document.getElementById('openSkillModal').click()" class="bg-yellow-400 hover:bg-yellow-300 text-black font-semibold px-5 py-2 rounded-lg transition">
         Create First Skill
       </button>
@@ -163,197 +117,16 @@
     {% endfor %}
   </div>
 
-  <!-- ==================== FEATURED SKILLS (DYNAMIC) ==================== -->
-  {% set top = top_skill|default(skills[0] if skills else None) %}
-  {% if top %}
-  <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-6">
-    <!-- Top Skill: Alchemy Card -->
-    <div class="lg:col-span-2 bg-[#141414] border border-white/5 rounded-xl p-6">
-      <div class="flex items-start justify-between mb-2">
-        <span class="text-[10px] tracking-widest text-yellow-500 border border-yellow-500/30 rounded px-2 py-0.5">CORE DISCIPLINE</span>
-        <span class="serif text-3xl font-bold text-gray-300">{{ (top.xp|default(0)|int) % 100 }}%</span>
-      </div>
-      <h4 class="serif text-2xl font-bold text-white mb-2">{{ top.name }}</h4>
-      <p class="text-sm text-gray-500 mb-4 max-w-md">
-        {% if top.xp|default(0)|int > 500 %}
-          Transmuting raw logic into ethereal interfaces through the ancient arts of code.
-        {% else %}
-          A nascent technique awaiting your focused cultivation. Practice daily to ascend.
-        {% endif %}
-      </p>
-      <div class="mb-5">
-        <div class="flex items-center justify-between text-sm mb-1.5">
-          <span class="text-gray-300 flex items-center gap-1.5">↻ {{ top.name }} Qi Infusion</span>
-          <span class="text-gray-400">{{ top.xp|default(0) }} / {{ (top.level|default(1)|int) * 100 }} XP</span>
-        </div>
-        <div class="w-full h-1.5 bg-white/10 rounded-full overflow-hidden">
-          <div class="h-full bg-yellow-400 rounded-full" style="width: {{ (top.xp|default(0)|int) % 100 }}%"></div>
-        </div>
-      </div>
-      <div class="grid grid-cols-2 gap-4">
-        <div class="bg-white/5 rounded-lg p-4">
-          <p class="text-[10px] tracking-widest text-gray-500 mb-1">Current Focus</p>
-          <p class="text-sm font-semibold text-white mb-1">{{ top.name }} Mastery</p>
-          <p class="text-xs text-yellow-500">⚡ +{{ 10 + (top.level|default(1)|int) * 5 }} XP/hr</p>
-        </div>
-        <div class="bg-white/5 rounded-lg p-4">
-          <p class="text-[10px] tracking-widest text-gray-500 mb-1">Mastery Bonus</p>
-          <p class="text-sm font-semibold text-white mb-1">Level {{ (top.level|default(1)|int) + 1 }} Unlock</p>
-          <p class="text-xs text-gray-500">Locked at Level {{ (top.level|default(1)|int) + 1 }}</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Second Skill: Array Formation -->
-    {% set second = second_skill|default(skills[1] if skills|length > 1 else None) %}
-    {% if second %}
-    <div class="bg-[#141414] border border-white/5 rounded-xl p-6 flex flex-col">
-      <span class="text-[10px] tracking-widest text-green-500 border border-green-500/30 rounded px-2 py-0.5 w-fit mb-2">SUPPORT ARTS</span>
-      <h4 class="serif text-xl font-bold text-white mb-2 leading-snug">{{ second.name }}</h4>
-      <p class="text-xs text-gray-500 mb-4">
-        {% if second.xp|default(0)|int > 300 %}
-          Architecting secure channels and robust databases to store the sect's vital essence.
-        {% else %}
-          A secondary discipline requiring dedicated practice to unlock its full potential.
-        {% endif %}
-      </p>
-      <div class="space-y-3 mb-4 flex-1">
-        <div>
-          <div class="flex items-center justify-between text-xs mb-1">
-            <span class="text-gray-300">{{ second.name }} Core</span>
-            <span class="text-gray-400">{{ (second.xp|default(0)|int) % 100 }}%</span>
-          </div>
-          <div class="w-full h-1.5 bg-white/10 rounded-full overflow-hidden">
-            <div class="h-full bg-green-500 rounded-full" style="width: {{ (second.xp|default(0)|int) % 100 }}%"></div>
-          </div>
-        </div>
-        {% set third = third_skill|default(skills[2] if skills|length > 2 else None) %}
-        {% if third %}
-        <div>
-          <div class="flex items-center justify-between text-xs mb-1">
-            <span class="text-gray-300">{{ third.name }} Vaults</span>
-            <span class="text-gray-400">{{ (third.xp|default(0)|int) % 100 }}%</span>
-          </div>
-          <div class="w-full h-1.5 bg-white/10 rounded-full overflow-hidden">
-            <div class="h-full bg-green-500 rounded-full" style="width: {{ (third.xp|default(0)|int) % 100 }}%"></div>
-          </div>
-        </div>
-        {% endif %}
-      </div>
-      <div class="mt-auto flex items-center gap-2">
-        <a href="{{ url_for('skills.skill_realm', skill_id=second.id) }}" class="flex-1 bg-green-300 hover:bg-green-200 text-black text-sm font-semibold rounded-lg py-2.5 flex items-center justify-center gap-2 transition">
-          📖 Enter Archive
-        </a>
-        <form action="{{ url_for('skills.add_skill_xp', skill_id=second.id) }}" method="POST" class="m-0">
-          <button type="submit" class="bg-yellow-400 hover:bg-yellow-300 text-black rounded-lg w-10 h-10 flex items-center justify-center font-bold text-lg transition">+</button>
-        </form>
-      </div>
-    </div>
-    {% else %}
-    <div class="bg-[#141414] border border-white/5 rounded-xl p-6 flex flex-col items-center justify-center text-center">
-      <div class="text-3xl mb-2">📜</div>
-      <p class="text-gray-500 text-sm">Create more skills to unlock the Support Arts display.</p>
-    </div>
-    {% endif %}
-  </div>
-  {% endif %}
-
-  <!-- ==================== PATH TO MASTERY ==================== -->
-  <div class="grid grid-cols-1 lg:grid-cols-[1fr_1.4fr] gap-5 mb-6">
-    <!-- Spiritual Logic -->
-    <div class="bg-[#141414] border border-white/5 rounded-xl p-6">
-      <h4 class="serif text-lg font-bold text-pink-300 mb-4 leading-snug">
-        {% set third = third_skill|default(skills[2] if skills|length > 2 else None) %}
-        {% if third %}{{ third.name }}{% else %}Spiritual Logic{% endif %}
-      </h4>
-      <div class="space-y-3">
-        {% if third %}
-        <div class="bg-white/5 rounded-lg px-4 py-3 flex items-center justify-between">
-          <span class="flex items-center gap-2 text-sm text-gray-200">▦ {{ third.name }} Flow</span>
-          <span class="text-xs text-gray-400">Lv. {{ third.level|default(1) }}</span>
-        </div>
-        {% endif %}
-        {% for skill in skills[:3] %}
-        <div class="bg-white/5 rounded-lg px-4 py-3 flex items-center justify-between {% if loop.index > 1 and (skill.xp|default(0)|int) < 100 %}opacity-50{% endif %}">
-          <span class="flex items-center gap-2 text-sm {% if (skill.xp|default(0)|int) >= 100 %}text-gray-200{% else %}text-gray-400{% endif %}">
-            {% if (skill.xp|default(0)|int) >= 100 %}▦{% else %}⚭{% endif %} {{ skill.name }}
-          </span>
-          <span class="text-xs {% if (skill.xp|default(0)|int) >= 100 %}text-gray-400{% else %}text-gray-500{% endif %}">
-            {% if (skill.xp|default(0)|int) >= 100 %}Mastered{% else %}Lv. {{ skill.level|default(1) }} / 10{% endif %}
-          </span>
-        </div>
-        {% endfor %}
-        {% if skills|length == 0 %}
-        <div class="bg-white/5 rounded-lg px-4 py-3 flex items-center justify-between opacity-50">
-          <span class="flex items-center gap-2 text-sm text-gray-400">🔒 Dynamic Zen</span>
-          <span class="text-xs text-gray-500">Locked</span>
-        </div>
-        {% endif %}
-      </div>
-    </div>
-
-    <!-- Ascension Roadmap -->
-    <div class="bg-[#141414] border border-white/5 rounded-xl p-6">
-      <div class="flex items-center justify-between mb-5">
-        <h4 class="serif text-lg font-bold text-white">Path to Mastery</h4>
-        <span class="text-[10px] tracking-widest text-gray-500">ASCENSION ROADMAP</span>
-      </div>
-      <div class="relative pl-12">
-        <div class="absolute left-[15px] top-2 bottom-2 w-px bg-white/10"></div>
-
-        {% set milestones = [
-          ("Foundation Verse", "Create your first skill", 0),
-          ("The Great Alchemist", "Reach 1,000 total XP", 1000),
-          ("Void Architecture", "Reach 5,000 total XP", 5000),
-          ("Immortal Fullstack", "Reach 20,000 total XP", 20000)
-        ] %}
-        {% set user_total_xp = total_xp|default(user.xp|default(0)|int) %}
-
-        {% for name, desc, req_xp in milestones %}
-        {% set achieved = user_total_xp >= req_xp %}
-        {% set current = not achieved and (loop.index == 1 or user_total_xp >= milestones[loop.index0 - 1][2]) %}
-        <div class="relative flex items-start {% if not loop.last %}mb-6{% endif %}">
-          <div class="absolute -left-12 w-8 h-8 rounded-full flex items-center justify-center text-sm
-            {% if achieved %}bg-yellow-400/20 border border-yellow-400 text-yellow-400
-            {% elif current %}bg-yellow-400/20 border border-yellow-400
-            {% else %}bg-white/5 border border-white/10 text-gray-500{% endif %}">
-            {% if achieved %}✓{% elif current %}<div class="w-2.5 h-2.5 rounded-full bg-yellow-400"></div>{% else %}🔒{% endif %}
-          </div>
-          <div class="flex-1 {% if not achieved and not current %}opacity-50{% endif %}">
-            <div class="flex items-center justify-between">
-              <p class="text-sm font-semibold {% if achieved or current %}text-white{% else %}text-gray-400{% endif %}">{{ name }}</p>
-              {% if current %}<span class="text-[10px] bg-white/10 text-gray-300 rounded px-2 py-1">In Progress</span>{% endif %}
-            </div>
-            <p class="text-xs text-gray-500 mt-0.5">{{ desc }}</p>
-          </div>
-        </div>
-        {% endfor %}
-      </div>
-    </div>
-  </div>
-
-  <!-- ==================== FORBIDDEN TECHNIQUE BANNER ==================== -->
-  <div class="bg-[#141414] border border-white/5 rounded-xl overflow-hidden flex flex-col md:flex-row mb-8">
-    <div class="w-full md:w-72 shrink-0 bg-black h-48 md:h-auto">
-      <img src="https://images.unsplash.com/photo-1620121692029-d088224ddc74?q=80&w=800&auto=format&fit=crop" class="w-full h-full object-cover opacity-90" alt="scroll" />
-    </div>
-    <div class="p-6 flex flex-col justify-center flex-1">
-      <span class="text-[10px] tracking-widest text-yellow-500 flex items-center gap-1.5 mb-2">📖 FORBIDDEN TECHNIQUE</span>
-      <h3 class="serif text-2xl font-bold text-white mb-3 leading-snug">The WebGL Spirit Sword:<br />Advanced Shaders</h3>
-      <p class="text-sm text-gray-500 mb-5 max-w-lg">Learn to manifest complex visual energy using the GPU. This scroll covers vertex shaders, fragment alchemy, and the flow of the rendering pipeline.</p>
-      <div class="flex flex-wrap items-center gap-4">
-        <button onclick="showToast('⚡ Coming in v2.0! The Elders are still transcribing this scroll.')" class="bg-yellow-400 hover:bg-yellow-300 text-black text-sm font-semibold rounded-lg px-5 py-2.5 flex items-center gap-2 transition">
-          ⚡ Start Cultivation
-        </button>
-        <span class="text-xs text-gray-400 flex items-center gap-1.5">🕐 12 Lessons</span>
-        <span class="text-xs text-gray-400 flex items-center gap-1.5">⭐ 2,500 XP Bounty</span>
-      </div>
-    </div>
-  </div>
-
-  <p class="text-center text-[10px] tracking-[0.3em] text-gray-600 mb-6">FORGED IN THE FIRES OF DISCIPLINE</p>
-
-</div>
+  <section class="mb-8 grid gap-4 lg:grid-cols-[1fr_1fr]">
+    <article class="rounded-2xl border border-white/10 bg-[#141414] p-5 sm:p-6">
+      <p class="text-xs font-semibold uppercase tracking-[.18em] text-yellow-200">How study progress works</p>
+      <p class="mt-3 text-sm leading-6 text-gray-300">The percentage on each skill counts completed study stages across the games made from your resources. It is a learning-progress measure, not a claim that you have mastered the skill.</p>
+    </article>
+    <article class="rounded-2xl border border-emerald-300/15 bg-emerald-300/[.04] p-5 sm:p-6">
+      <p class="text-xs font-semibold uppercase tracking-[.18em] text-emerald-200">How quiz evidence works</p>
+      <p class="mt-3 text-sm leading-6 text-gray-300">A passed resource game records quiz evidence for internship matching. The skill card shows your best result and whether you reached the 70% pass mark.</p>
+    </article>
+  </section>
 
 <!-- ==================== ADD SKILL MODAL ==================== -->
 <div id="skillModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden items-center justify-center z-50 modal-overlay">

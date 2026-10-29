@@ -6,6 +6,7 @@ from models.user import User
 from models.internship import Internship
 from database.database import db
 from models.applied_internship import AppliedInternship
+from services.skill_progress import get_skill_progress
 
 internship_bp = Blueprint("internship", __name__)
 
@@ -57,16 +58,22 @@ def interns():
     if total_scrolls > 0:
         average_match = sum(i["match_percentage"] for i in filtered) // total_scrolls
 
-    # Build skill progress for cultivation panel (top 2 skills by XP)
-    user_skills = sorted(user.skills, key=lambda s: s.xp, reverse=True)[:2]
+    # Share the same transparent evidence calculation used by the skills pages.
+    evidence_by_skill = get_skill_progress(user.id)
+    user_skills = sorted(
+        user.skills,
+        key=lambda skill: evidence_by_skill.get(skill.id, {}).get("percent", 0),
+        reverse=True,
+    )[:3]
     skill_progress = []
     for skill in user_skills:
-        # Assume max level 20 for progress bar math
-        pct = min(int((skill.level / 20) * 100), 100)
+        evidence = evidence_by_skill.get(skill.id, {})
         skill_progress.append({
             "name": skill.name,
-            "level": skill.level,
-            "pct": pct
+            "pct": evidence.get("percent", 0),
+            "demonstrated": evidence.get("demonstrated", False),
+            "best_accuracy": evidence.get("best_accuracy", 0),
+            "attempts": evidence.get("attempts", 0),
         })
 
     return render_template(
@@ -85,7 +92,7 @@ def interns():
     )
 
 
-@internship_bp.route("/apply/<int:internship_id>")
+@internship_bp.route("/apply/<int:internship_id>", methods=["POST"])
 @login_required
 def apply_internship(internship_id):
     user = User.query.get(session["user_id"])
@@ -103,7 +110,7 @@ def apply_internship(internship_id):
     ).first()
 
     if existing:
-        flash("You have already accepted this scroll.", "info")
+        flash("You have already tracked this application.", "info")
         return redirect(url_for("internship.interns"))
 
     application = AppliedInternship(
@@ -116,13 +123,27 @@ def apply_internship(internship_id):
 
     check_achievements(user)
 
-    flash(f"Scroll accepted: {internship.company} — {internship.title}", "success")
+    flash(f"Application saved: {internship.company} — {internship.title}", "success")
 
-    # Open external apply link in new tab via JS, but redirect back for now
-    # If you want external redirect, uncomment next line:
-    # return redirect(internship.apply_link)
+    # The application row is saved first, then the listing's apply portal opens.
+    return redirect(internship.apply_link)
 
-    return redirect(url_for("internship.interns"))
+
+@internship_bp.route("/applications/<int:application_id>/status", methods=["POST"])
+@login_required
+def update_application_status(application_id):
+    application = AppliedInternship.query.filter_by(
+        id=application_id, user_id=session["user_id"]
+    ).first_or_404()
+    allowed_statuses = {"Applied", "Under Review", "Interview", "Accepted", "Rejected"}
+    status = request.form.get("status", "Applied").strip()
+    if status not in allowed_statuses:
+        flash("Choose a valid application status.", "error")
+    else:
+        application.status = status
+        db.session.commit()
+        flash("Application status updated.", "success")
+    return redirect(url_for("internship.applications"))
 
 
 @internship_bp.route("/applications")

@@ -1,0 +1,41 @@
+{% extends "layouts/base.html" %}
+{% block title %}A memory checkpoint · {{ game.source_title }}{% endblock %}
+{% block styles %}
+<style>
+  @keyframes checkpoint-glow { 0%,100% { box-shadow:0 0 25px rgba(245,190,75,.09) } 50% { box-shadow:0 0 55px rgba(245,190,75,.2) } }
+  @keyframes lantern-float { 0%,100% { transform:translateY(0) } 50% { transform:translateY(-6px) } }
+  .checkpoint-card { animation: checkpoint-glow 4s ease-in-out infinite; background:radial-gradient(ellipse at 50% 0%,rgba(245,190,75,.13),transparent 42%),linear-gradient(145deg,#15151d,#211b27 58%,#2b2118); }
+  .lantern-guide { animation: lantern-float 3s ease-in-out infinite; }
+  .checkpoint-choice:has(input:checked) { border-color:#f5be4b; background:rgba(245,190,75,.12); }
+</style>
+{% endblock %}
+{% block content %}
+<main class="mx-auto flex min-h-[calc(100vh-3.5rem)] max-w-4xl items-center px-4 py-8 sm:px-6">
+  <section class="checkpoint-card w-full rounded-3xl border border-amber-200/20 p-6 sm:p-10">
+    <a href="{{ url_for('skills.skill_realm', skill_id=game.skill_id) }}" class="text-sm text-gray-400 hover:text-white">← {{ game.skill.name }}</a>
+    <div class="mx-auto mt-7 max-w-2xl text-center">
+      <div class="lantern-guide mx-auto flex h-20 w-20 items-center justify-center rounded-3xl border border-amber-100/20 bg-amber-100/10 text-4xl" aria-hidden="true">🧝🏻‍♀️</div>
+      <p class="mt-5 text-[10px] font-bold uppercase tracking-[.28em] text-amber-200">Memory checkpoint · {{ milestone }} stages explored</p>
+      <h1 class="mt-2 font-display text-3xl text-white">The lantern remembers</h1>
+      <p class="mx-auto mt-3 max-w-xl text-sm leading-6 text-gray-300">“Before we travel farther, explorer, let’s recall one clue from your resource. Your answer helps relight the path.”</p>
+    </div>
+    <form method="POST" action="{{ url_for('learning_game.answer_story_checkpoint', game_id=game.id) }}" class="mx-auto mt-8 max-w-2xl">
+      <fieldset>
+        <legend class="text-base font-semibold leading-7 text-white">{{ question.prompt }}</legend>
+        <div class="mt-5 grid gap-3 sm:grid-cols-2">
+          {% for option in question.options %}
+          <label class="checkpoint-choice flex cursor-pointer items-start gap-3 rounded-xl border border-white/10 bg-black/20 p-4 transition hover:border-amber-100/30">
+            <input required type="radio" name="answer" value="{{ loop.index0 }}" class="mt-1 accent-amber-300">
+            <span class="text-sm leading-6 text-gray-200">{{ option }}</span>
+          </label>
+          {% endfor %}
+        </div>
+      </fieldset>
+      <div class="mt-7 flex flex-col items-center gap-3">
+        <button class="w-full rounded-xl bg-amber-300 px-6 py-3 font-bold text-[#21170a] transition hover:bg-amber-200 sm:w-auto">Answer and continue the story →</button>
+        <p class="text-center text-xs text-gray-500">Questions come from the material you uploaded. If you miss one, Mira will show you the clue and you can keep learning.</p>
+      </div>
+    </form>
+  </section>
+</main>
+{% endblock %}

@@ -203,19 +203,21 @@ login_registation
         <!-- Social Buttons -->
         <div class="grid grid-cols-3 gap-3">
 
-          <button
+          <a
+            href="{{ url_for('auth.google_login') }}"
             class="rounded-xl border border-gray-700 bg-[#1b1b24] py-3 text-sm font-medium text-white transition hover:border-yellow-500 hover:bg-[#22222c]">
 
-            Google
+                <span class="flex justify-center">Google</span>
 
-          </button>
+          </a>
 
-          <button
+          <a
+            href="{{ url_for('auth.github_login') }}"
             class="rounded-xl border border-gray-700 bg-[#1b1b24] py-3 text-sm font-medium text-white transition hover:border-yellow-500 hover:bg-[#22222c]">
 
-            GitHub
+            <span class="flex justify-center">GitHub</span>
 
-          </button>
+          </a>
 
           <button
             class="rounded-xl border border-gray-700 bg-[#1b1b24] py-3 text-sm font-medium text-white transition hover:border-yellow-500 hover:bg-[#22222c]">
@@ -344,19 +346,21 @@ login_registation
         <!-- Social Buttons -->
         <div class="grid grid-cols-3 gap-3">
 
-          <button
+          <a
+            href="{{ url_for('auth.google_login') }}"
             class="rounded-xl border border-gray-700 bg-[#1b1b24] py-3 text-sm font-medium text-white transition hover:border-yellow-500 hover:bg-[#22222c]">
 
             Google
 
-          </button>
+          </a>
 
-          <button
+          <a
+            href="{{ url_for('auth.github_login') }}"
             class="rounded-xl border border-gray-700 bg-[#1b1b24] py-3 text-sm font-medium text-white transition hover:border-yellow-500 hover:bg-[#22222c]">
 
-            GitHub
+            <span class="flex justify-center">GitHub</span>
 
-          </button>
+          </a>
 
           <button
             class="rounded-xl border border-gray-700 bg-[#1b1b24] py-3 text-sm font-medium text-white transition hover:border-yellow-500 hover:bg-[#22222c]">
